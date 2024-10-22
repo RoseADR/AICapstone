@@ -1,4 +1,4 @@
-Tue Oct 22 14:52:02 2024
+Tue Oct 22 15:39:11 2024
 [INFO]: Starting the SceneManager
 [INFO]: OpenGL version: 4.6.0 - Build 31.0.101.1999
 [INFO]: Graphics card vendor Intel
@@ -6,6 +6,11 @@ Tue Oct 22 14:52:02 2024
 [INFO]: GLSL Version 4.60 - Build 31.0.101.1999
 [INFO]: Created Scene1: 
 [INFO]: Loading assets Scene0: 
+[INFO]: Uniforms:
+"projection" loc:-1
+"view" loc:-1
+"modelMatrix" loc:1
+
 [INFO]: Uniforms:
 "projection" loc:-1
 "view" loc:-1
@@ -36,9 +41,11 @@ Tue Oct 22 14:52:02 2024
 "modelMatrix" loc:1
 "color" loc:2
 
-[INFO]: Uniforms:
-"projection" loc:-1
-"view" loc:-1
-"modelMatrix" loc:1
-
 [INFO]: Creating values for CameraActor: 
+[INFO]: Deleted Scene0: 
+[INFO]: Deleting assets Scene1: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting the SceneManager

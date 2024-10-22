@@ -8,6 +8,7 @@
 #include "MeshComponent.h"
 #include "ShaderComponent.h"
 #include "MaterialComponent.h"
+#include "AiComponent.h"
 
 
 AssetManager::AssetManager() {
@@ -41,6 +42,9 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("RedCheckerTexture", nullptr,"textures/redCheckerPiece.png");
 	AddComponent<MaterialComponent>("BlackCheckerTexture", nullptr, "textures/blackCheckerPiece.png");
 	AddComponent<MaterialComponent>("WhiteCheckerTexture", nullptr, "textures/whiteCheckerPiece.png");
+
+	AddComponent<AiComponent>("Enemy", nullptr);
+
 	OnCreate();
 	ListAllComponents();
 }
