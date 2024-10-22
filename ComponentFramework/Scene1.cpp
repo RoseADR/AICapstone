@@ -54,9 +54,9 @@ bool Scene1::OnCreate() {
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	character->AddComponent<AiComponent>(assetManager->GetComponent<AiComponent>("Enemy"));
-	
 	AddActor(character);
+
+	LoadEnemies();
 
 	return true;
 }
@@ -259,6 +259,49 @@ void Scene1::DrawNormals(const Vec4 color) const {
 	glUseProgram(0);
 }
 
+void Scene1::LoadEnemies() {
+	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Sphere");
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
+	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
+	Ref<AiComponent> eAi = (assetManager->GetComponent<AiComponent>("Enemy"));
+
+
+	Ref<Actor> enemies;
+
+	float yPos = 3.5f;
+	float xPos = -3.5f;
+	for (int j = 0; j < 2; j++) {
+		enemies = std::make_shared<Actor>(gameboard.get());
+		enemies->AddComponent<ShaderComponent>(shader);
+		enemies->AddComponent<MaterialComponent>(enemyTexture);
+		switch (j) {
+		case 0:
+			enemies->AddComponent<MeshComponent>(e);
+			enemies->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.05f),
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
+			AddActor(enemies);
+			break;
+		
+		
+		default:
+			break;
+		}
+		xPos += 1.0f;
+	}
+	xPos = -3.5f;
+	yPos -= 1.0f;
+	for (int j = 0; j < 2; j++) {
+		enemies = std::make_shared<Actor>(gameboard.get());
+		enemies->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.05f),
+			QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
+		enemies->AddComponent<MeshComponent>(e);
+		enemies->AddComponent<ShaderComponent>(shader);
+		enemies->AddComponent<MaterialComponent>(enemyTexture);
+		enemies->OnCreate();
+		AddActor(enemies);
+		xPos += 1.0f;
+	}
+}
 
 
 

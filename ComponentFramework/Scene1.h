@@ -20,6 +20,8 @@ private:
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
 	Ref<Actor> character;
+	Ref<Actor> enemies;
+
 	
 	bool drawNormals;
 	bool drawOverlay;
@@ -38,6 +40,8 @@ public:
 	void DrawNormals(const Vec4 color) const;
 
 	void DrawMeshOverlay(const Vec4 color) const;
+
+	void LoadEnemies();
 };
 
 
