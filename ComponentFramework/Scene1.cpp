@@ -76,12 +76,19 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	static Vec2	lastMousePos;
 	static float flip = 1.0f;
 	Ref<TransformComponent> cameraTC;
+	Ref<TransformComponent> characterTC;
 	Ref<TransformComponent> gameBoardTC;
+
+	Quaternion start;
+	Quaternion end;
 
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
 	case SDL_KEYDOWN:
 		cameraTC = camera->GetComponent<TransformComponent>();
+		characterTC = character->GetComponent<TransformComponent>();
+		gameBoardTC = gameboard->GetComponent<TransformComponent>();
+
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_LEFT:
 			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
@@ -104,38 +111,43 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_SPACE:
-		{
+		
 			flip *= -1.0f;
-			gameBoardTC = gameboard->GetComponent<TransformComponent>();
-			Quaternion start = gameBoardTC->GetQuaternion();
-			Quaternion end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			start = gameBoardTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
 			gameBoardTC->SlerpOrientation(start, end, 3.0f);
 			break;
-		}
-		}
+		
 
+		}
 
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_E:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
 			break;
 
 		case SDL_SCANCODE_Q:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
 			break;
 
 		case SDL_SCANCODE_W:
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.f, -0.1f, 0.0f), start = characterTC->GetQuaternion());
 			break;
 
 		case SDL_SCANCODE_A:
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), characterTC->GetQuaternion());
 			break;
 
 		case SDL_SCANCODE_S:
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), characterTC->GetQuaternion());
 			break;
 
 		case SDL_SCANCODE_D:
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), characterTC->GetQuaternion());
 			break;
 
 		case SDL_SCANCODE_N:
