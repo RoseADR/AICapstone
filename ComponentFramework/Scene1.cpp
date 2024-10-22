@@ -42,59 +42,8 @@ bool Scene1::OnCreate() {
 	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f),orientation);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
-	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CheckerBoard"));
+	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("ChessBoard"));
 	AddActor(gameboard);
-
-	Ref<MeshComponent> checkerMesh = assetManager->GetComponent<MeshComponent>("CheckerPiece");
-	Ref<MaterialComponent> rTexture = assetManager->GetComponent<MaterialComponent>("RedCheckerTexture");
-	Ref<MaterialComponent> bTexture = assetManager->GetComponent<MaterialComponent>("BlackCheckerTexture");
-	Ref<MaterialComponent> wTexture = assetManager->GetComponent<MaterialComponent>("WhiteCheckerTexture");
-	Ref<Actor> checker_red;
-	float yPos = -3.5f;
-	for( int i = 0; i < 3; i++){
-		float xPos = -3.5f;
-		for (int j = 0; j < 4; j++) {
-			checker_red = std::make_shared<Actor>(gameboard.get());
-			if (i == 1) {
-				checker_red->AddComponent<TransformComponent>(nullptr, Vec3(xPos + 1.0f, yPos, 0.0f),
-					QMath::angleAxisRotation(0.0f,Vec3(1.0f,0.0f,0.0f)), Vec3(0.1f, 0.1f, 0.12f));
-			} else {
-				checker_red->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.0f),
-					QMath::angleAxisRotation(0.0f,Vec3(1.0f,0.0f,0.0f)), Vec3(0.1f, 0.1f, 0.12f));
-			}
-				
-			checker_red->AddComponent<MeshComponent>(checkerMesh);
-			checker_red->AddComponent<ShaderComponent>(shader);
-			checker_red->AddComponent<MaterialComponent>(rTexture);
-			checker_red->OnCreate();
-			AddActor(checker_red);
-			xPos += 2.0f;
-			
-		}
-		yPos += 1.0f;
-	}
-
-	Ref<Actor> checker_black;
-	yPos = 3.5f;
-	for( int i = 0; i < 3; i++){
-		float xPos = -3.5f;
-		for (int j = 0; j < 4; j++) {
-			checker_black = std::make_shared<Actor>(gameboard.get());
-			if (i == 1) {
-				checker_black->AddComponent<TransformComponent>(nullptr, Vec3(xPos + 1.0f, yPos, 0.0f),
-					QMath::angleAxisRotation(0.0f,Vec3(1.0f,0.0f,0.0f)), Vec3(0.1f, 0.1f, 0.12f));
-			} else {
-				checker_black->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.0f),
-					QMath::angleAxisRotation(0.0f,Vec3(1.0f,0.0f,0.0f)), Vec3(0.1f, 0.1f, 0.12f));
-			}	
-			checker_black->AddComponent<MeshComponent>(checkerMesh);
-			checker_black->AddComponent<ShaderComponent>(shader);
-			checker_black->AddComponent<MaterialComponent>(bTexture);
-			AddActor(checker_black);
-			xPos += 2.0f;	
-		}
-		yPos -= 1.0f;
-	}
 
 	return true;
 }
