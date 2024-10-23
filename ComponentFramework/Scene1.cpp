@@ -269,8 +269,10 @@ void Scene1::Update(const float deltaTime) {
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	locationManager.mariosPos = character->GetComponent<TransformComponent>()->GetPosition();
 	Vec3 mePos = actors[0]->GetComponent<TransformComponent>()->GetPosition();
-	actors[0]->GetComponent<AiComponent>()->Follow(mePos, locationManager.mariosPos);
+	Vec3 move = actors[0]->GetComponent<AiComponent>()->Follow(mePos, locationManager.mariosPos);
+
 	//locationManager.mariosPos.print();
+
 }
 
 void Scene1::Render() const {
@@ -334,7 +336,6 @@ void Scene1::LoadEnemies() {
 	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Sphere");
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
-
 	
 
 	Ref<Actor> enemy;
@@ -346,8 +347,9 @@ void Scene1::LoadEnemies() {
 		enemy->AddComponent<AiComponent>(enemy.get());
 		enemy->AddComponent<MeshComponent>(e);// add mesh
 		enemy->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
+			QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
 
-		enemies = std::make_shared<Actor>(gameboard.get()));
+		enemies = std::make_shared<Actor>(gameboard.get());
 		enemies->AddComponent<ShaderComponent>(shader);
 		enemies->AddComponent<MaterialComponent>(enemyTexture);
 

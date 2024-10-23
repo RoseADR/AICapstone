@@ -22,22 +22,28 @@ void AiComponent::OnDestroy() {
 void AiComponent::Update(const float deltaTime) {
 
 }
+
+
 void AiComponent::Render()const {}
 
-void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
+Vec3 AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 
-	//result = new SteeringOutput;
-	
-	result->linear = myLocation - otherLocation;
+	Vec3 enemy = myLocation;
+	Vec3 character = otherLocation;
+
+	Vec3 linear = character - enemy;
+	linear = VMath::normalize(linear);
+
+	return linear;
 
 	std::cout << "Im following you" << std::endl;
 	myLocation.print();
 }
 
-
-
-
-//void AiComponent::SteeringBehaviour::Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_)
+//
+//
+//
+//void AiComponent::Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_)
 //{
 //    npc = npc_;
 //    target = target_;
@@ -46,7 +52,7 @@ void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 //}
 //
 //
-//void AiComponent::SteeringBehaviour::Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_)
+//void AiComponent::Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_)
 //{
 //    npc = npc_;
 //    target = target_;
@@ -55,20 +61,20 @@ void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 //    getFleeSteering();
 //}
 //
-//void AiComponent::SteeringBehaviour::Arrive(const PhysicsComponent* npc_, const PhysicsComponent* target_)
+//void AiComponent::Arrive(const PhysicsComponent* npc_, const PhysicsComponent* target_)
 //{
-//    npc = npc_;
-//    target = target_;
+//   // npc = npc_;
+//   // target = target_;
 //    targetRadius = 1.0f;       // Distance where we consider the NPC has "arrived"
 //    slowRadius = 10.0f;        // Distance to start slowing down
 //    timeToTarget = 0.1f;       // Time over which to achieve speed
-//    result = new SteeringOutput();
+//   // result = new SteeringOutput();
 //
 //    getArriveSteering();
 //
 //}
 //
-//SteeringOutput* AiComponent::SteeringBehaviour::getSeekSteering()
+//void AiComponent::getSeekSteering()
 //{
 //    // get direction to target
 //    result->linear = target->getPos() - npc->getPos();
@@ -80,7 +86,7 @@ void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 //    return result;
 //}
 //
-//SteeringOutput* AiComponent::SteeringBehaviour::getFleeSteering()
+//void AiComponent::getFleeSteering()
 //{
 //    // get direction to target
 //    result->linear = target->getPos() + npc->getPos();
@@ -92,7 +98,7 @@ void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 //    return result;
 //}
 //
-//SteeringOutput* AiComponent::SteeringBehaviour::getArriveSteering()
+//void AiComponent::getArriveSteering()
 //{
 //    // Get the direction to the target
 //    Vec3 direction = target->getPos() - npc->getPos();
@@ -131,5 +137,5 @@ void AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 //    // Return the calculated steering output
 //    return result;
 //}
- 
-
+// 
+//

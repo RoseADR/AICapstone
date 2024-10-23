@@ -2,11 +2,16 @@
 
 #include "MMath.h"
 #include "VMath.h"
+#include "Component.h"
 
 using namespace MATH;
 
-class PhysicsComponent
+class PhysicsComponent : public Component 
 {
+    PhysicsComponent(const PhysicsComponent&) = delete;
+    PhysicsComponent(PhysicsComponent&&) = delete;
+    PhysicsComponent& operator = (const PhysicsComponent&) = delete;
+    PhysicsComponent& operator = (PhysicsComponent&&) = delete;
 
 protected:
         // inherited classes can access this
