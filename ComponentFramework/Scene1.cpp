@@ -140,7 +140,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_W:
 		
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), start = characterTC->GetQuaternion());
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), characterTC->GetQuaternion());
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -265,11 +265,18 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 void Scene1::Update(const float deltaTime) {
 	Ref<TransformComponent> characterTC;
+	Ref<TransformComponent> enemyTC;
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	locationManager.mariosPos = character->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 mePos = actors[0]->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 move = actors[0]->GetComponent<AiComponent>()->Follow(mePos, locationManager.mariosPos);
+	Vec3 mePos = actors[2]->GetComponent<TransformComponent>()->GetPosition();
+	//Vec3 move = actors[2]->GetComponent<AiComponent>()->Follow(mePos, locationManager.mariosPos);
+
+	Vec3 move = actors[2]->GetComponent<AiComponent>()->Flee(mePos, locationManager.mariosPos);
+
+	//REMEBER
+	enemyTC = actors[2]->GetComponent<TransformComponent>();
+	enemyTC->SetTransform(enemyTC->GetPosition() + move * deltaTime, enemyTC->GetQuaternion());
 
 	//locationManager.mariosPos.print();
 

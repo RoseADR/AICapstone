@@ -40,6 +40,20 @@ Vec3 AiComponent::Follow(const Vec3 myLocation, Vec3 otherLocation){
 	myLocation.print();
 }
 
+Vec3 AiComponent::Flee(const Vec3 myLocation, Vec3 otherLocation) {
+
+	Vec3 enemy = myLocation;
+	Vec3 character = otherLocation;
+
+	Vec3 linear = character + enemy;
+	linear = VMath::normalize(linear);
+
+	return linear;
+
+	std::cout << "Im following you" << std::endl;
+	myLocation.print();
+}
+
 //
 //
 //

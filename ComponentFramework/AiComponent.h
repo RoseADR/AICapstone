@@ -40,6 +40,8 @@ public:
 
 	Vec3 Follow(const Vec3 myLocation, Vec3 otherLocation);
 
+	Vec3 Flee(const Vec3 myLocation, Vec3 otherLocation);
+
 			void Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_);
 			void Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_);
 			void Arrive(const PhysicsComponent* npc_, const PhysicsComponent* target_);
