@@ -267,20 +267,32 @@ void Scene1::Update(const float deltaTime) {
 	Ref<TransformComponent> characterTC;
 	Ref<TransformComponent> enemyTC;
 
+	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+
+	// Get Mario's position (character's position)
 	locationManager.mariosPos = character->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 mePos = actors[2]->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 move = actors[2]->GetComponent<AiComponent>()->Flee(mePos, locationManager.mariosPos);
 
-	//Vec3 move = actors[2]->GetComponent<AiComponent>()->Flee(mePos, locationManager.mariosPos);
+	// --- Enemy 1 (actors[2]) Flee ---
+	Vec3 enemy1Pos = actors[2]->GetComponent<TransformComponent>()->GetPosition();
+	Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
 
-	//REMEBER
-	enemyTC = actors[2]->GetComponent<TransformComponent>();
-	enemyTC->SetTransform(enemyTC->GetPosition() + move * deltaTime, enemyTC->GetQuaternion());
+	// Update Enemy 1's position
+	Ref<TransformComponent> enemy1TC = actors[2]->GetComponent<TransformComponent>();
+	enemy1TC->SetTransform(enemy1TC->GetPosition() + enemy1Move * deltaTime, enemy1TC->GetQuaternion());
 
-	//locationManager.mariosPos.print();
+	// --- Enemy 2 (actors[3]) Follow ---
+	Vec3 enemy2Pos = actors[3]->GetComponent<TransformComponent>()->GetPosition();
+	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Follow(enemy2Pos, locationManager.mariosPos);
 
+	// Update Enemy 2's position
+	Ref<TransformComponent> enemy2TC = actors[3]->GetComponent<TransformComponent>();
+	enemy2TC->SetTransform(enemy2TC->GetPosition() + enemy2Move * deltaTime, enemy2TC->GetQuaternion());
+
+	// Debug or print Mario's position if needed
+	// locationManager.mariosPos.print();
 }
+
 
 void Scene1::Render() const {
 
@@ -343,30 +355,33 @@ void Scene1::LoadEnemies() {
 	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Sphere");
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
-	
 
-	Ref<Actor> enemy;
+	// Create an array of 2 enemy actors
+	Ref<Actor> enemies[2]{};
 
-	
-		enemy = std::make_shared<Actor>(gameboard.get()); // makes actor and parents it to gameboard
-		enemy->AddComponent<ShaderComponent>(shader);// add shader
-		enemy->AddComponent<MaterialComponent>(enemyTexture);// add texture
-		enemy->AddComponent<AiComponent>(enemy.get());
-		enemy->AddComponent<MeshComponent>(e);// add mesh
-		enemy->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
-			QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
+	// Set up the first enemy
+	enemies[0] = std::make_shared<Actor>(gameboard.get()); // Make actor and parent it to gameboard
+	enemies[0]->AddComponent<ShaderComponent>(shader); // Add shader
+	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
+	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
+	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
+	enemies[0]->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
+		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
 
-		enemies = std::make_shared<Actor>(gameboard.get());
-		enemies->AddComponent<ShaderComponent>(shader);
-		enemies->AddComponent<MaterialComponent>(enemyTexture);
+	// Set up the second enemy
+	enemies[1] = std::make_shared<Actor>(gameboard.get()); // Make actor and parent it to gameboard
+	enemies[1]->AddComponent<ShaderComponent>(shader); // Add shader
+	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
+	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
+	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
+	enemies[1]->AddComponent<TransformComponent>(nullptr, Vec3(1.0f, 0.0f, 0.05f), // Different position
+		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.75f, 0.75f, 0.75f));
 
-			enemies->AddComponent<MeshComponent>(e);
-			enemies->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
-				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
-		AddActor(enemy);// adds to the actor list
-			
-		
+	// Add both enemies to the actor list
+	AddActor(enemies[0]);
+	AddActor(enemies[1]);
 }
+
 
 
 int Scene1::Pick(int x, int y) {

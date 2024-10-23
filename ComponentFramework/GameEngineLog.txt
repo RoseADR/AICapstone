@@ -1,11 +1,16 @@
-Wed Oct 23 17:20:02 2024
+Wed Oct 23 18:26:36 2024
 [INFO]: Starting the SceneManager
-[INFO]: OpenGL version: 4.6.0 NVIDIA 551.86
+[INFO]: OpenGL version: 4.6.0 NVIDIA 560.94
 [INFO]: Graphics card vendor NVIDIA Corporation
-[INFO]: Graphics card name NVIDIA GeForce RTX 3050 Laptop GPU/PCIe/SSE2
+[INFO]: Graphics card name NVIDIA GeForce RTX 3060/PCIe/SSE2
 [INFO]: GLSL Version 4.60 NVIDIA
 [INFO]: Created Scene1: 
 [INFO]: Loading assets Scene0: 
+[INFO]: Uniforms:
+"modelMatrix" loc:1
+"projection" loc:-1
+"view" loc:-1
+
 [INFO]: Uniforms:
 "modelMatrix" loc:2
 "projection" loc:-1
@@ -32,11 +37,6 @@ Wed Oct 23 17:20:02 2024
 
 [INFO]: Uniforms:
 "color" loc:2
-"modelMatrix" loc:1
-"projection" loc:-1
-"view" loc:-1
-
-[INFO]: Uniforms:
 "modelMatrix" loc:1
 "projection" loc:-1
 "view" loc:-1

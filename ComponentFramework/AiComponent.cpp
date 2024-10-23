@@ -50,7 +50,7 @@ Vec3 AiComponent::Flee(const Vec3 myLocation, Vec3 otherLocation) {
 
 	return linear;
 
-	std::cout << "Im following you" << std::endl;
+	std::cout << "Im not following you" << std::endl;
 	myLocation.print();
 }
 
