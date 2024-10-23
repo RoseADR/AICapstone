@@ -1,11 +1,20 @@
+<<<<<<< Updated upstream
 Wed Oct 23 14:28:18 2024
+=======
+Wed Oct 23 14:09:06 2024
+>>>>>>> Stashed changes
 [INFO]: Starting the SceneManager
-[INFO]: OpenGL version: 4.6.0 - Build 31.0.101.1999
+[INFO]: OpenGL version: 4.6.0 - Build 31.0.101.5186
 [INFO]: Graphics card vendor Intel
-[INFO]: Graphics card name Intel(R) Iris(R) Plus Graphics
-[INFO]: GLSL Version 4.60 - Build 31.0.101.1999
+[INFO]: Graphics card name Intel(R) Iris(R) Xe Graphics
+[INFO]: GLSL Version 4.60 - Build 31.0.101.5186
 [INFO]: Created Scene1: 
 [INFO]: Loading assets Scene0: 
+[INFO]: Uniforms:
+"projection" loc:-1
+"view" loc:-1
+"modelMatrix" loc:1
+
 [INFO]: Uniforms:
 "projection" loc:-1
 "view" loc:-1
@@ -36,18 +45,4 @@ Wed Oct 23 14:28:18 2024
 "modelMatrix" loc:1
 "color" loc:2
 
-[INFO]: Uniforms:
-"projection" loc:-1
-"view" loc:-1
-"modelMatrix" loc:1
-
 [INFO]: Creating values for CameraActor: 
-[INFO]: Deleted Scene0: 
-[INFO]: Deleting assets Scene1: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting the SceneManager
