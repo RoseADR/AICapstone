@@ -38,9 +38,11 @@ public:
 	virtual void Render()const;
 
 
-	Vec3 Follow(const Vec3 myLocation, Vec3 otherLocation);
+	Vec3 Seek(const Vec3 myLocation, Vec3 otherLocation);
 
 	Vec3 Flee(const Vec3 myLocation, Vec3 otherLocation);
+
+	Vec3 Pursuit(const Vec3 myLocation, const Vec3 otherLocation);
 
 			void Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_);
 			void Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_);

@@ -266,6 +266,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 void Scene1::Update(const float deltaTime) {
 	Ref<TransformComponent> characterTC;
 	Ref<TransformComponent> enemyTC;
+	Ref<TransformComponent> enemyTC2;
 
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
@@ -278,16 +279,16 @@ void Scene1::Update(const float deltaTime) {
 	Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
 
 	// Update Enemy 1's position
-	Ref<TransformComponent> enemy1TC = actors[2]->GetComponent<TransformComponent>();
-	enemy1TC->SetTransform(enemy1TC->GetPosition() + enemy1Move * deltaTime, enemy1TC->GetQuaternion());
+	enemyTC = actors[2]->GetComponent<TransformComponent>();
+	enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
 
 	// --- Enemy 2 (actors[3]) Follow ---
 	Vec3 enemy2Pos = actors[3]->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Follow(enemy2Pos, locationManager.mariosPos);
+	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Seek(enemy2Pos, locationManager.mariosPos);
 
 	// Update Enemy 2's position
-	Ref<TransformComponent> enemy2TC = actors[3]->GetComponent<TransformComponent>();
-	enemy2TC->SetTransform(enemy2TC->GetPosition() + enemy2Move * deltaTime, enemy2TC->GetQuaternion());
+	enemyTC2= actors[3]->GetComponent<TransformComponent>();
+	enemyTC2->SetTransform(enemyTC2->GetPosition() + enemy2Move * deltaTime, enemyTC2->GetQuaternion());
 
 	// Debug or print Mario's position if needed
 	// locationManager.mariosPos.print();
