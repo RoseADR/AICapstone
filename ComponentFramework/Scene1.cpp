@@ -270,7 +270,7 @@ void Scene1::Update(const float deltaTime) {
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	locationManager.mariosPos = character->GetComponent<TransformComponent>()->GetPosition();
 	Vec3 mePos = actors[2]->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 move = actors[2]->GetComponent<AiComponent>()->Follow(mePos, locationManager.mariosPos);
+	Vec3 move = actors[2]->GetComponent<AiComponent>()->Flee(mePos, locationManager.mariosPos);
 
 	//Vec3 move = actors[2]->GetComponent<AiComponent>()->Flee(mePos, locationManager.mariosPos);
 

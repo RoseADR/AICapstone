@@ -45,7 +45,7 @@ Vec3 AiComponent::Flee(const Vec3 myLocation, Vec3 otherLocation) {
 	Vec3 enemy = myLocation;
 	Vec3 character = otherLocation;
 
-	Vec3 linear = character + enemy;
+	Vec3 linear =  enemy - character;
 	linear = VMath::normalize(linear);
 
 	return linear;
