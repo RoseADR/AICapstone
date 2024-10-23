@@ -5,6 +5,8 @@
 #include "Matrix.h"
 #include "Component.h"
 #include "AssetManager.h"
+#include "LocationManager.h"
+
 using namespace MATH;
 
 /// Forward declarations 
@@ -21,6 +23,7 @@ private:
 	Ref<Actor> gameboard;
 	Ref<Actor> character;
 	Ref<Actor> enemies;
+	LocationManager locationManager;
 
 	
 	bool drawNormals;

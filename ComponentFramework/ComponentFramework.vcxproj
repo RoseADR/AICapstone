@@ -153,6 +153,7 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="EMath.cpp" />
     <ClCompile Include="LightActor.cpp" />
+    <ClCompile Include="LocationManager.cpp" />
     <ClCompile Include="MaterialComponent.cpp" />
     <ClCompile Include="MeshComponent.cpp" />
     <ClCompile Include="QMath.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="EMath.h" />
     <ClInclude Include="Euler.h" />
     <ClInclude Include="LightActor.h" />
+    <ClInclude Include="LocationManager.h" />
     <ClInclude Include="MaterialComponent.h" />
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="QMath.h" />

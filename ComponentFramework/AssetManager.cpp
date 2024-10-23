@@ -43,7 +43,6 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("BlackCheckerTexture", nullptr, "textures/blackCheckerPiece.png");
 	AddComponent<MaterialComponent>("WhiteCheckerTexture", nullptr, "textures/whiteCheckerPiece.png");
 
-	AddComponent<AiComponent>("Enemy", nullptr);
 
 	OnCreate();
 	ListAllComponents();

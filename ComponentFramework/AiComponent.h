@@ -1,6 +1,10 @@
 #pragma once
 #include <glew.h>
 #include "Component.h"
+#include "Actor.h"
+#include "VMath.h"
+
+using namespace MATH;
 
 class AiComponent : public Component {
 	AiComponent(const AiComponent&) = delete;
@@ -15,5 +19,7 @@ public:
 	virtual void OnDestroy();
 	virtual void Update(const float deltaTime_);
 	virtual void Render()const;
+
+	void Follow(const Vec3 location);
 
 };
