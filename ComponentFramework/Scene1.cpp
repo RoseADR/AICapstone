@@ -328,6 +328,7 @@ void Scene1::LoadEnemies() {
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
 	Ref<AiComponent> eAi = (assetManager->GetComponent<AiComponent>("Enemy"));
+	
 
 	Ref<Actor> enemies;
 
@@ -337,6 +338,7 @@ void Scene1::LoadEnemies() {
 		enemies = std::make_shared<Actor>(gameboard.get());
 		enemies->AddComponent<ShaderComponent>(shader);
 		enemies->AddComponent<MaterialComponent>(enemyTexture);
+	
 		switch (j) {
 		case 0:
 			enemies->AddComponent<MeshComponent>(e);
@@ -365,7 +367,6 @@ void Scene1::LoadEnemies() {
 		xPos += 1.0f;
 	}
 }
-
 
 
 int Scene1::Pick(int x, int y) {
