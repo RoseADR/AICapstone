@@ -79,6 +79,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Ref<TransformComponent> characterTC;
 	Ref<TransformComponent> gameBoardTC;
 
+	Vec3 rotatedDirection;
+	Vec3 direction;  
 	Quaternion start;
 	Quaternion end;
 
@@ -121,6 +123,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		}
 
+
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_E:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
@@ -135,20 +138,69 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_W:
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.f, -0.1f, 0.0f), start = characterTC->GetQuaternion());
+		
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), start = characterTC->GetQuaternion());
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f);
+
+			/*direction = Vec3(0.0f, 1.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+
 			break;
+		
 
 		case SDL_SCANCODE_A:
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), characterTC->GetQuaternion());
+	
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), start = characterTC->GetQuaternion());
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f);
+
+			/*direction = Vec3(-1.0f, 0.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
+	
 
 		case SDL_SCANCODE_S:
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), characterTC->GetQuaternion());
+	
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f), start = characterTC->GetQuaternion());
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//	characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f);
+			/*direction = Vec3(0.0f, -1.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
+	
 
 		case SDL_SCANCODE_D:
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), characterTC->GetQuaternion());
+	
+			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), start = characterTC->GetQuaternion());
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
+
+		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
+	
+
 
 		case SDL_SCANCODE_N:
 			if (drawNormals == false) drawNormals = true;
@@ -276,7 +328,6 @@ void Scene1::LoadEnemies() {
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
 	Ref<AiComponent> eAi = (assetManager->GetComponent<AiComponent>("Enemy"));
-
 
 	Ref<Actor> enemies;
 
