@@ -96,7 +96,7 @@ Vec3 AiComponent::Arrive(const Vec3 myLocation, Vec3 otherLocation)
 
 	Vec3 enemy = myLocation;
 	Vec3 character = otherLocation;
-	Vec3 velocity = ;
+	Vec3 velocity;
 	float targetRadius = 0.5f;
 	float slowRadius = 2.0f;
 	float maxSpeed = 3.0f;
