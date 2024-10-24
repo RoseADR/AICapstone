@@ -42,7 +42,9 @@ public:
 
 	Vec3 Flee(const Vec3 myLocation, Vec3 otherLocation);
 
-	Vec3 Pursuit(const Vec3 myLocation, const Vec3 otherLocation);
+	Vec3 Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const Vec3 otherVelocity); //added the otherVelocity parameter which is the players velocity needed in the calculation
+
+	Vec3 Arrive(const Vec3 myLocation, Vec3 otherLocation);
 
 			void Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_);
 			void Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_);

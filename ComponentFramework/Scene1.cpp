@@ -85,6 +85,9 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Quaternion start;
 	Quaternion end;
 
+	// was going to use to store the previous position to calulate vel - didnt work
+	//Vec3 currentPosition = characterTC->GetPosition();
+
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
 	case SDL_KEYDOWN:
@@ -261,6 +264,16 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	default:
 		break;
     }
+
+	//Was trying to calculate the players velocity here when we change positions to use in the pursue and arrive
+	//// Calculate velocity as (new position - previous position) / deltaTime
+	//if (deltaTime > 0.0f) { // Prevent division by zero
+	//	Vec3 newPosition = characterTC->GetPosition();
+	//	velPlayer = (newPosition - previousPlayerPos) / deltaTime;
+
+	//	// Update previous position to the new position
+	//	previousPlayerPos = newPosition;
+	//}
 }
 
 void Scene1::Update(const float deltaTime) {
