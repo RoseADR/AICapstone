@@ -7,8 +7,6 @@
 using namespace MATH;
 
 #include "PhysicsComponent.h"
-#include "SteeringBehaviourComponent.h"
-#include "SteeringOutputComponent.h"
 
 
 class AiComponent : public Component {
@@ -17,7 +15,7 @@ class AiComponent : public Component {
 	AiComponent& operator=(const AiComponent&) = delete;
 	AiComponent& operator=(AiComponent&&) = delete;
 protected:
-	Ref<SteeringOutput> result;
+
 	Ref<PhysicsComponent> target; 
 	Ref<PhysicsComponent> npc;
 
