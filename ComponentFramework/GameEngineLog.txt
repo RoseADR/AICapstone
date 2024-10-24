@@ -1,29 +1,29 @@
-Thu Oct 24 01:30:25 2024
+Thu Oct 24 10:29:38 2024
 [INFO]: Starting the SceneManager
-[INFO]: OpenGL version: 4.6.0 NVIDIA 551.86
-[INFO]: Graphics card vendor NVIDIA Corporation
-[INFO]: Graphics card name NVIDIA GeForce RTX 3050 Laptop GPU/PCIe/SSE2
-[INFO]: GLSL Version 4.60 NVIDIA
+[INFO]: OpenGL version: 4.6.0 - Build 31.0.101.1999
+[INFO]: Graphics card vendor Intel
+[INFO]: Graphics card name Intel(R) Iris(R) Plus Graphics
+[INFO]: GLSL Version 4.60 - Build 31.0.101.1999
 [INFO]: Created Scene1: 
 [INFO]: Loading assets Scene0: 
 [INFO]: Uniforms:
+"projection" loc:-1
+"view" loc:-1
 "modelMatrix" loc:2
-"projection" loc:-1
-"view" loc:-1
 
 [INFO]: Uniforms:
-"colorID" loc:2
+"projection" loc:-1
+"view" loc:-1
 "modelMatrix" loc:1
-"projection" loc:-1
-"view" loc:-1
+"colorID" loc:2
 
 [INFO]: Uniforms:
+"projection" loc:-1
+"view" loc:-1
+"position" loc:-1
 "colour" loc:-1
 "modelMatrix" loc:2
 "myTexture" loc:0
-"position" loc:-1
-"projection" loc:-1
-"view" loc:-1
 
 [INFO]: Uniforms:
 "depthProjectionMatrix" loc:0
@@ -31,14 +31,23 @@ Thu Oct 24 01:30:25 2024
 "modelMatrix" loc:2
 
 [INFO]: Uniforms:
-"color" loc:2
-"modelMatrix" loc:1
 "projection" loc:-1
 "view" loc:-1
+"modelMatrix" loc:1
+"color" loc:2
 
 [INFO]: Uniforms:
-"modelMatrix" loc:1
 "projection" loc:-1
 "view" loc:-1
+"modelMatrix" loc:1
 
 [INFO]: Creating values for CameraActor: 
+[INFO]: Deleted Scene0: 
+[INFO]: Deleting assets Scene1: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting assets for Actor: 
+[INFO]: Deleting the SceneManager
