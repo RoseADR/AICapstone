@@ -24,6 +24,7 @@ private:
 	Ref<Actor> character;
 	Ref<Actor> enemies;
 	LocationManager locationManager;
+	
 
 	
 	bool drawNormals;
@@ -43,7 +44,7 @@ public:
 	void DrawNormals(const Vec4 color) const;
 
 	void DrawMeshOverlay(const Vec4 color) const;
-
+	
 	void LoadEnemies();
 };
 

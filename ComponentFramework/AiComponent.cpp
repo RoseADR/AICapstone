@@ -58,6 +58,7 @@ Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const
 
 	Vec3 enemy = myLocation;
 	Vec3 character = otherLocation;
+	Vec3 velocity = otherVelocity;
 
     // Calculate the direction to the target (other actor)
 	Vec3 direction = character - enemy;
@@ -79,7 +80,7 @@ Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const
     }
 
 	Vec3 pursuit = character;
-	pursuit += character * prediction;
+	pursuit += velocity * prediction;
 
 	return pursuit;
 
@@ -97,9 +98,9 @@ Vec3 AiComponent::Arrive(const Vec3 myLocation, Vec3 otherLocation)
 	Vec3 enemy = myLocation;
 	Vec3 character = otherLocation;
 	Vec3 velocity;
-	float targetRadius = 0.5f;
-	float slowRadius = 2.0f;
-	float maxSpeed = 3.0f;
+	float targetRadius = 5.0f;
+	float slowRadius = 5.0f;
+	float maxAccel = 1.0f;
 	float timeToTarget = 0.1f;
 
 	Vec3 linear = enemy - character;
@@ -134,7 +135,7 @@ Vec3 AiComponent::Arrive(const Vec3 myLocation, Vec3 otherLocation)
 
 	// Clip the acceleration if it's too high
 	if (VMath::mag(linear) > targetSpeed) {
-		linear = VMath::normalize(linear);
+		linear = VMath::normalize(linear) * maxAccel;
 	}
 
 	// No angular steering is applied
