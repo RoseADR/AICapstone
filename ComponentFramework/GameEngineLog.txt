@@ -1,4 +1,4 @@
-Thu Oct 24 11:56:57 2024
+Thu Oct 24 12:21:12 2024
 [INFO]: Starting the SceneManager
 [INFO]: OpenGL version: 4.6.0 - Build 31.0.101.1999
 [INFO]: Graphics card vendor Intel
@@ -42,12 +42,3 @@ Thu Oct 24 11:56:57 2024
 "modelMatrix" loc:1
 
 [INFO]: Creating values for CameraActor: 
-[INFO]: Deleted Scene0: 
-[INFO]: Deleting assets Scene1: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting assets for Actor: 
-[INFO]: Deleting the SceneManager

@@ -52,6 +52,8 @@ public:
 	Vec3 GetScale() { return scale; }
 	Quaternion GetQuaternion() { return orientation; }
 	float getMass() const { return mass; }
+	Vec3 getVel() const { return vel; }
+	Vec3 getAccel() const { return accel; }
 
 	/*Vec3 getVel() const { return vel; }
 	Vec3 getAccel() const { return accel; }
@@ -83,7 +85,7 @@ public:
 		scale = scale_;
 	}
 	void SetPosition(const Vec3 pos_) { pos = pos_; }
-
+	void SetVelocity(const Vec3 vel_) { vel = vel_; }
 
 };
 

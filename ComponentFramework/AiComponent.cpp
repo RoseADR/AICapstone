@@ -55,13 +55,17 @@ Vec3 AiComponent::Flee(const Vec3 myLocation, Vec3 otherLocation) {
 }
 
 Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const Vec3 otherVelocity) {
+
+	Vec3 enemy = myLocation;
+	Vec3 character = otherLocation;
+
     // Calculate the direction to the target (other actor)
-    Vec3 direction = otherLocation - myLocation;
+	Vec3 direction = character - enemy;
 
     // Distance between NPC (self) and target (other actor)
     float distance = VMath::mag(direction);
 
-	float speed = VMath::mag(myLocation);//(npc->getVel());
+	float speed = VMath::mag(enemy);//(npc->getVel());
     // Maximum prediction time
     float maxPrediction = 5.0f;
     float prediction;
@@ -74,8 +78,8 @@ Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const
         prediction = distance / speed;
     }
 
-	Vec3 pursuit = otherLocation;
-	pursuit += otherVelocity * prediction;
+	Vec3 pursuit = character;
+	pursuit += character * prediction;
 
 	return pursuit;
 
@@ -89,50 +93,55 @@ Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const
 Vec3 AiComponent::Arrive(const Vec3 myLocation, Vec3 otherLocation)
 {
 
-	//Vec3 enemy = myLocation;
-	//Vec3 character = otherLocation;
-	//float targetRadius = 0.5f;
-	//float slowRadius = 2.0f;
-	//float maxSpeed = 3.0f;
-	//float timeToTarget = 0.1f;
 
-	//// Get the direction to the target
-	//Vec3 direction = character - enemy;
-	//float distance = VMath::mag(direction);
-	//// Check if the character has arrived at the target
+	Vec3 enemy = myLocation;
+	Vec3 character = otherLocation;
+	Vec3 velocity = ;
+	float targetRadius = 0.5f;
+	float slowRadius = 2.0f;
+	float maxSpeed = 3.0f;
+	float timeToTarget = 0.1f;
 
-	////if (distance < targetRadius) {
-	////	// If within the target radius, no need for steering
-	////	delete result;
-	////}
+	Vec3 linear = enemy - character;
+	linear = VMath::normalize(linear);
 
-	//// Determine the target speed based on distance
-	//float targetSpeed;
-	//if (distance > slowRadius) {
-	//	// If outside the slow radius, use maximum speed
-	//	targetSpeed = npc->getMaxAcceleration();
-	//}
-	//else {
-	//	// Use a scaled speed based on the distance within the slow radius
-	//	targetSpeed = npc->getMaxAcceleration() * (distance / slowRadius);
+	// Get the direction to the target
+	Vec3 direction = character - enemy;
+	float distance = VMath::mag(direction);
+	// Check if the character has arrived at the target
+
+	//if (distance < targetRadius) {
+	//	// If within the target radius, no need for steering
+	//	delete linear;
 	//}
 
-	//// The target velocity is a combination of speed and direction
-	//Vec3 targetVelocity = VMath::normalize(direction) * targetSpeed;
+	// Determine the target speed based on distance
+	float targetSpeed;
+	if (distance > slowRadius) {
+		// If outside the slow radius, use maximum speed
+		targetSpeed = 1.0f;
+	}
+	else {
+		// Use a scaled speed based on the distance within the slow radius
+		targetSpeed = (distance / slowRadius);
+	}
 
-	//// Calculate the linear acceleration needed to reach the target velocity
-	//result->linear = (targetVelocity - npc->getVel()) / timeToTarget;
+	// The target velocity is a combination of speed and direction
+	Vec3 targetVelocity = VMath::normalize(direction) * targetSpeed;
 
-	//// Clip the acceleration if it's too high
-	//if (VMath::mag(result->linear) > npc->getMaxAcceleration()) {
-	//	result->linear = VMath::normalize(result->linear) * npc->getMaxAcceleration();
-	//}
+	// Calculate the linear acceleration needed to reach the target velocity
+	linear = (targetVelocity - velocity) / timeToTarget;
 
-	//// No angular steering is applied
+	// Clip the acceleration if it's too high
+	if (VMath::mag(linear) > targetSpeed) {
+		linear = VMath::normalize(linear);
+	}
+
+	// No angular steering is applied
 	//result->angular = 0.0f;
 
-	//// Return the calculated steering output
-	//return result;
+	// Return the calculated steering output
+	return linear;
 
 
 

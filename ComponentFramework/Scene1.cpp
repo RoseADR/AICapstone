@@ -297,7 +297,7 @@ void Scene1::Update(const float deltaTime) {
 
 	// --- Enemy 2 (actors[3]) Follow ---
 	Vec3 enemy2Pos = actors[3]->GetComponent<TransformComponent>()->GetPosition();
-	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Seek(enemy2Pos, locationManager.mariosPos);
+	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, locationManager.mariosPos/*, Vec3(0.0f, 0.0f, 0.0f)*/);
 
 	// Update Enemy 2's position
 	enemyTC2= actors[3]->GetComponent<TransformComponent>();

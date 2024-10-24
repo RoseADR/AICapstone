@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Component.h"
 #include "TransformComponent.h" 
+#include "PhysicsComponent.h"
 
 class Actor: public Component {
 	/// Unless you know what these do don't allow them to be created implicitly 
