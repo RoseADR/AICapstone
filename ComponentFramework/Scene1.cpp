@@ -15,6 +15,7 @@
 #include "AiComponent.h"
 #include "LocationManager.h"
 
+
 using namespace MATH;
 
 
@@ -51,7 +52,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
-	character->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 2.5f), mariosQuaternion);
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 10.0f, 2.5f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
@@ -77,7 +78,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	static Vec2	lastMousePos;
 	static float flip = 1.0f;
 	Ref<TransformComponent> cameraTC;
-	Ref<TransformComponent> characterTC;
+	Ref<PhysicsComponent> characterTC;
 	Ref<TransformComponent> gameBoardTC;
 
 	Vec3 rotatedDirection;
@@ -92,7 +93,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	switch (sdlEvent.type) {
 	case SDL_KEYDOWN:
 		cameraTC = camera->GetComponent<TransformComponent>();
-		characterTC = character->GetComponent<TransformComponent>();
+		characterTC = character->GetComponent<PhysicsComponent>();
 		gameBoardTC = gameboard->GetComponent<TransformComponent>();
 
 		switch (sdlEvent.key.keysym.scancode) {
@@ -117,13 +118,13 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_SPACE:
-		
+
 			flip *= -1.0f;
 			start = gameBoardTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
 			gameBoardTC->SlerpOrientation(start, end, 3.0f);
 			break;
-		
+
 
 		}
 
@@ -142,8 +143,10 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_W:
-		
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f), characterTC->GetQuaternion());
+		{
+			Vec3 Position = characterTC->GetPosition();
+			characterTC->SetPosition(Position + Vec3(0.0f, 1.0f, 0.0f));
+		}
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -156,11 +159,11 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 
 			break;
-		
+
 
 		case SDL_SCANCODE_A:
-	
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), start = characterTC->GetQuaternion());
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -172,11 +175,11 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			rotatedDirection = characterTC->GetQuaternion() * direction;
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
-	
+
 
 		case SDL_SCANCODE_S:
-	
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f), start = characterTC->GetQuaternion());
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -187,11 +190,11 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			rotatedDirection = characterTC->GetQuaternion() * direction;
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
-	
+
 
 		case SDL_SCANCODE_D:
-	
-			characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), start = characterTC->GetQuaternion());
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -203,7 +206,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			rotatedDirection = characterTC->GetQuaternion() * direction;
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
-	
+
 
 
 		case SDL_SCANCODE_N:
@@ -221,48 +224,6 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		}
 		break;
 
-	case SDL_MOUSEMOTION:
-	{
-		if (objID < 0) break;
-		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
-		Vec3 pos = actors[objID]->GetComponent<TransformComponent>()->GetPosition();
-		if (currentMousePos.y - lastMousePos.y > 0.0f) {
-			pos.y -= 0.08f * flip;
-			pos.z = 0.2f;
-		} else {
-			pos.y += 0.08f * flip;
-			pos.z = 0.2f;
-		}
-
-		actors[objID]->GetComponent<TransformComponent>()->SetPosition(pos);
-		lastMousePos = currentMousePos;
-	}
-	break;
-
-	case SDL_MOUSEBUTTONDOWN:
-
-		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
-		lastMousePos = currentMousePos;
-		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
-		printf("0x%X %d\n", objID, objID);
-		break;
-
-	case SDL_MOUSEBUTTONUP: 
-	{
-		if (objID == -1) break;
-		float integerPart;
-		Vec3 pos = actors[objID]->GetComponent<TransformComponent>()->GetPosition();
-		/// Snap to a grid square
-		integerPart = round(pos.y);
-		pos.y = -3.5f + ((integerPart - -4.0f) * 1.0f);
-		/// Lower the piece 
-		pos.z = 0.0f;
-		actors[objID]->GetComponent<TransformComponent>()->SetPosition(pos);
-		objID = -1;
-		break;
-	}
-	default:
-		break;
     }
 
 	//Was trying to calculate the players velocity here when we change positions to use in the pursue and arrive
@@ -277,30 +238,30 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 }
 
 void Scene1::Update(const float deltaTime) {
-	Ref<TransformComponent> characterTC;
-	Ref<TransformComponent> enemyTC;
-	Ref<TransformComponent> enemyTC2;
+	Ref<PhysicsComponent> characterTC;
+	Ref<PhysicsComponent> enemyTC;
+	Ref<PhysicsComponent> enemyTC2;
 
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
 	// Get Mario's position (character's position)
-	locationManager.mariosPos = character->GetComponent<TransformComponent>()->GetPosition();
+	locationManager.mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
 
 	// --- Enemy 1 (actors[2]) Flee ---
-	Vec3 enemy1Pos = actors[2]->GetComponent<TransformComponent>()->GetPosition();
+	Vec3 enemy1Pos = actors[2]->GetComponent<PhysicsComponent>()->GetPosition();
 	Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
 
 	// Update Enemy 1's position
-	enemyTC = actors[2]->GetComponent<TransformComponent>();
+	enemyTC = actors[2]->GetComponent<PhysicsComponent>();
 	enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
 
 	// --- Enemy 2 (actors[3]) Follow ---
-	Vec3 enemy2Pos = actors[3]->GetComponent<TransformComponent>()->GetPosition();
+	Vec3 enemy2Pos = actors[3]->GetComponent<PhysicsComponent>()->GetPosition();
 	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, locationManager.mariosPos/*, Vec3(0.0f, 0.0f, 0.0f)*/);
 
 	// Update Enemy 2's position
-	enemyTC2= actors[3]->GetComponent<TransformComponent>();
+	enemyTC2= actors[3]->GetComponent<PhysicsComponent>();
 	enemyTC2->SetTransform(enemyTC2->GetPosition() + enemy2Move * deltaTime, enemyTC2->GetQuaternion());
 
 	// Debug or print Mario's position if needed
@@ -379,7 +340,7 @@ void Scene1::LoadEnemies() {
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
 	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[0]->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
+	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
 
 	// Set up the second enemy
@@ -388,7 +349,7 @@ void Scene1::LoadEnemies() {
 	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
 	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[1]->AddComponent<TransformComponent>(nullptr, Vec3(1.0f, 0.0f, 0.05f), // Different position
+	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(1.0f, 0.0f, 0.05f), // Different position
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.75f, 0.75f, 0.75f));
 
 	// Add both enemies to the actor list

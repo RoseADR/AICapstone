@@ -10,9 +10,6 @@ class TransformComponent : public Component {
 	TransformComponent& operator = (const TransformComponent&) = delete;
 	TransformComponent& operator = (TransformComponent&&) = delete;
 private:
-	Vec3 pos;
-	Vec3 scale;
-	Quaternion orientation;
 
 	/// Slerp stuff
 	Quaternion start, end;
@@ -20,7 +17,13 @@ private:
 	float elapsedTime;
 	bool doSlerpOrientation;
  
+protected:
+	Vec3 pos;
+	Vec3 scale;
+	Quaternion orientation;
+
 public:
+
 	TransformComponent(Component* parent_);
 	TransformComponent(Component* parent_,Vec3 pos_, Quaternion orientation_, Vec3 scale_ = Vec3(1.0f, 1.0f, 1.0f));
 	~TransformComponent();

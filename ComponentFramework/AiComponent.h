@@ -44,38 +44,7 @@ public:
 
 	Vec3 Arrive(const Vec3 myLocation, Vec3 otherLocation);
 
-			void Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-			void Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-			void Arrive(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-	
-			void getSeekSteering();
-			void getFleeSteering();
-			void getArriveSteering();
+			
 	
 		};
-
-
-
-//	class SteeringBehaviour {
-//	protected:
-//		SteeringOutput* result;
-//		const PhysicsComponent* target;
-//		const PhysicsComponent* npc;
-//
-//		// for ariive
-//		float targetRadius; // Radius for arriving at the target
-//		float slowRadius;   // Radius for slowing down
-//		float timeToTarget; // Time over which to achieve speed
-//	public:
-//		void Seek(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-//		void Flee(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-//		void Arrive(const PhysicsComponent* npc_, const PhysicsComponent* target_);
-//
-//		SteeringOutput* getSeekSteering();
-//		SteeringOutput* getFleeSteering();
-//		SteeringOutput* getArriveSteering();
-//
-//	};
-//
-//};
 

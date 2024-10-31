@@ -57,6 +57,7 @@
     <ClCompile Include="PhysicsComponent.cpp">
       <Filter>Source Files\Component</Filter>
     </ClCompile>
+    <ClCompile Include="IrrklangAudio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
