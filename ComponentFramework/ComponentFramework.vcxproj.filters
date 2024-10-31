@@ -58,6 +58,9 @@
       <Filter>Source Files\Component</Filter>
     </ClCompile>
     <ClCompile Include="IrrklangAudio.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -162,6 +165,9 @@
     <ClInclude Include="PhysicsComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -243,6 +249,12 @@
     </Filter>
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{85756b72-0455-4c1a-8147-cd21bff141c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Systems">
+      <UniqueIdentifier>{51e441ff-4712-4ece-8c48-b2a7efaaccb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Systems">
+      <UniqueIdentifier>{8fd61de0-128c-4ec6-a95b-100dc8f69b4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
