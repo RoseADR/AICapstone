@@ -273,6 +273,9 @@ void Scene1::Update(const float deltaTime) {
 	Ref<PhysicsComponent> enemyTC;
 	Ref<PhysicsComponent> enemyTC2;
 
+	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+	Vec3 mariosVel = character->GetComponent<PhysicsComponent>()->getVel();
+
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
@@ -288,8 +291,10 @@ void Scene1::Update(const float deltaTime) {
 	enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
 
 	// --- Enemy 2 (actors[3]) Follow ---
+	Vec3 enemy2Vel = actors[3]->GetComponent<PhysicsComponent>()->getVel();
 	Vec3 enemy2Pos = actors[3]->GetComponent<PhysicsComponent>()->GetPosition();
-	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, locationManager.mariosPos/*, Vec3(0.0f, 0.0f, 0.0f)*/);
+	//Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Pursuit(enemy2Pos, mariosPos, enemy2Vel);
+	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, mariosPos);
 
 	// Update Enemy 2's position
 	enemyTC2= actors[3]->GetComponent<PhysicsComponent>();

@@ -55,34 +55,34 @@ Vec3 AiComponent::Flee(const Vec3 myLocation, Vec3 otherLocation) {
 }
 
 Vec3 AiComponent::Pursuit(const Vec3 myLocation, const Vec3 otherLocation, const Vec3 otherVelocity) {
+	// Calculate the direction to the target (other actor)
+	Vec3 direction = otherLocation - myLocation;
 
-	Vec3 enemy = myLocation;
-	Vec3 character = otherLocation;
-	Vec3 velocity = otherVelocity;
+	// Distance between NPC (self) and target (other actor)
+	float distance = VMath::mag(direction);
 
-    // Calculate the direction to the target (other actor)
-	Vec3 direction = character - enemy;
+	// Speed of the target (other actor)
+	float speed = VMath::mag(otherVelocity);
 
-    // Distance between NPC (self) and target (other actor)
-    float distance = VMath::mag(direction);
+	// Maximum prediction time
+	float maxPrediction = 5.0f;
+	float prediction;
 
-	float speed = VMath::mag(enemy);//(npc->getVel());
-    // Maximum prediction time
-    float maxPrediction = 5.0f;
-    float prediction;
+	// If NPC's speed is slower than distance / maxPrediction, use maxPrediction
+	if (speed <= distance / maxPrediction) {
+		prediction = maxPrediction;
+	}
+	else {
+		prediction = distance / speed;
+	}
 
-    // If the NPC is slower than the distance / maxPrediction, use maxPrediction
-    if (speed < distance / maxPrediction) {
-        prediction = maxPrediction;
-    }
-    else {
-        prediction = distance / speed;
-    }
+	// Predict the future position of the target
+	Vec3 futurePos = otherLocation + otherVelocity * prediction;
 
-	Vec3 pursuit = character;
-	pursuit += velocity * prediction;
+	// Return the predicted position for pursuit
+	return futurePos;
 
-	return pursuit;
+
 
     // Predict the future position of the target (other actor)
     //Vec3 futurePos = otherVelocity * prediction + otherLocation;
