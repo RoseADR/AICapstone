@@ -6,6 +6,9 @@
 #include "Component.h"
 #include "AssetManager.h"
 #include "LocationManager.h"
+#include "Graph.h"
+#include "Node.h"
+#include "Tile.h"
 
 using namespace MATH;
 /// let me change
@@ -25,8 +28,18 @@ private:
 	Ref<Actor> enemies;
 	LocationManager locationManager;
 	
+	Quaternion orientationBoard; //needed for the orientation of the tiles to match the board (evetually ground)
+	//FOR PATHFINDING
+	class Graph* graph;
+	std::vector<Node*> sceneNodes;
+	float tileWidth, tileHeight;
+	std::vector< std::vector<Tile*> > tiles;
+	//Vec3 gridOffset;  // Offset to position the grid on the chessboard
+	// Initializes tiles and calculates weights between nodes
+	void createTiles();
+	void calculateConnectionWeights();
 
-	
+
 	bool drawNormals;
 	bool drawOverlay;
 public:

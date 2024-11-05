@@ -152,11 +152,13 @@
     <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="EMath.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="IrrklangAudio.cpp" />
     <ClCompile Include="LightActor.cpp" />
     <ClCompile Include="LocationManager.cpp" />
     <ClCompile Include="MaterialComponent.cpp" />
     <ClCompile Include="MeshComponent.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="QMath.cpp" />
@@ -167,6 +169,7 @@
     <ClCompile Include="MMath.cpp" />
     <ClCompile Include="Scene0.cpp" />
     <ClCompile Include="ShaderComponent.cpp" />
+    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
@@ -183,10 +186,12 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="EMath.h" />
     <ClInclude Include="Euler.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="LightActor.h" />
     <ClInclude Include="LocationManager.h" />
     <ClInclude Include="MaterialComponent.h" />
     <ClInclude Include="MeshComponent.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="QMath.h" />
@@ -202,6 +207,7 @@
     <ClInclude Include="Scene0.h" />
     <ClInclude Include="ShaderComponent.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="TransformComponent.h" />

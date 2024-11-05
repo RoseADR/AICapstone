@@ -41,9 +41,9 @@ bool Scene1::OnCreate() {
 	
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	gameboard = std::make_shared<Actor>(nullptr);
-	Quaternion orientation = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationBoard = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f),orientation);
+	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientationBoard);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("ChessBoard"));
@@ -60,6 +60,26 @@ bool Scene1::OnCreate() {
 
 	LoadEnemies();
 
+	//PATHFINDING REALTED 
+	
+	// Set an initial offset to manually test and adjust the grid position
+	//gridOffset = Vec3(-3.0f, -2.5f, 0.0f);  // Example values; adjust as needed
+
+	// Set dimensions for an 8x8 grid on the chessboard - change size to match the actual chess board (not 25w and 15h)
+	tileWidth = 1;   // Adjust to be the same size as the chessboard
+	tileHeight = 1;  // Adjust to be the same size as the chessboard
+
+	// Create the grid and graph for pathfinding
+	createTiles();
+	calculateConnectionWeights();
+
+	// Sample pathfinding: Start at (0,0) and go to (7,7) - change as needed
+	std::vector<Node*> path = graph->findPath(sceneNodes[0], sceneNodes[63]);
+
+	// Placeholder: Use path as needed for movement or rendering
+
+
+
 	return true;
 }
 
@@ -70,6 +90,17 @@ Scene1::~Scene1() {
 
 void Scene1::OnDestroy() {
 	Debug::Info("Deleting assets Scene1: ", __FILE__, __LINE__);
+
+	//FOR PATHFINDING
+	// Delete each tile and its associated node in the 2D tiles vector
+	for (auto& row : tiles) {
+		for (Tile* tile : row) {
+			delete tile->getNode();  // Delete the node associated with each tile
+			delete tile;              // Delete the tile itself
+		}
+	}
+	//Delete the graph
+	delete graph;
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
@@ -288,6 +319,14 @@ void Scene1::Render() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
+	
+	// Render each tile in the grid
+	/*for (int i = 0; i < tiles.size(); i++) {
+		for (int j = 0; j < tiles[i].size(); j++) {
+			tiles[i][j]->render();
+		}
+	}*/
+
 	if (drawOverlay == true) {
 		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
 	}
@@ -356,6 +395,71 @@ void Scene1::LoadEnemies() {
 	AddActor(enemies[0]);
 	AddActor(enemies[1]);
 }
+
+// Creates an 8x8 grid of tiles and initializes nodes
+void Scene1::createTiles() {
+	int gridSize = 8;
+	graph = new Graph();
+	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
+	sceneNodes.resize(gridSize * gridSize);
+
+	int label = 0;
+	for (int i = 0; i < gridSize; ++i) {
+		for (int j = 0; j < gridSize; ++j) {
+			Node* node = new Node(label);
+			sceneNodes[label] = node;
+
+			// Position each tile in a grid layout
+			Vec3 tilePos = Vec3(j * tileWidth, i * tileHeight, 0.0f);
+			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this, orientationBoard);
+			tiles[i][j] = tile;
+
+			label++;
+		}
+	}
+
+	// Initialize the graph with the list of nodes
+	if (!graph->OnCreate(sceneNodes)) {
+		std::cerr << "Failed to initialize graph." << std::endl;
+	}
+}
+
+// Sets up connections (left, right, up, down) between adjacent nodes
+void Scene1::calculateConnectionWeights() {
+	int gridSize = 8;
+
+	for (int i = 0; i < gridSize; ++i) {
+		for (int j = 0; j < gridSize; ++j) {
+			Node* from = tiles[i][j]->getNode();
+
+			// Connect left
+			if (j > 0) {
+				Node* to = tiles[i][j - 1]->getNode();
+				graph->addWeightedConnection(from, to, 1.0f);
+			}
+
+			// Connect right
+			if (j < gridSize - 1) {
+				Node* to = tiles[i][j + 1]->getNode();
+				graph->addWeightedConnection(from, to, 1.0f);
+			}
+
+			// Connect up
+			if (i > 0) {
+				Node* to = tiles[i - 1][j]->getNode();
+				graph->addWeightedConnection(from, to, 1.0f);
+			}
+
+			// Connect down
+			if (i < gridSize - 1) {
+				Node* to = tiles[i + 1][j]->getNode();
+				graph->addWeightedConnection(from, to, 1.0f);
+			}
+		}
+	}
+}
+
+
 
 
 
