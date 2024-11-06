@@ -62,13 +62,6 @@ bool Scene1::OnCreate() {
 
 	//PATHFINDING REALTED 
 	
-	// Set an initial offset to manually test and adjust the grid position
-	//gridOffset = Vec3(-3.0f, -2.5f, 0.0f);  // Example values; adjust as needed
-
-	// Set dimensions for an 8x8 grid on the chessboard - change size to match the actual chess board (not 25w and 15h)
-	tileWidth = 1;   // Adjust to be the same size as the chessboard
-	tileHeight = 1;  // Adjust to be the same size as the chessboard
-
 	// Create the grid and graph for pathfinding
 	createTiles();
 	calculateConnectionWeights();
@@ -326,11 +319,11 @@ void Scene1::Render() const {
 
 	
 	// Render each tile in the grid
-	/*for (int i = 0; i < tiles.size(); i++) {
+	for (int i = 0; i < tiles.size(); i++) {
 		for (int j = 0; j < tiles[i].size(); j++) {
 			tiles[i][j]->render();
 		}
-	}*/
+	}
 
 	if (drawOverlay == true) {
 		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
@@ -404,9 +397,18 @@ void Scene1::LoadEnemies() {
 // Creates an 8x8 grid of tiles and initializes nodes
 void Scene1::createTiles() {
 	int gridSize = 8;
+
+	//technically these should be equal to make a square however the render is not showing as a square, 
+	//Might have to change manually until they equal a square. Or could be a different issue
+	//could also potentially effect the pathfinding
+	float tileWidth = 0.15f;  
+	float tileHeight = 0.15f; 
+
 	graph = new Graph();
 	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
 	sceneNodes.resize(gridSize * gridSize);
+
+	Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	int label = 0;
 	for (int i = 0; i < gridSize; ++i) {
@@ -415,9 +417,17 @@ void Scene1::createTiles() {
 			sceneNodes[label] = node;
 
 			// Position each tile in a grid layout
-			Vec3 tilePos = Vec3(j * tileWidth, i * tileHeight, 0.0f);
-			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this, orientationBoard);
+			Vec3 tilePos = Vec3( -.45 + (j * tileWidth), -.45 + (i * tileHeight), 0.0f); // the number before is the offset from center
+			//Vec3 rotatedTilePos = QMath::rotate(tilePos, orientationTile);
+			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
+			
 			tiles[i][j] = tile;
+
+			// Debug print for tile width, height, and position
+			std::cout << "Tile (" << i << ", " << j << ") - "
+				<< "Width: " << tileWidth << ", Height: " << tileHeight << ", "
+				<< "Position: (" << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")\n";
+				//<< "RotatedPosition: (" << rotatedTilePos.x << ", " << rotatedTilePos.y << ", " << rotatedTilePos.z << ")\n";
 
 			label++;
 		}

@@ -13,10 +13,10 @@ private:
     Vec3 pos;       
     Node* node;     // Associated node
     Scene* scene;
-    Quaternion orientation;  // Orientation for matching chessboard rotation
+    //Quaternion orientation;  // Orientation for matching chessboard rotation
 
 public:
-    Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_, Quaternion orientation_);
+    Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_);
     virtual ~Tile() {}
 
     Node* getNode() const { return node; }
