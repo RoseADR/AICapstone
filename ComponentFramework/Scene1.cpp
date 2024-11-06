@@ -398,11 +398,19 @@ void Scene1::LoadEnemies() {
 void Scene1::createTiles() {
 	int gridSize = 8;
 
-	//technically these should be equal to make a square however the render is not showing as a square, 
-	//Might have to change manually until they equal a square. Or could be a different issue
-	//could also potentially effect the pathfinding
-	float tileWidth = 0.15f;  
-	float tileHeight = 0.15f; 
+	float tileWidth = 0.15f;
+	float tileHeight = 0.15f;
+
+	// Calculate aspect ratio as a float
+	float aspectRatio = 1280.0f / 720.0f;
+
+	// Adjust tile height or width to make the tiles square
+	if (aspectRatio > 1.0f) {
+		tileHeight *= aspectRatio; // If the window is wide, increase the height
+	}
+	else {
+		tileWidth /= aspectRatio;  // If the window is tall, reduce the width
+	}
 
 	graph = new Graph();
 	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
@@ -411,23 +419,23 @@ void Scene1::createTiles() {
 	Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	int label = 0;
+
+	// Use adjusted tileWidth and tileHeight to ensure square rendering
 	for (int i = 0; i < gridSize; ++i) {
 		for (int j = 0; j < gridSize; ++j) {
 			Node* node = new Node(label);
 			sceneNodes[label] = node;
 
 			// Position each tile in a grid layout
-			Vec3 tilePos = Vec3( -.45 + (j * tileWidth), -.45 + (i * tileHeight), 0.0f); // the number before is the offset from center
-			//Vec3 rotatedTilePos = QMath::rotate(tilePos, orientationTile);
+			Vec3 tilePos = Vec3(-.45f + (j * tileWidth), -.45f + (i * tileHeight), 0.0f);
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
-			
+
 			tiles[i][j] = tile;
 
 			// Debug print for tile width, height, and position
 			std::cout << "Tile (" << i << ", " << j << ") - "
 				<< "Width: " << tileWidth << ", Height: " << tileHeight << ", "
 				<< "Position: (" << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")\n";
-				//<< "RotatedPosition: (" << rotatedTilePos.x << ", " << rotatedTilePos.y << ", " << rotatedTilePos.z << ")\n";
 
 			label++;
 		}
@@ -438,6 +446,7 @@ void Scene1::createTiles() {
 		std::cerr << "Failed to initialize graph." << std::endl;
 	}
 }
+
 
 // Sets up connections (left, right, up, down) between adjacent nodes
 void Scene1::calculateConnectionWeights() {
