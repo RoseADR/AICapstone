@@ -18,9 +18,16 @@ void Tile::render() const
     // Position the tile in the grid
     glTranslatef(pos.x, pos.y, pos.z);
 
+    // Set color based on whether the tile's node is blocked
+    if (node && node->getIsBlocked()) {
+        glColor3f(1.0f, 0.0f, 0.0f); // Red color for blocked tiles
+    }
+    else {
+        glColor3f(0.0f, 0.0f, 1.0f); // Blue color for normal tiles
+    }
 
+    // Render the tile as a filled quad
     glBegin(GL_QUADS);
-    glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the tile
     glVertex3f(0.0f, 0.0f, 0.0f);            // Bottom-left corner
     glVertex3f(width, 0.0f, 0.0f);           // Bottom-right corner
     glVertex3f(width, height, 0.0f);         // Top-right corner

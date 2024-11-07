@@ -11,10 +11,11 @@ private:
     float hCost;  // Heuristic cost to the goal node
     float fCost;  // Total cost (gCost + hCost)
     Node* parent; // Pointer to parent node for path reconstruction
+    bool isBlocked; // To indicate if the node is blocked
 
 public:
     Node(int label_) : label(label_), gCost(std::numeric_limits<float>::infinity()),
-        hCost(0.0f), fCost(0.0f), parent(nullptr) {};
+        hCost(0.0f), fCost(0.0f), parent(nullptr), isBlocked(false) {};
     ~Node() {}
 
     int getLabel() const { return label; }
@@ -35,6 +36,10 @@ public:
     }
 
     void updateFCost() { fCost = gCost + hCost; } // Recalculate total cost
+
+
+    bool getIsBlocked() const { return isBlocked; }
+    void setIsBlocked(bool blocked) { isBlocked = blocked; }
 };
 
 #endif

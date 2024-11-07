@@ -68,8 +68,21 @@ bool Scene1::OnCreate() {
 
 	// Sample pathfinding: Start at (0,0) and go to (7,7) - change as needed
 	std::vector<Node*> path = graph->findPath(sceneNodes[0], sceneNodes[63]);
+	//FOR DEBUGGING - SHOWS PATH TAKEN FOR ABOVE
+	std::cout << "Calculated Path:\n";
+	for (Node* node : path) {
+		for (int i = 0; i < tiles.size(); ++i) {
+			for (int j = 0; j < tiles[i].size(); ++j) {
+				if (tiles[i][j]->getNode() == node) { 
+					std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
+						<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
+				}
+			}
+		}
+	}
+	//END DEBUGGING FOR PATH TAKEN
 
-	// Placeholder: Use path as needed for movement or rendering
+	// Placeholder: Need to hook up path to AI
 
 
 
@@ -398,8 +411,8 @@ void Scene1::LoadEnemies() {
 void Scene1::createTiles() {
 	int gridSize = 8;
 
-	float tileWidth = 0.15f;
-	float tileHeight = 0.15f;
+	float tileWidth = 0.10f;
+	float tileHeight = 0.10f;
 
 	// Calculate aspect ratio as a float
 	float aspectRatio = 1280.0f / 720.0f;
@@ -416,7 +429,13 @@ void Scene1::createTiles() {
 	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
 	sceneNodes.resize(gridSize * gridSize);
 
+	//used to try to rotate tiles, delete if not using
 	Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
+
+	// Define blocked positions (x, y) within the grid
+	std::vector<std::pair<int, int>> blockedPositions = {
+		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6},{6, 7} // Add blocked squares here
+	};
 
 	int label = 0;
 
@@ -427,15 +446,23 @@ void Scene1::createTiles() {
 			sceneNodes[label] = node;
 
 			// Position each tile in a grid layout
-			Vec3 tilePos = Vec3(-.45f + (j * tileWidth), -.45f + (i * tileHeight), 0.0f);
+			Vec3 tilePos = Vec3(-.40f + (j * tileWidth), -.7f + (i * tileHeight), 0.0f); //includes offset numbers
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
 
 			tiles[i][j] = tile;
 
 			// Debug print for tile width, height, and position
 			std::cout << "Tile (" << i << ", " << j << ") - "
+				<< "Label: " << label << ", "
 				<< "Width: " << tileWidth << ", Height: " << tileHeight << ", "
 				<< "Position: (" << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")\n";
+
+			// Check if this tile position is in the blockedPositions list
+			if (std::find(blockedPositions.begin(), blockedPositions.end(), std::make_pair(i, j)) != blockedPositions.end()) {
+				node->setIsBlocked(true); // Set the node as blocked
+				//DEBUGGING TO SEE BLOCKED NODE AT WHICH TILE
+				std::cout << "Blocked Node at: (" << i << ", " << j << ")\n";
+			}
 
 			label++;
 		}

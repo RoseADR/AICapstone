@@ -40,7 +40,10 @@ std::vector<Node*> Graph::neighbours(Node* fromNode) {
     int from = fromNode->getLabel();
     for (int j = 0; j < numNodes(); j++) {
         if (cost[from][j] > 0.0f) {
-            result.push_back(getNode(j));
+            Node* neighborNode = getNode(j);
+            if (!neighborNode->getIsBlocked()) { // Only add if the node is not blocked
+                result.push_back(neighborNode);
+            }
         }
     }
     return result;
