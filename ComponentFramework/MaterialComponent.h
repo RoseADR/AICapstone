@@ -1,7 +1,3 @@
-
-
-
-
 #pragma once
 #include <glew.h>
 #include "Component.h"
