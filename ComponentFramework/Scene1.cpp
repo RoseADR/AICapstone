@@ -334,6 +334,7 @@ void Scene1::Render() const {
 	// Render each tile in the grid
 	for (int i = 0; i < tiles.size(); i++) {
 		for (int j = 0; j < tiles[i].size(); j++) {
+			//glRotatef(-45.0f, i, 0.0f, 0.0f);  // Rotate around x-axis TRY ROTATING GRID IN THIS RENDER
 			tiles[i][j]->render();
 		}
 	}
@@ -430,11 +431,11 @@ void Scene1::createTiles() {
 	sceneNodes.resize(gridSize * gridSize);
 
 	//used to try to rotate tiles, delete if not using
-	Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
+	//Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	// Define blocked positions (x, y) within the grid
+	// Define blocked positions (x, y) within the grid - the x = i which are row number, the y = j which are column number
 	std::vector<std::pair<int, int>> blockedPositions = {
-		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6},{6, 7} // Add blocked squares here
+		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6},{6, 7} // Add as many blocked squares wanted here
 	};
 
 	int label = 0;

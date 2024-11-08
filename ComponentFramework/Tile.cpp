@@ -12,8 +12,8 @@ void Tile::render() const
 
     glPushMatrix();
 
-    // Apply grid-wide rotation here to align with the chessboard
-    glRotatef(0.0f, 1.0f, 1.0f, 1.0f);  // Rotate around x-axis
+    // Apply grid-wide rotation to align with the chessboard MOVING TO SCENE RENDER PER MEETING WITH GAIl
+    //glRotatef(0.0f, 1.0f, 1.0f, 1.0f);  // Rotate around x-axis
 
     // Position the tile in the grid
     glTranslatef(pos.x, pos.y, pos.z);
