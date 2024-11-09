@@ -418,62 +418,57 @@ void Scene1::createTiles() {
 	// Calculate aspect ratio as a float
 	float aspectRatio = 1280.0f / 720.0f;
 
-	// Adjust tile height or width to make the tiles square
 	if (aspectRatio > 1.0f) {
-		tileHeight *= aspectRatio; // If the window is wide, increase the height
+		tileHeight *= aspectRatio;
 	}
 	else {
-		tileWidth /= aspectRatio;  // If the window is tall, reduce the width
+		tileWidth /= aspectRatio;
 	}
 
 	graph = new Graph();
 	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
 	sceneNodes.resize(gridSize * gridSize);
 
-	//used to try to rotate tiles, delete if not using
-	//Quaternion orientationTile = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
-
-	// Define blocked positions (x, y) within the grid - the x = i which are row number, the y = j which are column number
 	std::vector<std::pair<int, int>> blockedPositions = {
-		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6},{6, 7} // Add as many blocked squares wanted here
+		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6}, {6, 7}
 	};
 
 	int label = 0;
 
-	// Use adjusted tileWidth and tileHeight to ensure square rendering
 	for (int i = 0; i < gridSize; ++i) {
 		for (int j = 0; j < gridSize; ++j) {
 			Node* node = new Node(label);
 			sceneNodes[label] = node;
 
-			// Position each tile in a grid layout
-			Vec3 tilePos = Vec3(-.40f + (j * tileWidth), -.7f + (i * tileHeight), 0.0f); //includes offset numbers
+			Vec3 tilePos = Vec3(-.40f + (j * tileWidth), -.7f + (i * tileHeight), 0.0f);
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
 
 			tiles[i][j] = tile;
 
-			// Debug print for tile width, height, and position
-			std::cout << "Tile (" << i << ", " << j << ") - "
-				<< "Label: " << label << ", "
-				<< "Width: " << tileWidth << ", Height: " << tileHeight << ", "
-				<< "Position: (" << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")\n";
-
-			// Check if this tile position is in the blockedPositions list
 			if (std::find(blockedPositions.begin(), blockedPositions.end(), std::make_pair(i, j)) != blockedPositions.end()) {
-				node->setIsBlocked(true); // Set the node as blocked
-				//DEBUGGING TO SEE BLOCKED NODE AT WHICH TILE
-				std::cout << "Blocked Node at: (" << i << ", " << j << ")\n";
+				node->setIsBlocked(true);
 			}
 
 			label++;
 		}
 	}
 
-	// Initialize the graph with the list of nodes
+	// Mark path nodes as path tiles
+	std::vector<int> pathNodes = { 0, 8, 16, 17, 25, 33, 34, 42, 50, 58, 59, 60, 61, 62, 63 }; // Example path node labels
+	for (int pathLabel : pathNodes) {
+		Node* pathNode = sceneNodes[pathLabel];
+		if (pathNode) {
+			int row = pathLabel / gridSize;
+			int col = pathLabel % gridSize;
+			tiles[row][col]->setPathTile(true);
+		}
+	}
+
 	if (!graph->OnCreate(sceneNodes)) {
 		std::cerr << "Failed to initialize graph." << std::endl;
 	}
 }
+
 
 
 // Sets up connections (left, right, up, down) between adjacent nodes
