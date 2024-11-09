@@ -2,12 +2,16 @@
 #include <glew.h>
 
 Tile::Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_)
-    : node{ node_ }, pos{ pos_ }, width{ width_ }, height{ height_ }, scene{ scene_ }, isPathTile{ false }
+    : node{ node_ }, pos{ pos_ }, width{ width_ }, height{ height_ }, scene{ scene_ }, isPathTile{ false }, isDestination{ false }
 {
 }
 
 void Tile::setPathTile(bool isPath) {
     isPathTile = isPath;
+}
+
+void Tile::setDestinationTile(bool isDest) {
+    isDestination = isDest;
 }
 
 void Tile::render() const {
@@ -16,7 +20,10 @@ void Tile::render() const {
     // Position the tile in the grid
     glTranslatef(pos.x, pos.y, pos.z);
 
-    if (isPathTile) {
+    if (isDestination) {
+        glColor3f(0.0f, 1.0f, 0.0f); // Green for destination tile
+    }
+    else if (isPathTile) {
         glColor3f(1.0f, 1.0f, 0.0f); // Yellow for path tiles
     }
     else if (node && node->getIsBlocked()) {

@@ -463,6 +463,7 @@ void Scene1::createTiles() {
 			tiles[row][col]->setPathTile(true);
 		}
 	}
+	tiles[gridSize - 1][gridSize - 1]->setDestinationTile(true);
 
 	if (!graph->OnCreate(sceneNodes)) {
 		std::cerr << "Failed to initialize graph." << std::endl;

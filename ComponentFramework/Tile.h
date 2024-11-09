@@ -13,7 +13,8 @@ private:
     Vec3 pos;
     Node* node;     // Associated node
     Scene* scene;
-    bool isPathTile; // Indicates if this tile is part of the calculated path
+    bool isPathTile;     // Indicates if this tile is part of the calculated path
+    bool isDestination;  // Indicates if this tile is the destination tile
 
 public:
     Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_);
@@ -24,8 +25,8 @@ public:
     float getWidth() const { return width; }
     float getHeight() const { return height; }
 
-    // Declaration only; do not include a body here
     void setPathTile(bool isPath);
+    void setDestinationTile(bool isDest); // Add this function
 
     void render() const;
 };
