@@ -75,20 +75,19 @@ bool Scene1::OnCreate() {
 	calculateConnectionWeights();
 
 	// Sample pathfinding: Start at (0,0) and go to (7,7) - change as needed
-	std::vector<Node*> path = graph->findPath(sceneNodes[0], sceneNodes[63]);
+	std::vector<Node*> path = graph->findPath(sceneNodes[10], sceneNodes[63]);
 	//FOR DEBUGGING - SHOWS PATH TAKEN FOR ABOVE
 	std::cout << "Calculated Path:\n";
 	for (Node* node : path) {
-		for (int i = 0; i < tiles.size(); ++i) {
-			for (int j = 0; j < tiles[i].size(); ++j) {
-				if (tiles[i][j]->getNode() == node) { 
-					std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
-						<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
-				}
-			}
-		}
+		int j, i;
+		i = node->getLabel() / tiles[0].size(); // divide by the number of coloumns
+		j = node->getLabel() % tiles.size();    // get the reminder by the number of rows
+		std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
+		<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
+		tiles[i][j]->setPathTile(true);	
 	}
 	//END DEBUGGING FOR PATH TAKEN
+	
 
 	// Placeholder: Need to hook up path to AI
 
@@ -484,21 +483,6 @@ void Scene1::createTiles() {
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
 			tile->modelMatrix = projectionMatrix  * translationMatrix * OffsetMatrix  * rotationMatrix;
 
-
-			// Calculate the transformed position in world space FOR DEBUGGING
-			//Vec3 transformedPosition = tile->modelMatrix * Vec3(0.0f, 0.0f, 0.0f);
-			// Debug print for the modelMatrix of each tile
-			//std::cout << "Transformed Position: (" << transformedPosition.x << ", " << transformedPosition.y << ", " << transformedPosition.z << ")\n";
-			//std::cout << "Tile " << label << " ModelMatrix:\n";
-			//for (int row = 0; row < 4; ++row) {
-			//	for (int col = 0; col < 4; ++col) {
-			//		std::cout << tile->modelMatrix[row * 4 + col] << " ";
-			//	}
-			//	std::cout << "\n";
-			//}
-			//std::cout << "\n"; // Add a newline for readability
-
-
 			tiles[i][j] = tile;
 
 			if (std::find(blockedPositions.begin(), blockedPositions.end(), std::make_pair(i, j)) != blockedPositions.end()) {
@@ -509,16 +493,6 @@ void Scene1::createTiles() {
 		}
 	}
 
-	// Mark path nodes as path tiles
-	std::vector<int> pathNodes = { 0, 8, 16, 17, 25, 33, 34, 42, 50, 58, 59, 60, 61, 62, 63 }; // Example path node labels
-	for (int pathLabel : pathNodes) {
-		Node* pathNode = sceneNodes[pathLabel];
-		if (pathNode) {
-			int row = pathLabel / gridSize;
-			int col = pathLabel % gridSize;
-			tiles[row][col]->setPathTile(true);
-		}
-	}
 	tiles[gridSize - 1][gridSize - 1]->setDestinationTile(true);
 
 	if (!graph->OnCreate(sceneNodes)) {
