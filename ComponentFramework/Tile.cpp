@@ -14,11 +14,8 @@ void Tile::setDestinationTile(bool isDest) {
     isDestination = isDest;
 }
 
-void Tile::render() const {
-    glPushMatrix();
 
-    glMultMatrixf(modelMatrix);  // Apply the tile’s model matrix
-
+void Tile::setColour() const {
     if (isDestination) {
         glColor3f(0.0f, 1.0f, 0.0f); // Green for destination tile
     }
@@ -31,6 +28,15 @@ void Tile::render() const {
     else {
         glColor3f(0.0f, 0.0f, 1.0f); // Blue for normal tiles
     }
+}
+
+
+void Tile::render() const {
+    glPushMatrix();
+
+    glMultMatrixf(modelMatrix);  // Apply the tile’s model matrix
+
+    setColour();
 
     glBegin(GL_QUADS);
     glVertex3f(0.0f, 0.0f, 0.0f);

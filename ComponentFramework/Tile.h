@@ -33,6 +33,7 @@ public:
 
     void setPathTile(bool isPath);
     void setDestinationTile(bool isDest); // Add this function
+    void setColour() const;
 
     void render() const;
 

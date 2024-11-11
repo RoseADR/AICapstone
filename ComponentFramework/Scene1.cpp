@@ -60,7 +60,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
-	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 10.0f, 2.5f), mariosQuaternion);
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 2.5f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
