@@ -17,8 +17,7 @@ void Tile::setDestinationTile(bool isDest) {
 void Tile::render() const {
     glPushMatrix();
 
-    // Position the tile in the grid
-    glTranslatef(pos.x, pos.y, pos.z);
+    glMultMatrixf(modelMatrix);  // Apply the tile’s model matrix
 
     if (isDestination) {
         glColor3f(0.0f, 1.0f, 0.0f); // Green for destination tile

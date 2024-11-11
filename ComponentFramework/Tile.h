@@ -16,7 +16,13 @@ private:
     bool isPathTile;     // Indicates if this tile is part of the calculated path
     bool isDestination;  // Indicates if this tile is the destination tile
 
+   
+
 public:
+
+    Matrix4 modelMatrix;  // Add model matrix to Tile
+
+
     Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_);
     virtual ~Tile() {}
 
@@ -29,6 +35,8 @@ public:
     void setDestinationTile(bool isDest); // Add this function
 
     void render() const;
+
+    Matrix4 getModelMatrix() const { return modelMatrix; }  // Add getter for model matrix
 };
 
 #endif

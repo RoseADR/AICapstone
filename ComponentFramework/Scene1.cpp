@@ -49,6 +49,14 @@ bool Scene1::OnCreate() {
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("ChessBoard"));
 	AddActor(gameboard);
 
+	
+	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
+	std::cout << "GameBoard Position: ("
+		<< boardPos.x << ", "
+		<< boardPos.y << ", "
+		<< boardPos.z << ")\n";
+
+
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
@@ -314,6 +322,7 @@ void Scene1::Update(const float deltaTime) {
 void Scene1::Render() const {
 
 	glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS); // JUST ADDED FOR TESTING ROTATION
 	glEnable(GL_CULL_FACE);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -330,14 +339,15 @@ void Scene1::Render() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
+	//glPushMatrix();
 	
-	// Render each tile in the grid
 	for (int i = 0; i < tiles.size(); i++) {
 		for (int j = 0; j < tiles[i].size(); j++) {
-			//glRotatef(-45.0f, i, 0.0f, 0.0f);  // Rotate around x-axis TRY ROTATING GRID IN THIS RENDER
-			tiles[i][j]->render();
+			tiles[i][j]->render();  // Each tile renders with its own model matrix
 		}
 	}
+
+	//glPopMatrix(); // Restore the previous matrix state
 
 	if (drawOverlay == true) {
 		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
@@ -412,8 +422,9 @@ void Scene1::LoadEnemies() {
 void Scene1::createTiles() {
 	int gridSize = 8;
 
-	float tileWidth = 0.10f;
-	float tileHeight = 0.10f;
+	//changed amounts to make fit with the rotation. 
+	float tileWidth = 0.50f;
+	float tileHeight = 0.28f;
 
 	// Calculate aspect ratio as a float
 	float aspectRatio = 1280.0f / 720.0f;
@@ -425,6 +436,11 @@ void Scene1::createTiles() {
 		tileWidth /= aspectRatio;
 	}
 
+	// Center offset for the grid, accounting for adjusted tile dimensions. Changed for tile rotation
+	float gridCenterX = (gridSize * tileWidth) / 2.0f;
+	float gridCenterY = (gridSize * tileHeight) / 2.8f;
+	float gridCenterZ = -5.0f; // Starting z-position 
+
 	graph = new Graph();
 	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
 	sceneNodes.resize(gridSize * gridSize);
@@ -435,13 +451,45 @@ void Scene1::createTiles() {
 
 	int label = 0;
 
+	// Create a rotation matrix for -45 degrees on the x-axis
+	Matrix4 rotationMatrix = MMath::rotate(-45.0f, 1.0f, 0.0f, 0.0f);
+	Matrix4 projectionMatrix = camera->GetProjectionMatrix();
+
 	for (int i = 0; i < gridSize; ++i) {
 		for (int j = 0; j < gridSize; ++j) {
 			Node* node = new Node(label);
 			sceneNodes[label] = node;
 
-			Vec3 tilePos = Vec3(-.40f + (j * tileWidth), -.7f + (i * tileHeight), 0.0f);
+
+			Vec3 tilePos = Vec3((j * tileWidth) - gridCenterX, (i * tileHeight) - gridCenterY, gridCenterZ);
+
+			// Additional offset based on row index `i`
+			// Adjust this factor as needed to minimize gaps due to rotation
+			float rowOffsetx = -0.2f * i; //not needed as its rotating along the x axis
+			float rowOffsetY = -0.30f * tileHeight * i;
+			float rowOffsetz = -0.68f * tileWidth * i;
+			
+			Matrix4 OffsetMatrix = MMath::translate(0.0f, rowOffsetY, rowOffsetz);
+			
+			Matrix4 translationMatrix = MMath::translate(tilePos);
+			
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
+			tile->modelMatrix = projectionMatrix  * translationMatrix * OffsetMatrix  * rotationMatrix;
+
+
+			// Calculate the transformed position in world space FOR DEBUGGING
+			//Vec3 transformedPosition = tile->modelMatrix * Vec3(0.0f, 0.0f, 0.0f);
+			// Debug print for the modelMatrix of each tile
+			//std::cout << "Transformed Position: (" << transformedPosition.x << ", " << transformedPosition.y << ", " << transformedPosition.z << ")\n";
+			//std::cout << "Tile " << label << " ModelMatrix:\n";
+			//for (int row = 0; row < 4; ++row) {
+			//	for (int col = 0; col < 4; ++col) {
+			//		std::cout << tile->modelMatrix[row * 4 + col] << " ";
+			//	}
+			//	std::cout << "\n";
+			//}
+			//std::cout << "\n"; // Add a newline for readability
+
 
 			tiles[i][j] = tile;
 
