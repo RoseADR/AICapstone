@@ -43,6 +43,7 @@ private:
 	bool drawNormals;
 	bool drawOverlay;
 public:
+	bool showTiles = true;
 	explicit Scene1();
 	virtual ~Scene1();
 

@@ -136,6 +136,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
+
+
 	case SDL_KEYDOWN:
 		cameraTC = camera->GetComponent<TransformComponent>();
 		characterTC = character->GetComponent<PhysicsComponent>();
@@ -191,6 +193,10 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		{
 			Vec3 Position = characterTC->GetPosition();
 			characterTC->SetPosition(Position + Vec3(0.0f, 1.0f, 0.0f));
+		}
+
+		case SDL_SCANCODE_B: { // Check if 'G' key is pressed
+			showTiles = !showTiles; // Toggle the visibility flag
 		}
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
@@ -341,9 +347,11 @@ void Scene1::Render() const {
 
 	//glPushMatrix();
 	
-	for (int i = 0; i < tiles.size(); i++) {
-		for (int j = 0; j < tiles[i].size(); j++) {
-			tiles[i][j]->render();  // Each tile renders with its own model matrix
+	if (showTiles) { // Only render tiles if showTiles is true
+		for (const auto& row : tiles) {
+			for (Tile* tile : row) {
+				tile->render(); // Render the tile
+			}
 		}
 	}
 
