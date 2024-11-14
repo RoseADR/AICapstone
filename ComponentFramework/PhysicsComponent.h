@@ -7,6 +7,10 @@
 using namespace MATH;
 
 class PhysicsComponent : public TransformComponent {
+	friend class PhysicsSystem;
+	// friend class CollisionSystem;
+	// friend class AISystem;
+
 	PhysicsComponent(const PhysicsComponent&) = delete;
 	PhysicsComponent(PhysicsComponent&&) = delete;
 	PhysicsComponent& operator = (const PhysicsComponent&) = delete;
@@ -19,6 +23,7 @@ protected:
 	Vec3 accel;
 	Vec3 force;
 	float mass;
+	bool useGravity;
 	//float rotation;			// rotating at this speed (radians per second?)
 	//float angular;          // angular acceleration
 	//float maxSpeed;
@@ -32,7 +37,7 @@ public:
 	PhysicsComponent(
 		Component* parent_, Vec3 pos_, Quaternion orientation_,
 		Vec3 vel_ = Vec3(0.0f, 0.0f, 0.0f), Vec3 accel_ = Vec3(0.0f, 0.0f, 0.0f),
-		/*Vec3 force_ = Vec3(0.0f,0.0f,0.0f),*/ Vec3 scale = Vec3(1.0f, 1.0f, 1.0f)
+		Vec3 force_ = Vec3(0.0f,0.0f,0.0f), Vec3 scale = Vec3(1.0f, 1.0f, 1.0f)
 	);
 	~PhysicsComponent();
 	bool OnCreate();
@@ -56,7 +61,10 @@ public:
 	float getMaxAcceleration() const { return maxAcceleration; }
 	float getMaxRotation() const { return maxRotation; }
 	float getMaxAngular() const { return maxAngular; }
-	applyforce()*/
+	*/
+
+	void ApplyForce(const Vec3 force_);
+	void UndoForce();
 
 	void SetPhysics(Vec3 vel_, Vec3 accel_, float mass_ = 1.0f) 
 	{

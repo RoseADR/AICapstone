@@ -5,13 +5,13 @@
 using namespace MATH;
 
 PhysicsComponent::PhysicsComponent(Component* parent_, Vec3 pos_, Quaternion orientation_,
-	Vec3 vel_, Vec3 accel_, /*vec3 force*/ Vec3 scale_):TransformComponent(parent_) {
+	Vec3 vel_, Vec3 accel_, Vec3 force_, Vec3 scale_):TransformComponent(parent_) {
 	
 	// set values amateurishly makes it easier to read
 	pos = pos_;
 	vel = vel_;
 	accel = accel_;
-	// force
+	force = force_;
 	orientation = orientation_;
 	scale = scale_;
 
@@ -44,4 +44,12 @@ PhysicsComponent::~PhysicsComponent() {
 
 void PhysicsComponent::OnDestroy() {
 	isCreated = false;
+}
+
+void PhysicsComponent::ApplyForce(const Vec3 force_) {
+	force += force_;
+}
+
+void PhysicsComponent::UndoForce() {
+	force = Vec3(0.0f, 0.0f, 0.0f);
 }
