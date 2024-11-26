@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DecisionTree>
+	<!-- DecisionTree is the Root of the XML -->
 	<child>
+		<!-- This is how you make a comment -->
 	<subchild> </subchild>
 	</child>
 </DecisionTree>
