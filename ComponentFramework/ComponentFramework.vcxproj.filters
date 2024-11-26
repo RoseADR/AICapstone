@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="LocationManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -64,6 +63,13 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="CollisionComponent.cpp">
+      <Filter>Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -95,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="Plane.h">
       <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene2.h">
       <Filter>Header Files\Scenes</Filter>
@@ -180,6 +183,16 @@
     <ClInclude Include="Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem.h" />
+    <ClInclude Include="ContstantsConversions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -226,9 +239,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="GameEngineLog.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{ea2081a9-5411-4784-a3be-b06d88fea63e}</UniqueIdentifier>
     </Filter>
@@ -268,5 +278,10 @@
     <Filter Include="Source Files\Systems">
       <UniqueIdentifier>{8fd61de0-128c-4ec6-a95b-100dc8f69b4a}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GameEngineLog.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

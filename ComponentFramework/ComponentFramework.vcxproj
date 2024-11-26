@@ -150,6 +150,8 @@
     <ClCompile Include="AiComponent.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="CameraActor.cpp" />
+    <ClCompile Include="CollisionComponent.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="EMath.cpp" />
     <ClCompile Include="Graph.cpp" />
@@ -182,11 +184,14 @@
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="AxisAngle.h" />
     <ClInclude Include="CameraActor.h" />
+    <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="EMath.h" />
     <ClInclude Include="Euler.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="ContstantsConversions.h" />
     <ClInclude Include="LightActor.h" />
     <ClInclude Include="LocationManager.h" />
     <ClInclude Include="MaterialComponent.h" />
