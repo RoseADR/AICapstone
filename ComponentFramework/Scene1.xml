@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<DecisionTree>
+	<Node id="root" type="Decision">
+		<Condition>
+			<Check type="PlayerInRange" value="true" />
+		</Condition>
+		<TrueNode>
+			<Node id="engage" type="Decision">
+				<Condition>
+					<Check type="PlayerDistance" comparison="less_than" value="5" />
+				</Condition>
+				<TrueNode>
+					<Node id="attack" type="Action">
+						<Behavior>Attack</Behavior>
+					</Node>
+				</TrueNode>
+				<FalseNode>
+					<Node id="flee" type="Action">
+						<Behavior>Flee</Behavior>
+					</Node>
+				</FalseNode>
+			</Node>
+		</TrueNode>
+		<FalseNode>
+			<Node id="patrol" type="Decision">
+				<Condition>
+					<Check type="playerOutOfRange" value="true" />
+				</Condition>
+				<TrueNode>
+					<Node id="idle" type="Action">
+						<Behavior>Idle</Behavior>
+					</Node>
+				</TrueNode>
+			</Node>
+		</FalseNode>
+	</Node>
+</DecisionTree>

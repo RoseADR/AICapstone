@@ -242,6 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="DecisionTree.xml" />
+    <Xml Include="Scene1.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -292,5 +292,8 @@
     <Xml Include="DecisionTree.xml">
       <Filter>Resource Files</Filter>
     </Xml>
+    <Xml Include="Scene1.xml">
+      <Filter>Source Files</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
