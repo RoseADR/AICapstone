@@ -72,6 +72,21 @@
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="DecisionTreeNode.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
+    <ClCompile Include="Decision.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatDecision.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeBuilder.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -197,6 +212,21 @@
     <ClInclude Include="CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="DecisionTreeNode.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="Decision.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatDecision.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeBuilder.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -281,6 +311,12 @@
     </Filter>
     <Filter Include="Source Files\Systems">
       <UniqueIdentifier>{8fd61de0-128c-4ec6-a95b-100dc8f69b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DecisionTrees">
+      <UniqueIdentifier>{3b8b65b4-8bd2-4986-a620-8bf640ccae00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DecisionTrees">
+      <UniqueIdentifier>{139c0161-ef83-49fc-ac2a-4c9429eed1a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

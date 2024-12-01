@@ -3,35 +3,40 @@
 <DecisionTree>
 	<Node id="root" type="Decision">
 		<Condition>
-			<Check type="PlayerInRange" value="true" />
+			<Check type="EnemyVisible" value="true" />
 		</Condition>
 		<TrueNode>
 			<Node id="engage" type="Decision">
 				<Condition>
-					<Check type="PlayerDistance" comparison="less_than" value="5" />
+					<Check type="EnemyHealth" comparison="greater_than" value="50" />
 				</Condition>
 				<TrueNode>
 					<Node id="attack" type="Action">
-						<Behavior>Attack</Behavior>
+						<Action>Attack</Action>
 					</Node>
 				</TrueNode>
 				<FalseNode>
-					<Node id="flee" type="Action">
-						<Behavior>Flee</Behavior>
+					<Node id="defend" type="Action">
+						<Action>Defend</Action>
 					</Node>
 				</FalseNode>
 			</Node>
 		</TrueNode>
 		<FalseNode>
-			<Node id="patrol" type="Decision">
+			<Node id="evaluate" type="Decision">
 				<Condition>
-					<Check type="playerOutOfRange" value="true" />
+					<Check type="HasObjective" value="true" />
 				</Condition>
 				<TrueNode>
-					<Node id="idle" type="Action">
-						<Behavior>Idle</Behavior>
+					<Node id="patrol" type="Action">
+						<Action>Patrol</Action>
 					</Node>
 				</TrueNode>
+				<FalseNode>
+					<Node id="retreat" type="Action">
+						<Action>Retreat</Action>
+					</Node>
+				</FalseNode>
 			</Node>
 		</FalseNode>
 	</Node>
