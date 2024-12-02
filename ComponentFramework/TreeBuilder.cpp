@@ -14,94 +14,111 @@
 
 using namespace tinyxml2;
 
-DecisionTreeNode* TreeBuilder::buildTree(const std::string& xmlFile) {
+
+// Parses the XML file and constructs the decision tree.
+std::unique_ptr<DecisionTreeNode> DecisionTreeParser::parseFromFile(const std::string& filePath) {
+    XMLDocument doc;
+
     // Load the XML file
-    tinyxml2::XMLDocument doc;
-    if (doc.LoadFile(xmlFile.c_str()) != tinyxml2::XML_SUCCESS) {
-        std::cerr << "Error loading XML file: " << xmlFile << std::endl;
-        std::cerr << "Error description: " << doc.ErrorStr() << std::endl;
+    XMLError eResult = doc.LoadFile(filePath.c_str());
+    if (eResult != XML_SUCCESS) {
+        std::cerr << "Failed to load XML file: " << filePath << std::endl;
+        std::cerr << "Error: " << doc.ErrorStr() << std::endl;  // Print detailed error message
         return nullptr;
     }
 
-    // Get the root element ("DecisionTree")
-    tinyxml2::XMLElement* root = doc.FirstChildElement("DecisionTree");
-    if (root == nullptr) {
-        std::cerr << "Error: No root element found in XML." << std::endl;
+    // Get the root element
+    const XMLElement* root = doc.RootElement();
+    if (!root) {
+        std::cerr << "Error: Missing root element in XML file." << std::endl;
         return nullptr;
     }
-    std::cout << "Root element 'DecisionTree' found, proceeding to build tree..." << std::endl;
 
-    // Recursively build the tree from the root element
-    return buildNode(root);
+    // Check if the root element is "DecisionTree"
+    if (std::string(root->Name()) != "DecisionTree") {
+        std::cerr << "Error: Invalid root element. Expected 'DecisionTree', found '" << root->Name() << "'." << std::endl;
+        return nullptr;
+    }
+
+    // Parse the first child element of the root
+    return parseElement(root->FirstChildElement());
 }
 
-DecisionTreeNode* TreeBuilder::buildNode(tinyxml2::XMLElement* element) {
-    if (element == nullptr) {
-        std::cerr << "Error: Null XML element encountered." << std::endl;
+// Recursive function to parse an XML element and build a decision tree node.
+std::unique_ptr<DecisionTreeNode> DecisionTreeParser::parseElement(const XMLElement* element) {
+    if (!element) {
+        std::cerr << "Error: Element is null while parsing XML." << std::endl;
         return nullptr;
     }
 
-    std::string nodeName = element->Name();
-    std::cout << "Processing node: " << nodeName << std::endl;
+    const std::string nodeName = element->Name();
 
-    if (nodeName == "Decision") {
-        // Process a Decision node (such as engage)
-        const char* conditionText = element->FirstChildElement("Condition") ? element->FirstChildElement("Condition")->GetText() : nullptr;
-
-        if (conditionText == nullptr) {
-            std::cerr << "Error: No 'Condition' element found for 'Decision' node." << std::endl;
+    // Handle Condition nodes
+    if (nodeName == "Condition") {
+        const char* conditionName = element->GetText();
+        if (!conditionName) {
+            std::cerr << "Error: Condition element is missing text!" << std::endl;
             return nullptr;
         }
-        std::cout << "Condition: " << conditionText << std::endl;
 
-        // Create the appropriate condition based on the XML condition string
-        Condition* condition = nullptr;
-
-        if (conditionText == std::string("playerInRange")) {
-            // For example, creating a PlayerInRangeCondition (you should pass actual data to it)
-            condition = new PlayerInRangeCondition(10.0f, 15.0f);  // Example values
+        // Validate condition name
+        if (std::string(conditionName) != "playerInRange" && std::string(conditionName) != "enemyHealthGreaterThan50") {
+            std::cerr << "Error: Unknown or unsupported condition: " << conditionName << std::endl;
+            return nullptr;
         }
-        else if (conditionText == std::string("enemyHealthGreaterThan50")) {
-            // Similarly, create an EnemyHealthCondition
-            condition = new EnemyHealthCondition(50);
+
+        DecisionTreeNode* trueNode = nullptr;
+        DecisionTreeNode* falseNode = nullptr;
+
+        // Parse the True node
+        const XMLElement* trueElement = element->FirstChildElement("True");
+        if (trueElement) {
+            trueNode = parseElement(trueElement->FirstChildElement()).release();
         }
         else {
-            std::cerr << "Error: Unknown condition: " << conditionText << std::endl;
+            std::cerr << "Error: Missing 'True' branch for condition: " << conditionName << std::endl;
             return nullptr;
         }
 
-        // Process the True node
-        DecisionTreeNode* trueNode = buildNode(element->FirstChildElement("True"));
-        if (trueNode == nullptr) {
-            std::cerr << "Error: Failed to build 'True' branch of Decision node." << std::endl;
+        // Parse the False node
+        const XMLElement* falseElement = element->FirstChildElement("False");
+        if (falseElement) {
+            falseNode = parseElement(falseElement->FirstChildElement()).release();
+        }
+        else {
+            std::cerr << "Error: Missing 'False' branch for condition: " << conditionName << std::endl;
             return nullptr;
         }
 
-        // Process the False node
-        DecisionTreeNode* falseNode = buildNode(element->FirstChildElement("False"));
-        if (falseNode == nullptr) {
-            std::cerr << "Error: Failed to build 'False' branch of Decision node." << std::endl;
-            return nullptr;
+        // Create and return an appropriate Decision node based on the condition name
+        if (std::string(conditionName) == "playerInRange") {
+            return std::make_unique<FloatDecision>(0.0f, 100.0f, 50.0f, trueNode, falseNode);
+        }
+        else if (std::string(conditionName) == "enemyHealthGreaterThan50") {
+            return std::make_unique<FloatDecision>(0.0f, 100.0f, 60.0f, trueNode, falseNode);
         }
 
-        // Now create the Decision node with the condition, true and false nodes
-        return new Decision(condition, trueNode, falseNode);
+        // If condition name is unknown (additional checks are already performed), return nullptr
+        std::cerr << "Error: Condition '" << conditionName << "' is not supported!" << std::endl;
+        return nullptr;
     }
-    else if (nodeName == "Action") {
-        // Process an Action node (such as seek, attack, flee, etc.)
+
+    // Handle Action nodes
+    if (nodeName == "Action") {
         const char* actionName = element->GetText();
-        if (actionName == nullptr) {
-            std::cerr << "Error: No action name found in 'Action' node." << std::endl;
+        if (!actionName) {
+            std::cerr << "Error: Action element is missing text!" << std::endl;
             return nullptr;
         }
-        std::cout << "Action: " << actionName << std::endl;
-        return new Action(actionName);
+
+        // Create and return an Action node
+        return std::make_unique<Action>(std::string(actionName));
     }
 
-    std::cerr << "Error: Unknown node type: " << nodeName << std::endl;
+    // Handle unknown element names
+    std::cerr << "Error: Unknown element name: " << nodeName << std::endl;
     return nullptr;
 }
-
 
 
 //

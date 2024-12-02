@@ -7,6 +7,10 @@
 #include <string>
 #include "SceneManager.h"
 #include "Debug.h"
+#include "tinyxml2.h"
+#include "TreeBuilder.h"
+
+using namespace tinyxml2;
 
   
 int main(int argc, char* args[]) {
@@ -25,4 +29,6 @@ int main(int argc, char* args[]) {
 	/// This writes out memory leaks to the output window not the console window
 	_CrtDumpMemoryLeaks();
 	exit(0);
+
+ 
 }

@@ -26,29 +26,27 @@
 
 
 
-<DecisionTree>
-	<Decision> engage 
-		<Condition> playerInRange </Condition>
+<DecisionTree> 
+	<Condition> playerInRange </Condition>
+	<True>
+		<Condition> enemyHealthGreaterThan50 </Condition>
 		<True>
-			<Condition> enemyHealthGreaterThan50 </Condition>
-			<True>
-				<Action> seek </Action>
-			</True>
+			<Action> seek </Action>
+		</True>
 			<Condition> playerFound </Condition>
-			<True>
-				<Action> attack </Action>
-			</True>
-			<False>
-				<Action> seek </Action>
-			</False>
-			<False>
-				<Action> returnPatrol </Action>
-			</False>
+		<True>
+			<Action> attack </Action>
 		</True>
 		<False>
-			<Action> Flee </Action>
-		</False> 
-	</Decision>
+			<Action> seek </Action>
+		</False>
+		<False>
+			<Action> returnPatrol </Action>
+		</False>
+	</True>
+	<False>
+		<Action> Flee </Action>
+	</False> 
 </DecisionTree>
 
 <!--

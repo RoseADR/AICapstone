@@ -11,10 +11,10 @@
 //ConditionOutOfRange::ConditionOutOfRange()
 //{}
 //
-//bool ConditionOutOfRange::test(TransformComponent* enemy)
+//bool ConditionOutOfRange::test(Actor* npc)
 //{
 //    float threshold = 2.0f;
-//    if (VMath::distance(enemy->GetPosition(), enemy->GetPosition()) > threshold)
+//    if (VMath::distance(character->GetComponent<PhysicsComponent>()->GetPosition(), npc->GetComponent<PhysicsComponent>()->GetPosition()) > threshold)
 //    {
 //        return true;
 //    }
@@ -26,10 +26,10 @@
 //{
 //}
 //
-//bool ConditionInRange::test(TransformComponent* enemy)
+//bool ConditionInRange::test(Actor* npc)
 //{
 //    float threshold = 2.0f;
-//    if (VMath::distance(enemy->GetPosition(), enemy->GetPosition() <= threshold)
+//    if (VMath::distance(character->GetComponent<PhysicsComponent>()->GetPosition(), npc->GetComponent<PhysicsComponent>()->GetPosition()) <= threshold)
 //    {
 //        return true;
 //    }
