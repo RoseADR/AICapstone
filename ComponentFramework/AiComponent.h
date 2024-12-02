@@ -16,8 +16,8 @@ class AiComponent : public Component {
 	AiComponent& operator=(AiComponent&&) = delete;
 protected:
 
-	Ref<PhysicsComponent> target; 
-	Ref<PhysicsComponent> npc;
+	//Ref<Component> target; 
+//	Ref<TransformComponent> body;
 
 	// for ariive
 	float targetRadius; // Radius for arriving at the target

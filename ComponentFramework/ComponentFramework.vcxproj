@@ -153,6 +153,7 @@
     <ClCompile Include="CameraActor.cpp" />
     <ClCompile Include="CollisionComponent.cpp" />
     <ClCompile Include="CollisionSystem.cpp" />
+    <ClCompile Include="Condition.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Decision.cpp" />
     <ClCompile Include="DecisionTreeNode.cpp" />
@@ -193,10 +194,12 @@
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Condition.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Decision.h" />
     <ClInclude Include="DecisionTreeNode.h" />
     <ClInclude Include="EMath.h" />
+    <ClInclude Include="EnemyHealthCondition.h" />
     <ClInclude Include="Euler.h" />
     <ClInclude Include="FloatDecision.h" />
     <ClInclude Include="Graph.h" />
@@ -208,6 +211,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsSystem.h" />
+    <ClInclude Include="PlayerInRangeCondition.h" />
     <ClInclude Include="QMath.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="resource.h" />

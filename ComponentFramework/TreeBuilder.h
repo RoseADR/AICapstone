@@ -3,6 +3,8 @@
 
 #include "DecisionTreeNode.h"
 #include "Action.h"
+#include "Decision.h"
+#include "MakeDecision.h"
 #include "FloatDecision.h"
 #include <string>
 #include <memory>
@@ -10,6 +12,9 @@
 #include "tinyxml2.h"
 
 class TreeBuilder {
+
+private:
+    static DecisionTreeNode* buildNode(tinyxml2::XMLElement* element);
 public:
     static DecisionTreeNode* buildTree(const std::string& xmlFile);
 };

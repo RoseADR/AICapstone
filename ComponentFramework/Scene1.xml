@@ -1,43 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+<DecisionTree>
+	<Decision>
+		<Condition>playerInRange</Condition>
+		<True>
+			<Decision>
+				<Condition>enemyHealthGreaterThan50</Condition>
+				<True>
+					<Action>seek</Action>
+				</True>
+				<False>
+					<Action>returnPatrol</Action>
+				</False>
+			</Decision>
+		</True>
+		<False>
+			<Action>flee</Action>
+		</False>
+	</Decision>
+</DecisionTree>
+-->
+
+
+
+
+
+<DecisionTree>
+	<Decision> engage 
+		<Condition> playerInRange </Condition>
+		<True>
+			<Condition> enemyHealthGreaterThan50 </Condition>
+			<True>
+				<Action> seek </Action>
+			</True>
+			<Condition> playerFound </Condition>
+			<True>
+				<Action> attack </Action>
+			</True>
+			<False>
+				<Action> seek </Action>
+			</False>
+			<False>
+				<Action> returnPatrol </Action>
+			</False>
+		</True>
+		<False>
+			<Action> Flee </Action>
+		</False> 
+	</Decision>
+</DecisionTree>
+
+<!--
 <DecisionTree>
 	<Node id="root" type="Decision">
 		<Condition>
-			<Check type="EnemyVisible" value="true" />
+			<Check type="PlayerDetected" value="true" />
 		</Condition>
 		<TrueNode>
 			<Node id="engage" type="Decision">
 				<Condition>
-					<Check type="EnemyHealth" comparison="greater_than" value="50" />
+					<Check type="PlayerDistance" comparison="less_than" value="5" />
 				</Condition>
 				<TrueNode>
 					<Node id="attack" type="Action">
-						<Action>Attack</Action>
+						<Behavior>Attack</Behavior>
 					</Node>
 				</TrueNode>
 				<FalseNode>
-					<Node id="defend" type="Action">
-						<Action>Defend</Action>
+					<Node id="pursue" type="Action">
+						<Behavior>Pursue</Behavior>
 					</Node>
 				</FalseNode>
 			</Node>
 		</TrueNode>
 		<FalseNode>
-			<Node id="evaluate" type="Decision">
+			<Node id="idle_behavior" type="Decision">
 				<Condition>
-					<Check type="HasObjective" value="true" />
+					<Check type="NeedResource" value="true" />
 				</Condition>
 				<TrueNode>
-					<Node id="patrol" type="Action">
-						<Action>Patrol</Action>
+					<Node id="seek_resource" type="Action">
+						<Behavior>Seek</Behavior>
 					</Node>
 				</TrueNode>
 				<FalseNode>
-					<Node id="retreat" type="Action">
-						<Action>Retreat</Action>
+					<Node id="patrol_area" type="Action">
+						<Behavior>Arrive</Behavior>
 					</Node>
 				</FalseNode>
 			</Node>
 		</FalseNode>
 	</Node>
 </DecisionTree>
+ -->

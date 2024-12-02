@@ -87,6 +87,9 @@
     <ClCompile Include="TreeBuilder.cpp">
       <Filter>Source Files\DecisionTrees</Filter>
     </ClCompile>
+    <ClCompile Include="Condition.cpp">
+      <Filter>Source Files\DecisionTrees</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -225,6 +228,15 @@
       <Filter>Header Files\DecisionTrees</Filter>
     </ClInclude>
     <ClInclude Include="TreeBuilder.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="Condition.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInRangeCondition.h">
+      <Filter>Header Files\DecisionTrees</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyHealthCondition.h">
       <Filter>Header Files\DecisionTrees</Filter>
     </ClInclude>
   </ItemGroup>

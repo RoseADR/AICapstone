@@ -10,9 +10,9 @@ class FloatDecision : public Decision {
 
 public:
     FloatDecision(float min, float max, float value, DecisionTreeNode* trueNode, DecisionTreeNode* falseNode)
-        : Decision(trueNode, falseNode), minValue(min), maxValue(max), testValueValue(value) {}
+        : Decision(condition, trueNode, falseNode), minValue(min), maxValue(max), testValueValue(value) {}
 
-    bool testValue() const override {
+    bool testValue()  {
         return testValueValue >= minValue && testValueValue <= maxValue;
     }
 };

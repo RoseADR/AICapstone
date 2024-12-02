@@ -1,12 +1,18 @@
 #include "Decision.h"
 
-Decision::Decision(DecisionTreeNode* trueNode, DecisionTreeNode* falseNode)
-    : trueNode(trueNode), falseNode(falseNode) {}
-
-DecisionTreeNode* Decision::getBranch() {
-    return testValue() ? trueNode : falseNode;
-}
-
-DecisionTreeNode* Decision::makeDecision() {
-    return getBranch()->makeDecision();
-}
+//DecisionTreeNode* Decision::getBranch()
+//{
+//    if (testValue()) {
+//        return trueNode;
+//    }
+//    else {
+//        return falseNode;
+//    }
+//}
+//
+//DecisionTreeNode* Decision::makeDecision()
+//{
+//    DecisionTreeNode* branch = getBranch();
+//    return branch->makeDecision();
+//
+//}
