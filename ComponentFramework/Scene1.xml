@@ -11,7 +11,7 @@
 
 	<Node id="distanceCheck" type="Decision">
 		<Condition>
-			<Check type="PlayerDistance" comparison="less_than" value="3" />
+			<Check type="PlayerDistance" comparison="less_than" value="1" />
 		</Condition>
 		<TrueNode id="attack" />
 		<FalseNode id="facingCheck" />
