@@ -30,7 +30,7 @@ void Actor::OnDestroy() {
 
 
 void Actor::Update(const float deltaTime) {
-	std::cout << "Hello from Update\n";
+	//std::cout << "Hello from Update\n";
 }
 
 void Actor::Render()const {

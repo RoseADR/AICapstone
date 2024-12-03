@@ -44,7 +44,8 @@ public:
 
 	Vec3 Arrive(const Vec3 myLocation, Vec3 otherLocation);
 
-			
+	//FOR DECISION MAKING (SPRINT 3) 
+	void Attack(Actor* target); // Add Attack method declaration		
 	
-		};
+};
 

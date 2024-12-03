@@ -22,6 +22,8 @@ public:
 	void OnDestroy();
 	void Update(const float deltaTime_);
 	void Render() const;
+	//ADDED FOR DECISION TREE MAY NEED TO PUT SOMEWHERE ELSE
+	int health = 100;
 
 	template<typename ComponentTemplate>
 	void AddComponent(Ref<ComponentTemplate> component_) {

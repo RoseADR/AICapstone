@@ -51,10 +51,10 @@ bool Scene1::OnCreate() {
 
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
-	std::cout << "GameBoard Position: ("
-		<< boardPos.x << ", "
+	//std::cout << "GameBoard Position: ("
+		/*<< boardPos.x << ", "
 		<< boardPos.y << ", "
-		<< boardPos.z << ")\n";
+		<< boardPos.z << ")\n"*/;
 
 
 	character = std::make_shared<Actor>(gameboard.get());
@@ -77,21 +77,43 @@ bool Scene1::OnCreate() {
 	// Sample pathfinding: Start at (0,0) and go to (7,7) - change as needed
 	std::vector<Node*> path = graph->findPath(sceneNodes[10], sceneNodes[63]);
 	//FOR DEBUGGING - SHOWS PATH TAKEN FOR ABOVE
-	std::cout << "Calculated Path:\n";
+	//std::cout << "Calculated Path:\n";
 	for (Node* node : path) {
 		int j, i;
 		i = node->getLabel() / tiles[0].size(); // divide by the number of coloumns
 		j = node->getLabel() % tiles.size();    // get the reminder by the number of rows
-		std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
-		<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
+		//std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
+		//<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
 		tiles[i][j]->setPathTile(true);	
 	}
 	//END DEBUGGING FOR PATH TAKEN
-	
-
 	// Placeholder: Need to hook up path to AI
 
+	// DECISION TREE RELATED
+	// Load the decision tree from XML
 
+	Actor* enemy = actors[2].get();    // Assuming actors[2] is the enemy
+	Actor* player = character.get(); // Assuming character is the player
+
+	std::cout << "[LOG]: Building Decision Tree..." << std::endl;
+	decisionTreeRoot = TreeBuilder::buildTree("Scene1.xml", enemy, player);
+	if (!decisionTreeRoot) {
+		std::cerr << "[ERROR]: Failed to build decision tree" << std::endl;
+		//return;
+	}
+	std::cout << "[LOG]: Decision tree successfully built" << std::endl;
+
+	// Test decision tree evaluation
+	/*if (decisionTreeRoot) {
+		DecisionTreeNode* result = decisionTreeRoot->makeDecision(deltaTime);
+		if (auto* action = dynamic_cast<Action*>(result)) {
+			std::cout << "[LOG]: Decision Tree Result: " << action->GetActionName() << std::endl;
+		}
+		else {
+			std::cerr << "[ERROR]: Root node evaluation failed" << std::endl;
+		}
+	}*/
+	
 
 	return true;
 }
@@ -190,8 +212,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_W:
 		{
-			Vec3 Position = characterTC->GetPosition();
-			characterTC->SetPosition(Position + Vec3(0.0f, 1.0f, 0.0f));
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+			break;
 		}
 
 		case SDL_SCANCODE_B: { // Check if 'G' key is pressed
@@ -288,39 +310,74 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 }
 
 void Scene1::Update(const float deltaTime) {
+	
+	//START OF PREVIOUS SPRINT WORK
+	//Ref<PhysicsComponent> characterTC;
+	//Ref<PhysicsComponent> enemyTC;
+	//Ref<PhysicsComponent> enemyTC2;
+
+	//Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+	//Vec3 mariosVel = character->GetComponent<PhysicsComponent>()->getVel();
+
+	//// Update the gameboard transform
+	//gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+
+	//// Get Mario's position (character's position)
+	//locationManager.mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+
+	//// --- Enemy 1 (actors[2]) Flee ---
+	//Vec3 enemy1Pos = actors[2]->GetComponent<PhysicsComponent>()->GetPosition();
+	//Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
+
+	//// Update Enemy 1's position
+	//enemyTC = actors[2]->GetComponent<PhysicsComponent>();
+	//enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
+
+	//// --- Enemy 2 (actors[3]) Follow ---
+	//Vec3 enemy2Vel = actors[3]->GetComponent<PhysicsComponent>()->getVel();
+	//Vec3 enemy2Pos = actors[3]->GetComponent<PhysicsComponent>()->GetPosition();
+	////Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Pursuit(enemy2Pos, mariosPos, enemy2Vel);
+	//Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, mariosPos);
+
+	//// Update Enemy 2's position
+	//enemyTC2= actors[3]->GetComponent<PhysicsComponent>();
+	//enemyTC2->SetTransform(enemyTC2->GetPosition() + enemy2Move * deltaTime, enemyTC2->GetQuaternion());
+
+	// Debug or print Mario's position if needed
+	// locationManager.mariosPos.print();
+	// END OF PREVIOUS SPRINT WORK 
+
+	//START OF SPRINT 3 WORK
+	//DECISION TREE RELATED
+	// Evaluate the Decision Tree
+	// Update a single enemy using the decision tree
+
 	Ref<PhysicsComponent> characterTC;
 	Ref<PhysicsComponent> enemyTC;
-	Ref<PhysicsComponent> enemyTC2;
-
-	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
-	Vec3 mariosVel = character->GetComponent<PhysicsComponent>()->getVel();
 
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
 	// Get Mario's position (character's position)
-	locationManager.mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+	locationManager.mariosPos = mariosPos;
 
-	// --- Enemy 1 (actors[2]) Flee ---
-	Vec3 enemy1Pos = actors[2]->GetComponent<PhysicsComponent>()->GetPosition();
-	Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
+	// Enemy 1 (actors[2]) Decision Tree Logic 
+	auto& enemy = actors[2]; 
 
-	// Update Enemy 1's position
-	enemyTC = actors[2]->GetComponent<PhysicsComponent>();
-	enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
+	// Update Enemy 1's state
+	enemy->Update(deltaTime); // THIS DOES NOTHING 
 
-	// --- Enemy 2 (actors[3]) Follow ---
-	Vec3 enemy2Vel = actors[3]->GetComponent<PhysicsComponent>()->getVel();
-	Vec3 enemy2Pos = actors[3]->GetComponent<PhysicsComponent>()->GetPosition();
-	//Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Pursuit(enemy2Pos, mariosPos, enemy2Vel);
-	Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, mariosPos);
-
-	// Update Enemy 2's position
-	enemyTC2= actors[3]->GetComponent<PhysicsComponent>();
-	enemyTC2->SetTransform(enemyTC2->GetPosition() + enemy2Move * deltaTime, enemyTC2->GetQuaternion());
-
-	// Debug or print Mario's position if needed
-	// locationManager.mariosPos.print();
+	// Evaluate the decision tree
+	if (decisionTreeRoot) {
+		DecisionTreeNode* result = decisionTreeRoot->makeDecision(deltaTime);
+		if (auto* action = dynamic_cast<Action*>(result)) {
+			action->makeDecision(deltaTime); // Execute the encapsulated action logic
+		}
+		else {
+			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
+		}
+	}
 }
 
 
@@ -408,7 +465,7 @@ void Scene1::LoadEnemies() {
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
 	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 0.05f),
+	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(-5.0f, 0.0f, 0.05f),
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
 
 	// Set up the second enemy
@@ -417,7 +474,7 @@ void Scene1::LoadEnemies() {
 	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
 	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(1.0f, 0.0f, 0.05f), // Different position
+	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f), // Different position
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.75f, 0.75f, 0.75f));
 
 	// Add both enemies to the actor list
@@ -500,8 +557,6 @@ void Scene1::createTiles() {
 	}
 }
 
-
-
 // Sets up connections (left, right, up, down) between adjacent nodes
 void Scene1::calculateConnectionWeights() {
 	int gridSize = 8;
@@ -536,10 +591,6 @@ void Scene1::calculateConnectionWeights() {
 		}
 	}
 }
-
-
-
-
 
 int Scene1::Pick(int x, int y) {
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF

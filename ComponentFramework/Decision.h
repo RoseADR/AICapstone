@@ -12,7 +12,7 @@ public:
     Decision(DecisionTreeNode* trueNode, DecisionTreeNode* falseNode);
     virtual bool testValue() const = 0;
     DecisionTreeNode* getBranch();
-    DecisionTreeNode* makeDecision() override;
+    DecisionTreeNode* makeDecision(float deltaTime) override;
 };
 
 #endif // DECISION_H

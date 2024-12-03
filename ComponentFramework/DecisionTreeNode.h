@@ -5,8 +5,8 @@
 class DecisionTreeNode
 {
 public:
-    virtual ~DecisionTreeNode() = default;
-    virtual DecisionTreeNode* makeDecision() = 0;
+    virtual ~DecisionTreeNode() {}
+    virtual DecisionTreeNode* makeDecision(float deltaTime) = 0;
 
 };
 

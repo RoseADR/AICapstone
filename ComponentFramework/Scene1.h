@@ -9,6 +9,9 @@
 #include "Graph.h"
 #include "Node.h"
 #include "Tile.h"
+#include "Action.h"
+#include "DecisionTreeNode.h"
+#include "TreeBuilder.h"
 
 using namespace MATH;
 /// let me change
@@ -39,11 +42,13 @@ private:
 	void createTiles();
 	void calculateConnectionWeights();
 
+	//FOR DECISIONTREE
+	DecisionTreeNode* decisionTreeRoot;
 
 	bool drawNormals;
 	bool drawOverlay;
 public:
-	bool showTiles = true;
+	bool showTiles = false;
 	explicit Scene1();
 	virtual ~Scene1();
 

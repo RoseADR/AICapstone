@@ -176,3 +176,14 @@ Vec3 AiComponent::Arrive(const Vec3 myLocation, Vec3 otherLocation)
 	return Vec3(0,0,0);
 }
 
+void AiComponent::Attack(Actor* target) {
+	if (!target) return;
+
+	//Debug
+	std::cout << "Attacking target: " << target << std::endl;
+
+	target->health = target->health - 25;
+
+	//Debug
+	std::cout << "Target health: " << target->health << std::endl;
+}

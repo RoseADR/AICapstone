@@ -14,9 +14,9 @@ DecisionTreeNode* Decision::getBranch()
     }
 }
 
-DecisionTreeNode* Decision::makeDecision()
+DecisionTreeNode* Decision::makeDecision(float deltaTime)
 {
     DecisionTreeNode* branch = getBranch();
-    return branch->makeDecision();
+    return branch->makeDecision(deltaTime);
 
 }

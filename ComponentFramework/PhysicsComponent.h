@@ -73,6 +73,7 @@ public:
 		mass = mass_;
 	}
 	void SetVelocity(const Vec3 vel_) { vel = vel_; }
+	void SetAccel(const Vec3 accel_) { accel = accel_; }
 
 };
 
