@@ -56,7 +56,6 @@
     <ClCompile Include="PhysicsComponent.cpp">
       <Filter>Source Files\Component</Filter>
     </ClCompile>
-    <ClCompile Include="IrrklangAudio.cpp" />
     <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
