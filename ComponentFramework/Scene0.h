@@ -5,7 +5,10 @@
 #include "Matrix.h"
 #include "Component.h"
 #include "AssetManager.h"
+#include <irrKlang.h>
+
 using namespace MATH;
+using namespace irrklang;
 
 /// Forward declarations 
 union SDL_Event;
@@ -20,6 +23,8 @@ private:
 	Ref<LightActor> light;
 	bool drawNormals;
 	bool drawOverlay;
+	ISoundEngine* engine;
+
 public:
 	explicit Scene0();
 	virtual ~Scene0();
