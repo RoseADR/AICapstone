@@ -12,10 +12,14 @@
 #include "ShaderComponent.h"
 #include "MaterialComponent.h"
 #include "MMath.h"
+
+#include <chrono>
+#include <thread>
+
 using namespace MATH;
 
 
-Scene0::Scene0():drawNormals(false),drawOverlay(false){
+Scene0::Scene0():engine(nullptr),drawNormals(false),drawOverlay(false){
 
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -37,7 +41,11 @@ bool Scene0::OnCreate() {
 	light = std::make_shared<LightActor>(camera.get(), LightStyle::DirectionLight, Vec3(-10.0f, 0.0f, 0.0f) ,Vec4(0.6f,0.6f,0.6f,0.0f));
 	light->OnCreate();
 	
-
+	char c;
+	engine = createIrrKlangDevice();
+	engine->play2D("./Audio/BackgroundSound.mp3");
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::cout << "hi" << std::endl;
 	Ref<Actor> someObject = std::make_shared<Actor>(nullptr);
 	Quaternion orientation = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f));
 	someObject->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientation);
@@ -58,6 +66,10 @@ Scene0::~Scene0() {
 
 void Scene0::OnDestroy() {
 	Debug::Info("Deleting assets Scene1: ", __FILE__, __LINE__);
+
+	engine->drop(); // delete engine
+	return;
+
 }
 
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) {

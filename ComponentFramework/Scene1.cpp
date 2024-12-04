@@ -15,18 +15,21 @@
 #include "AiComponent.h"
 #include "LocationManager.h"
 
+#include <chrono>
+#include <thread>
+
 // test test delete me 
 using namespace MATH;
 
 
-Scene1::Scene1():drawNormals(false),drawOverlay(false) {
+Scene1::Scene1():engine(nullptr),drawNormals(false),drawOverlay(false) {
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	
 }
 
 bool Scene1::OnCreate() {
-	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
+	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
 	
 	camera = std::make_shared<CameraActor>(nullptr);
@@ -114,6 +117,12 @@ bool Scene1::OnCreate() {
 		}
 	}*/
 	
+	char c;
+	engine = createIrrKlangDevice();
+	engine->play2D("./Audio/BackgroundSound.wav");
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::cout << "hi" << std::endl;
+
 
 	return true;
 }
@@ -136,6 +145,9 @@ void Scene1::OnDestroy() {
 	}
 	//Delete the graph
 	delete graph;
+
+	engine->drop(); // delete engine
+	return;
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {

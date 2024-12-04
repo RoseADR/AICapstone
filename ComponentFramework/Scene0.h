@@ -5,6 +5,8 @@
 #include "Matrix.h"
 #include "Component.h"
 #include "AssetManager.h"
+#include <chrono>
+#include <thread>
 #include <irrKlang.h>
 
 using namespace MATH;
@@ -23,6 +25,7 @@ private:
 	Ref<LightActor> light;
 	bool drawNormals;
 	bool drawOverlay;
+	bool isRunning;
 	ISoundEngine* engine;
 
 public:
