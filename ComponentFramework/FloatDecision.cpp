@@ -22,12 +22,23 @@ bool FloatDecision::testValue() const {
         // Calculate forward vector from quaternion
         Vec3 forward = QMath::rotate(Vec3(0.0f, 0.0f, 1.0f), transform1->GetQuaternion());
         forward = VMath::normalize(forward);
+        std::cout << "[DEBUG]: Player Forward Vector: (" << forward.x << ", " << forward.y << ", " << forward.z << ")\n";
 
         // Vector to enemy actor
         Vec3 toActor = VMath::normalize(transform2->GetPosition() - transform1->GetPosition());
+        std::cout << "[DEBUG]: To Enemy Vector: (" << toActor.x << ", " << toActor.y << ", " << toActor.z << ")\n";
 
         // Dot product determines if the player is facing the enemy
-        return VMath::dot(forward, toActor) > 0.0f;
+        float dotProduct = VMath::dot(toActor, forward);
+        std::cout << "[DEBUG]: Dot Product: " << dotProduct << "\n";
+
+        // Define a stricter threshold for facing (cosine of acceptable angle, e.g., 30 degrees)
+        float facingThreshold = cos(M_PI / 6); // ~0.866
+        bool isFacing = dotProduct > facingThreshold;
+
+        std::cout << "[DEBUG]: Is Facing Enemy with Threshold (" << facingThreshold << "): " << (isFacing ? "Yes" : "No") << "\n";
+
+        return isFacing;
 
     }
     else if (type == "PlayerDistance") {

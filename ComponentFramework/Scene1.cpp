@@ -60,7 +60,7 @@ bool Scene1::OnCreate() {
 		<< boardPos.z << ")\n"*/;
 
 
-	character = std::make_shared<Actor>(gameboard.get());
+	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
 	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 2.5f), mariosQuaternion);
@@ -117,11 +117,11 @@ bool Scene1::OnCreate() {
 		}
 	}*/
 	
-	char c;
+	/*char c;
 	engine = createIrrKlangDevice();
 	engine->play2D("./Audio/BackgroundSound.wav");
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::cout << "hi" << std::endl;
+	std::cout << "hi" << std::endl;*/
 
 
 	return true;
@@ -163,6 +163,11 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Vec3 direction;  
 	Quaternion start;
 	Quaternion end;
+
+	Quaternion orientationU;
+	Quaternion orientationL;
+	Quaternion orientationR;
+	Quaternion orientationD;
 
 	// was going to use to store the previous position to calulate vel - didnt work
 	//Vec3 currentPosition = characterTC->GetPosition();
@@ -225,6 +230,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		case SDL_SCANCODE_W:
 		{
 			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+			orientationU= QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)); // Facing upward
+			characterTC->SetTransform(characterTC->GetPosition(), orientationU);
 			break;
 		}
 
@@ -248,6 +255,9 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		case SDL_SCANCODE_A:
 
 			characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
+			orientationL = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) *   // Turn left
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			characterTC->SetTransform(characterTC->GetPosition(), orientationL);
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
@@ -264,7 +274,10 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		case SDL_SCANCODE_S:
 
 			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
-			/*flip *= -1.0f;
+			orientationD = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn to face backward
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));     
+			characterTC->SetTransform(characterTC->GetPosition(), orientationD);
+			/*flip *= -1.0f
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
 			characterTC->SlerpOrientation(start, end, 2.0f);
@@ -279,6 +292,9 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		case SDL_SCANCODE_D:
 
 			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
+			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
 			/*flip *= -1.0f;
 			start = characterTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
