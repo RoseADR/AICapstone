@@ -238,6 +238,9 @@
     <ClInclude Include="EnemyHealthCondition.h">
       <Filter>Header Files\DecisionTrees</Filter>
     </ClInclude>
+    <ClInclude Include="Timing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">

@@ -13,10 +13,10 @@
 #include "DecisionTreeNode.h"
 #include "TreeBuilder.h"
 
-#include <irrKlang.h>
+// #include <irrKlang.h>
 
 using namespace MATH;
-using namespace irrklang;
+//using namespace irrklang;
 /// let me change
 /// Forward declarations 
 union SDL_Event;
@@ -52,7 +52,7 @@ private:
 	bool drawOverlay;
 
 	bool isRunning;
-	ISoundEngine* engine;
+	// ISoundEngine* engine;
 public:
 	bool showTiles = false;
 	explicit Scene1();

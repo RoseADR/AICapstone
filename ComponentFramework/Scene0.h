@@ -7,10 +7,10 @@
 #include "AssetManager.h"
 #include <chrono>
 #include <thread>
-#include <irrKlang.h>
+
 
 using namespace MATH;
-using namespace irrklang;
+
 
 /// Forward declarations 
 union SDL_Event;
@@ -26,7 +26,7 @@ private:
 	bool drawNormals;
 	bool drawOverlay;
 	bool isRunning;
-	ISoundEngine* engine;
+	
 
 public:
 	explicit Scene0();

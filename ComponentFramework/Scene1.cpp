@@ -22,7 +22,7 @@
 using namespace MATH;
 
 
-Scene1::Scene1():engine(nullptr),drawNormals(false),drawOverlay(false) {
+Scene1::Scene1():/*engine(nullptr),*/ drawNormals(false), drawOverlay(false) {
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	
@@ -120,6 +120,7 @@ bool Scene1::OnCreate() {
 	/*char c;
 	engine = createIrrKlangDevice();
 	engine->play2D("./Audio/BackgroundSound.wav");
+	engine->setSoundVolume(0.1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	std::cout << "hi" << std::endl;*/
 
@@ -146,8 +147,8 @@ void Scene1::OnDestroy() {
 	//Delete the graph
 	delete graph;
 
-	engine->drop(); // delete engine
-	return;
+	//engine->drop(); // delete engine
+	//return;
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
