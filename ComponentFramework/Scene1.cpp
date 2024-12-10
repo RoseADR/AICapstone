@@ -14,6 +14,7 @@
 #include "MMath.h"
 #include "AiComponent.h"
 #include "LocationManager.h"
+#include "Timing.h"
 
 #include <chrono>
 #include <thread>
@@ -29,6 +30,9 @@ Scene1::Scene1():/*engine(nullptr),*/ drawNormals(false), drawOverlay(false) {
 }
 
 bool Scene1::OnCreate() {
+	
+	Timing timing("Scene1::OnCreate");
+
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
 	
