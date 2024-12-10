@@ -89,6 +89,27 @@
     <ClCompile Include="Condition.cpp">
       <Filter>Source Files\DecisionTrees</Filter>
     </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_sdl2.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -241,6 +262,33 @@
     <ClInclude Include="Timing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_sdl2.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -331,6 +379,12 @@
     </Filter>
     <Filter Include="Source Files\DecisionTrees">
       <UniqueIdentifier>{139c0161-ef83-49fc-ac2a-4c9429eed1a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGUI">
+      <UniqueIdentifier>{017158b6-fc51-4e7a-b963-7cc0aba5dccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGUI">
+      <UniqueIdentifier>{9be7abfc-181e-4b29-be24-48b2d8d12b42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
