@@ -121,12 +121,12 @@ bool Scene1::OnCreate() {
 		}
 	}*/
 	
-	/*char c;
+	char c;
 	engine = createIrrKlangDevice();
 	engine->play2D("./Audio/BackgroundSound.wav");
 	engine->setSoundVolume(0.1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::cout << "hi" << std::endl;*/
+	std::cout << "hi" << std::endl;
 
 
 	return true;
@@ -151,8 +151,8 @@ void Scene1::OnDestroy() {
 	//Delete the graph
 	delete graph;
 
-	//engine->drop(); // delete engine
-	//return;
+	engine->drop(); // delete engine
+	return;
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {

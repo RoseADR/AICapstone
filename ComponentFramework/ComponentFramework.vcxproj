@@ -222,6 +222,7 @@
     <ClInclude Include="LightActor.h" />
     <ClInclude Include="LocationManager.h" />
     <ClInclude Include="MaterialComponent.h" />
+    <ClInclude Include="MemoryMonitoring.h" />
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="PhysicsComponent.h" />

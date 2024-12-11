@@ -289,6 +289,9 @@
     <ClInclude Include="imgui_impl_opengl3_loader.h">
       <Filter>Header Files\ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryMonitoring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -397,7 +400,7 @@
       <Filter>Resource Files</Filter>
     </Xml>
     <Xml Include="Scene1.xml">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
     </Xml>
   </ItemGroup>
 </Project>
