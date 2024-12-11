@@ -156,6 +156,8 @@ void Scene1::OnDestroy() {
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
+	Timing timing("Scene1::HandleEvents");
+
 	static int objID = -1;
 	static Vec2 currentMousePos;
 	static Vec2	lastMousePos;
@@ -343,7 +345,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 }
 
 void Scene1::Update(const float deltaTime) {
-	
+	Timing timing("Scene1::Update");
 	//START OF PREVIOUS SPRINT WORK
 	//Ref<PhysicsComponent> characterTC;
 	//Ref<PhysicsComponent> enemyTC;
@@ -415,6 +417,7 @@ void Scene1::Update(const float deltaTime) {
 
 
 void Scene1::Render() const {
+	Timing timing("Scene1::Render");
 
 	glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS); // JUST ADDED FOR TESTING ROTATION
