@@ -23,7 +23,7 @@
 using namespace MATH;
 
 
-Scene1::Scene1():/*engine(nullptr),*/ drawNormals(false), drawOverlay(false) {
+Scene1::Scene1():engine(nullptr), drawNormals(false), drawOverlay(false), controller(nullptr){
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	
@@ -176,6 +176,9 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Quaternion orientationR;
 	Quaternion orientationD;
 
+	controller = SDL_JoystickOpen(0);
+	
+
 	// was going to use to store the previous position to calulate vel - didnt work
 	//Vec3 currentPosition = characterTC->GetPosition();
 
@@ -187,6 +190,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		cameraTC = camera->GetComponent<TransformComponent>();
 		characterTC = character->GetComponent<PhysicsComponent>();
 		gameBoardTC = gameboard->GetComponent<TransformComponent>();
+		
 
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_LEFT:
@@ -331,6 +335,34 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		}
 		break;
 
+		case SDL_JOYBUTTONDOWN :
+			if (sdlEvent.jbutton.button == SDL_CONTROLLER_BUTTON_A)
+			{
+			
+			}
+			break;
+
+		case SDL_JOYAXISMOTION:
+			if (sdlEvent.jaxis.which == 0)
+			{
+			
+				xAxis = sdlEvent.jaxis.value;
+				std::cout << xAxis << '\n';
+				/*characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
+				characterTC->SetTransform(characterTC->GetPosition() + Vec3(xAxis, 0.0f, 0.0f), orientationL);*/
+				
+				
+			}
+			else if (sdlEvent.jaxis.which == 1) {
+				yAxis = sdlEvent.jaxis.value;
+				std::cout << yAxis << '\n';
+				/*characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
+				characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, yAxis, 0.0f), orientationU);*/
+			}
+
+			break;
+
+
     }
 
 	//Was trying to calculate the players velocity here when we change positions to use in the pursue and arrive
@@ -387,7 +419,7 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	Ref<PhysicsComponent> characterTC;
+	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
 	// Update the gameboard transform
@@ -413,6 +445,12 @@ void Scene1::Update(const float deltaTime) {
 			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
 		}
 	}
+
+	/*Vec3 axis(xAxis, yAxis, 0.0f);
+	if (VMath::mag(axis) > 1) {
+		characterTC->SetPosition(characterTC->GetPosition() + VMath::normalize(axis) * 0.1);
+	}*/
+	
 }
 
 

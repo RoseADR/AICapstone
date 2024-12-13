@@ -53,6 +53,10 @@ private:
 
 	bool isRunning;
 	ISoundEngine* engine;
+	SDL_Joystick* controller;
+	float xAxis;
+	float yAxis;
+
 public:
 	bool showTiles = false;
 	explicit Scene1();

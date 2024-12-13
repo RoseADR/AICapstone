@@ -45,7 +45,7 @@ public:
 		orientation = orientation_;
 		scale = scale_;
 	}
-	void SetPosition(const Vec3 pos_) { pos = pos_; }
+	void SetPosition(const Vec3& pos_) { pos = pos_; }
 
 
 };

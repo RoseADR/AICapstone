@@ -11,7 +11,7 @@ bool Window::OnCreate(std::string name_, int width_, int height_) {
 	this->width = width_;
 	this->height = height_;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		Debug::FatalError("Failed to initialize SDL", __FILE__, __LINE__);
 		return false;
 	}
