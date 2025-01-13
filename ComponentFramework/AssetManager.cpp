@@ -18,6 +18,7 @@ AssetManager::AssetManager() {
 	
 
 	AddComponent<MeshComponent>("Plane", nullptr,"meshes/Plane8x8.obj");
+
 	AddComponent<MeshComponent>("CheckerPiece", nullptr,"meshes/CheckerPiece.obj");
 	AddComponent<MeshComponent>("Pawn", nullptr,"meshes/Pawn.obj");
 	AddComponent<MeshComponent>("Rook", nullptr,"meshes/Rook.obj");
