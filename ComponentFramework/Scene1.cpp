@@ -456,13 +456,28 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
-	character->GetComponent<TransformComponent>()->Update(deltaTime);
+	const float gravity = -9.8f; // Strength of gravity (units per second squared)
+	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
-	// Check and resolve collision
-	if (CollisionHandler::CheckCollision(character, gameboard)) {
-		CollisionHandler::ResolveCollision(character, gameboard);
-		printf("touch");
+	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+	auto characterTransform = character->GetComponent<TransformComponent>();
+
+	// Apply gravity to the character
+	if (characterTransform) {
+		Vec3 pos = characterTransform->GetPosition();
+
+		// Only apply gravity if the character is not on the floor
+		if (!CollisionHandler::CheckCollision(character, gameboard)) {
+			verticalVelocity += gravity * deltaTime; // Increase downward velocity
+			pos.z += verticalVelocity * deltaTime;  // Update Y position
+		}
+		else {
+			// Resolve collision and reset vertical velocity
+			CollisionHandler::ResolveCollision(character, gameboard);
+			verticalVelocity = 0.0f; // Reset velocity when on the ground
+		}
+
+		characterTransform->SetPosition(pos);
 	}
 
 	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
