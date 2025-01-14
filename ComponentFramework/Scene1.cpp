@@ -50,9 +50,9 @@ bool Scene1::OnCreate() {
 	
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	gameboard = std::make_shared<Actor>(nullptr);
-	orientationBoard = QMath::angleAxisRotation(-45.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationBoard = QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientationBoard);
+	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.0f, 0.0f), orientationBoard);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlackChessTexture"));
@@ -338,6 +338,24 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
 
+		case SDL_SCANCODE_T:
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
+			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
+
+		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+			break;
+
 
 		case SDL_SCANCODE_N:
 			if (drawNormals == false) drawNormals = true;
@@ -441,9 +459,9 @@ void Scene1::Update(const float deltaTime) {
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	character->GetComponent<TransformComponent>()->Update(deltaTime);
 
-	// Check collision
-	if (CollisionHandler::CheckCollision(gameboard, character)) {
-		// Collision already handled in CollisionHandler
+	// Check and resolve collision
+	if (CollisionHandler::CheckCollision(character, gameboard)) {
+		CollisionHandler::ResolveCollision(character, gameboard);
 		printf("touch");
 	}
 
