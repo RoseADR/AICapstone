@@ -16,6 +16,8 @@
 #include "LocationManager.h"
 #include "Timing.h"
 
+#include "CollisionSystem.h"
+
 #include <chrono>
 #include <thread>
 
@@ -31,7 +33,7 @@ Scene1::Scene1():engine(nullptr), drawNormals(false), drawOverlay(false), contro
 
 bool Scene1::OnCreate() {
 	
-	Timing timing("Scene1::OnCreate");
+	//Timing timing("Scene1::OnCreate");
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
@@ -64,7 +66,7 @@ bool Scene1::OnCreate() {
 		<< boardPos.z << ")\n"*/;
 
 
-	character = std::make_shared<Actor>(nullptr);
+	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
 	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 2.5f), mariosQuaternion);
@@ -156,7 +158,7 @@ void Scene1::OnDestroy() {
 }
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
-	Timing timing("Scene1::HandleEvents");
+	//Timing timing("Scene1::HandleEvents");
 
 	static int objID = -1;
 	static Vec2 currentMousePos;
@@ -318,6 +320,23 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
 
+		case SDL_SCANCODE_R:
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
+			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
+			/*flip *= -1.0f;
+			start = characterTC->GetQuaternion();
+			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
+			characterTC->SlerpOrientation(start, end, 2.0f);
+			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
+			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
+
+		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
+			rotatedDirection = characterTC->GetQuaternion() * direction;
+			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+			break;
 
 
 		case SDL_SCANCODE_N:
@@ -377,7 +396,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 }
 
 void Scene1::Update(const float deltaTime) {
-	Timing timing("Scene1::Update");
+	//Timing timing("Scene1::Update");
 	//START OF PREVIOUS SPRINT WORK
 	//Ref<PhysicsComponent> characterTC;
 	//Ref<PhysicsComponent> enemyTC;
@@ -419,6 +438,15 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+	character->GetComponent<TransformComponent>()->Update(deltaTime);
+
+	// Check collision
+	if (CollisionHandler::CheckCollision(gameboard, character)) {
+		// Collision already handled in CollisionHandler
+		printf("touch");
+	}
+
 	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
@@ -455,7 +483,7 @@ void Scene1::Update(const float deltaTime) {
 
 
 void Scene1::Render() const {
-	Timing timing("Scene1::Render");
+	//Timing timing("Scene1::Render");
 
 	glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS); // JUST ADDED FOR TESTING ROTATION

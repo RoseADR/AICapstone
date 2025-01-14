@@ -6,7 +6,7 @@ Action::Action(const std::string& name, Actor* actor, Actor* targetActor)
 
 DecisionTreeNode* Action::makeDecision(float deltaTime) {
     if (actionName == "Seek Player") {
-        std::cout << "[LOG]: Action - Seek Player\n";
+        //std::cout << "[LOG]: Action - Seek Player\n";
         auto aiComponent = actor->GetComponent<AiComponent>();
         auto enemyTC = actor->GetComponent<PhysicsComponent>();
         if (aiComponent) {
@@ -17,7 +17,7 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
         }
     }
     else if (actionName == "Flee Player") {
-        std::cout << "[LOG]: Action - Flee Player\n";
+        //std::cout << "[LOG]: Action - Flee Player\n";
         auto aiComponent = actor->GetComponent<AiComponent>();
         auto enemyTC = actor->GetComponent<PhysicsComponent>();
         if (aiComponent) {
@@ -25,19 +25,19 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
             Vec3 playerPos = targetActor->GetComponent<PhysicsComponent>()->GetPosition();
 
             // Debug 
-            std::cout << "[DEBUG]: Enemy Position: (" << enemyPos.x << ", " << enemyPos.y << ", " << enemyPos.z << ")\n";
-            std::cout << "[DEBUG]: Player Position: (" << playerPos.x << ", " << playerPos.y << ", " << playerPos.z << ")\n";
+            //std::cout << "[DEBUG]: Enemy Position: (" << enemyPos.x << ", " << enemyPos.y << ", " << enemyPos.z << ")\n";
+            //std::cout << "[DEBUG]: Player Position: (" << playerPos.x << ", " << playerPos.y << ", " << playerPos.z << ")\n";
 
             Vec3 enemy1Move = aiComponent->Flee(enemyPos, playerPos);
 
             // Debug fleeing movement vector
-            std::cout << "[DEBUG]: Calculated Flee Direction: (" << enemy1Move.x << ", " << enemy1Move.y << ", " << enemy1Move.z << ")\n";
+            //std::cout << "[DEBUG]: Calculated Flee Direction: (" << enemy1Move.x << ", " << enemy1Move.y << ", " << enemy1Move.z << ")\n";
             
             enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
 
             // Debug new position
             Vec3 newEnemyPos = enemyTC->GetPosition();
-            std::cout << "[DEBUG]: Updated Enemy Position: (" << newEnemyPos.x << ", " << newEnemyPos.y << ", " << newEnemyPos.z << ")\n";
+            //std::cout << "[DEBUG]: Updated Enemy Position: (" << newEnemyPos.x << ", " << newEnemyPos.y << ", " << newEnemyPos.z << ")\n";
         }
     }
     else if (actionName == "Attack Player") {
@@ -46,15 +46,15 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
         attackTimer += deltaTime;
         if (attackTimer >= attackCooldown) {
             aiComponent->Attack(targetActor); // Execute the attack
-            std::cout << "[LOG]: Attacking Player!\n";
+            //std::cout << "[LOG]: Attacking Player!\n";
             attackTimer = 0.0f; // Reset the timer after the attack
         }
         else {
-            std::cout << "[LOG]: Attack on cooldown. Time remaining: " << (attackCooldown - attackTimer) << "s\n";
+            //std::cout << "[LOG]: Attack on cooldown. Time remaining: " << (attackCooldown - attackTimer) << "s\n";
         }
     }
     else if (actionName == "Idle") {
-        std::cout << "[LOG]: Action - Idle\n";
+        //std::cout << "[LOG]: Action - Idle\n";
         // Do nothing
         // Retrieve the PhysicsComponent of the enemy
         auto physicsComponent = actor->GetComponent<PhysicsComponent>();
@@ -65,10 +65,10 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
         // Set the acceleration to zero as well
         physicsComponent->SetAccel(Vec3(0.0f, 0.0f, 0.0f));
 
-        std::cout << "[LOG]: Velocity and acceleration reset to zero for Idle action.\n";
+        //std::cout << "[LOG]: Velocity and acceleration reset to zero for Idle action.\n";
     }
     else {
-        std::cerr << "[ERROR]: Unknown action: " << actionName << std::endl;
+        //std::cerr << "[ERROR]: Unknown action: " << actionName << std::endl;
     }
     return this;
 }
