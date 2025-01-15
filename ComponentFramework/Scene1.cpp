@@ -69,7 +69,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
 
-	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 2.5f), mariosQuaternion);
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.5f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
@@ -242,7 +242,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_W:
 		{
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.0f));
 			orientationU= QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)); // Facing upward
 			characterTC->SetTransform(characterTC->GetPosition(), orientationU);
 			break;
@@ -267,7 +267,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_A:
 
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.0f, 0.0f, 0.0f));
 			orientationL = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) *   // Turn left
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationL);
@@ -286,7 +286,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_S:
 
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.0f, 0.0f));
 			orientationD = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn to face backward
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));     
 			characterTC->SetTransform(characterTC->GetPosition(), orientationD);
@@ -304,7 +304,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 		case SDL_SCANCODE_D:
 
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.0f));
 			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
@@ -456,10 +456,11 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	const float gravity = -9.8f; // Gravitational acceleration
-	const float jumpStrength = 5.0f; // Initial jump velocity
+	const float gravity = -9.8f;        // Gravitational acceleration
+	const float jumpStrength = 5.0f;   // Initial jump velocity
+	const float moveSpeed = 3.7f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
-	static bool isGrounded = false; // Whether the character is on the floor
+	
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	auto characterTransform = character->GetComponent<TransformComponent>();
@@ -470,18 +471,19 @@ void Scene1::Update(const float deltaTime) {
 		// Check if the character is on the floor
 		isGrounded = CollisionHandler::CheckCollision(character, gameboard);
 
+		// Handle vertical motion (gravity and jump)
 		if (isGrounded) {
 			// Reset vertical velocity when grounded
 			verticalVelocity = 0.0f;
 
-			// Check for jump input
+			// Jump if space is pressed
 			const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 			if (keystate[SDL_SCANCODE_SPACE]) {
 				verticalVelocity = jumpStrength; // Apply jump velocity
-				isGrounded = false; // Character is no longer on the floor
+				isGrounded = false;              // Character is no longer grounded
 			}
 
-			// Resolve collision to keep character aligned with the floor
+			// Resolve collision to align with the floor
 			CollisionHandler::ResolveCollision(character, gameboard);
 		}
 		else {
@@ -489,8 +491,24 @@ void Scene1::Update(const float deltaTime) {
 			verticalVelocity += gravity * deltaTime;
 		}
 
-		// Update character position
-		pos.z += verticalVelocity * deltaTime;
+		// Handle horizontal motion (WASD input)
+		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
+		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
+		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
+		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
+		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
+
+		// Normalize movement direction and scale by speed and deltaTime
+		if (VMath::mag(horizontalMove) > 0.0f) {
+			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
+		}
+
+		// Combine horizontal and vertical motion
+		pos += horizontalMove;        // Update horizontal position
+		pos.z += verticalVelocity * deltaTime; // Update vertical position
+
+		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
 	}
 

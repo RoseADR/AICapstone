@@ -50,7 +50,7 @@ private:
 
 	bool drawNormals;
 	bool drawOverlay;
-
+	bool isGrounded = false;
 	bool isRunning;
 	ISoundEngine* engine;
 	SDL_Joystick* controller;
@@ -61,7 +61,7 @@ public:
 	bool showTiles = false;
 	explicit Scene1();
 	virtual ~Scene1();
-
+	
 	virtual bool OnCreate();
 	virtual void OnDestroy();
 	virtual void Update(const float deltaTime);
