@@ -12,8 +12,8 @@ bool CollisionHandler::CheckCollision(const std::shared_ptr<Actor>& actor1, cons
     Vec3 pos2 = transform2->GetPosition();
 
     // Define AABB boundaries for the plane (floor)
-    Vec3 floorMin = pos2 - Vec3(5.0f, 5.1f, 1.1f); // Adjust size as needed
-    Vec3 floorMax = pos2 + Vec3(5.0f, 5.1f, 1.1f);
+    Vec3 floorMin = pos2 - Vec3(4.0f, 5.0f, 1.25f); // Adjust size as needed
+    Vec3 floorMax = pos2 + Vec3(4.0f, 4.0f, 1.25f);
 
     // Check if the character is within the floor's boundaries
     if (pos1.x >= floorMin.x && pos1.x <= floorMax.x &&
@@ -34,8 +34,8 @@ void CollisionHandler::ResolveCollision(const std::shared_ptr<Actor>& character,
     Vec3 pos2 = transform2->GetPosition(); // Floor position
 
     // Define AABB boundaries for the floor
-    Vec3 floorMin = pos2 - Vec3(5.0f, 0.1f, 5.0f); // Adjust floor bounds to match the actual plane
-    Vec3 floorMax = pos2 + Vec3(5.0f, 0.1f, 5.0f);
+    Vec3 floorMin = pos2 - Vec3(4.0f, 5.0f, 5.0f); // Adjust floor bounds to match the actual plane
+    Vec3 floorMax = pos2 + Vec3(4.0f, 5.0f, 5.0f);
 
     // Check if character is within the floor's bounds
     if (pos1.x >= floorMin.x && pos1.x <= floorMax.x &&

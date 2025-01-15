@@ -215,13 +215,13 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			camera->UpdateViewMatrix();
 			break;
 
-		case SDL_SCANCODE_SPACE:
+		/*case SDL_SCANCODE_SPACE:
 
 			flip *= -1.0f;
 			start = gameBoardTC->GetQuaternion();
 			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
 			gameBoardTC->SlerpOrientation(start, end, 3.0f);
-			break;
+			break;*/
 
 
 		}
@@ -456,27 +456,41 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	const float gravity = -9.8f; // Strength of gravity (units per second squared)
+	const float gravity = -9.8f; // Gravitational acceleration
+	const float jumpStrength = 5.0f; // Initial jump velocity
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
+	static bool isGrounded = false; // Whether the character is on the floor
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	auto characterTransform = character->GetComponent<TransformComponent>();
 
-	// Apply gravity to the character
 	if (characterTransform) {
 		Vec3 pos = characterTransform->GetPosition();
 
-		// Only apply gravity if the character is not on the floor
-		if (!CollisionHandler::CheckCollision(character, gameboard)) {
-			verticalVelocity += gravity * deltaTime; // Increase downward velocity
-			pos.z += verticalVelocity * deltaTime;  // Update Y position
+		// Check if the character is on the floor
+		isGrounded = CollisionHandler::CheckCollision(character, gameboard);
+
+		if (isGrounded) {
+			// Reset vertical velocity when grounded
+			verticalVelocity = 0.0f;
+
+			// Check for jump input
+			const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+			if (keystate[SDL_SCANCODE_SPACE]) {
+				verticalVelocity = jumpStrength; // Apply jump velocity
+				isGrounded = false; // Character is no longer on the floor
+			}
+
+			// Resolve collision to keep character aligned with the floor
+			CollisionHandler::ResolveCollision(character, gameboard);
 		}
 		else {
-			// Resolve collision and reset vertical velocity
-			CollisionHandler::ResolveCollision(character, gameboard);
-			verticalVelocity = 0.0f; // Reset velocity when on the ground
+			// Apply gravity when not grounded
+			verticalVelocity += gravity * deltaTime;
 		}
 
+		// Update character position
+		pos.z += verticalVelocity * deltaTime;
 		characterTransform->SetPosition(pos);
 	}
 
