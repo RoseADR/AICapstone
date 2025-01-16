@@ -16,10 +16,10 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Sphere", nullptr, "meshes/Sphere.obj");
 	AddComponent<MeshComponent>("Mario", nullptr, "meshes/Mario.obj");
 	AddComponent<MeshComponent>("Cube", nullptr, "meshes/Cube.obj");
-
+	AddComponent<MeshComponent>("Plane", nullptr, "meshes/Plane.obj");
 	
 
-	AddComponent<MeshComponent>("Plane", nullptr,"meshes/Plane8x8.obj");
+	AddComponent<MeshComponent>("CheckerBoard", nullptr,"meshes/Plane8x8.obj");
 
 	AddComponent<MeshComponent>("CheckerPiece", nullptr,"meshes/CheckerPiece.obj");
 	AddComponent<MeshComponent>("Pawn", nullptr,"meshes/Pawn.obj");
@@ -35,6 +35,7 @@ AssetManager::AssetManager() {
 	AddComponent<ShaderComponent>("ShadowDepthShader",nullptr,"shaders/shadowDepthVert.glsl", "shaders/shadowDepthFrag.glsl");
 	AddComponent<ShaderComponent>("DrawNormalsShader",nullptr,"shaders/drawNormalsVert.glsl", "shaders/drawNormalsFrag.glsl","shaders/drawNormalsGeom.glsl");
 	AddComponent<ShaderComponent>("WireFrameShader",nullptr,"shaders/wireFrameVert.glsl", "shaders/wireFrameFrag.glsl","shaders/wireFrameGeom.glsl");
+	AddComponent<ShaderComponent>("Billboard", nullptr, "shaders/BillBoardingVert.glsl", "shaders/BillBoardingFrag.glsl");
 
 	AddComponent<MaterialComponent>("MarioMain",nullptr, "textures/mario_main.png");
 	
@@ -45,7 +46,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("RedCheckerTexture", nullptr,"textures/redCheckerPiece.png");
 	AddComponent<MaterialComponent>("BlackCheckerTexture", nullptr, "textures/blackCheckerPiece.png");
 	AddComponent<MaterialComponent>("WhiteCheckerTexture", nullptr, "textures/whiteCheckerPiece.png");
-
+	AddComponent<MaterialComponent>("WalkSpriteSheet", nullptr, "textures/walk_spritesheet.png");
 
 	OnCreate();
 	ListAllComponents();

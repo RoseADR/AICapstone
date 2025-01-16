@@ -21,7 +21,7 @@ using namespace MATH;
 
 Scene0::Scene0():drawNormals(false),drawOverlay(false){
 
-	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
+	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	
 }
@@ -46,9 +46,9 @@ bool Scene0::OnCreate() {
 	Quaternion orientation = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f));
 	someObject->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientation);
 
-	someObject->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
-	someObject->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	someObject->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
+	someObject->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	someObject->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+	someObject->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 
 	AddActor(someObject);
 
@@ -61,7 +61,7 @@ Scene0::~Scene0() {
 }
 
 void Scene0::OnDestroy() {
-	Debug::Info("Deleting assets Scene1: ", __FILE__, __LINE__);
+	Debug::Info("Deleting assets Scene0: ", __FILE__, __LINE__);
 
 	
 
