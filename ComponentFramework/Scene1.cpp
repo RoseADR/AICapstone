@@ -458,7 +458,7 @@ void Scene1::Update(const float deltaTime) {
 
 	const float gravity = -9.8f;        // Gravitational acceleration
 	const float jumpStrength = 5.0f;   // Initial jump velocity
-	const float moveSpeed = 3.7f;      // Movement speed
+	const float moveSpeed = 3.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 	
 
