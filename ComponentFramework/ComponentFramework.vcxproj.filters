@@ -110,6 +110,9 @@
     <ClCompile Include="imgui_impl_sdl2.cpp">
       <Filter>Source Files\ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="BillBoardedCameraActor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -292,6 +295,9 @@
     <ClInclude Include="MemoryMonitoring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BillBoardedCameraActor.h">
+      <Filter>Header Files\Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -334,6 +340,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shaders\wireFrameVert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\BillBoardingFrag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\BillBoardingVert.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
