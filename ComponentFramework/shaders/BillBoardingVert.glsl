@@ -25,11 +25,19 @@ layout(location = 1) out vec3 lightDir;
 layout(location = 2) out vec3 eyeDir; 
 layout(location = 3) out vec2 texCoord; 
 
+uniform float index;
+uniform bool facingLeft;
+uniform bool MovingTexture;
+
 
 void main() {
     texCoord = uvCoord;
     texCoord.y *= -1.0;
     texCoord.x = (texCoord.x / 8) - 0.375; // shift it by 1
+    // if(ismovabletexture)
+    // texcoord.x * 0.125 + (index * 0.125);
+    // if(facingleft)
+    // texcoord.x = texCoord.x + 0.125 - (texCoord.x - (index * 0.125)) * 2.0;
 
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
     vertNormal = normalize(normalMatrix * vNormal); /// Rotate the normal to the correct orientation 
