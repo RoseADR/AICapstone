@@ -27,16 +27,17 @@ layout(location = 3) out vec2 texCoord;
 
 uniform float index;
 uniform bool facingLeft;
-uniform bool MovingTexture;
+uniform bool facingRight;
+uniform bool movingTexture;
 
 
 void main() {
     texCoord = uvCoord;
     texCoord.y *= -1.0;
     texCoord.x = (texCoord.x / 8) - 0.375; // shift it by 1
-    // if(ismovabletexture)
+    // if(movingTexture)
     // texcoord.x * 0.125 + (index * 0.125);
-    // if(facingleft)
+    // if(facingLeft)
     // texcoord.x = texCoord.x + 0.125 - (texCoord.x - (index * 0.125)) * 2.0;
 
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
