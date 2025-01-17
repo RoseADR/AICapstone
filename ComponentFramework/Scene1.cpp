@@ -51,12 +51,20 @@ bool Scene1::OnCreate() {
 	gameboard = std::make_shared<Actor>(nullptr);
 	orientationBoard = QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(2.0, 2.0, 2.0));
+	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlackChessTexture"));
 	AddActor(gameboard); 
 
+	house = std::make_shared<Actor>(nullptr);
+	orientationHouse = QMath::angleAxisRotation(29.0f, Vec3(1.0f, 0.0f, 0.0f));
+
+	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 4.3f, -16.5f), orientationHouse, Vec3(1.2, 1.2, 1.2));
+	house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
+	house->AddComponent<ShaderComponent>(shader);
+	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlackChessTexture"));
+	AddActor(house);
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 	//std::cout << "GameBoard Position: ("

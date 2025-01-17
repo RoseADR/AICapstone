@@ -17,6 +17,7 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Mario", nullptr, "meshes/Mario.obj");
 	AddComponent<MeshComponent>("Cube", nullptr, "meshes/Cube.obj");
 	AddComponent<MeshComponent>("Plane", nullptr, "meshes/Plane.obj");
+	AddComponent<MeshComponent>("House", nullptr, "meshes/house1.obj");
 	
 
 	AddComponent<MeshComponent>("CheckerBoard", nullptr,"meshes/Plane8x8.obj");
