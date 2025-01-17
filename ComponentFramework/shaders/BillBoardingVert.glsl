@@ -34,11 +34,13 @@ uniform bool movingTexture;
 void main() {
     texCoord = uvCoord;
     texCoord.y *= -1.0;
-    texCoord.x = (texCoord.x / 8) - 0.375; // shift it by 1
-    // if(movingTexture)
-    // texcoord.x * 0.125 + (index * 0.125);
-    // if(facingLeft)
-    // texcoord.x = texCoord.x + 0.125 - (texCoord.x - (index * 0.125)) * 2.0;
+    texCoord.x = (texCoord.x / 8) - 0.00078125; // shift it by 1
+    if(movingTexture){
+     texCoord.x * 0.125 + (index * 0.125);
+     if(facingLeft){
+     texCoord.x = texCoord.x + 0.125 - (texCoord.x - (index * 0.125)) * 2.0;
+     }
+     }
 
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
     vertNormal = normalize(normalMatrix * vNormal); /// Rotate the normal to the correct orientation 
