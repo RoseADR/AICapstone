@@ -46,17 +46,16 @@ bool Scene1::OnCreate() {
 
 	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(3.0f, 5.0f, -5.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
 	light->OnCreate();
-
 	
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	gameboard = std::make_shared<Actor>(nullptr);
 	orientationBoard = QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.0f, 0.0f), orientationBoard);
+	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlackChessTexture"));
-	AddActor(gameboard);
+	AddActor(gameboard); 
 
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
@@ -67,12 +66,26 @@ bool Scene1::OnCreate() {
 
 
 	character = std::make_shared<Actor>(gameboard.get());
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)));
+	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+//
+//// Get the character and camera positions
+//	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+//	locationManager.mariosPos = mariosPos;
+//	Vec3 cameraPos = camera->GetComponent<PhysicsComponent>()->GetPosition();
+//
+//	// Calculate the direction vector to the camera
+//	Vec3 directionToCamera = VMath::normalize(cameraPos - mariosPos);
+//
+//	// Compute the new orientation using QMath::lookAt
+//	Quaternion orientation = QMath::lookAt(directionToCamera);
 
-	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.5f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
-	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+
+
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 0.1f), mariosQuaternion);
+	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
+	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
+	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
 	AddActor(character);
 
 	LoadEnemies();
@@ -215,14 +228,6 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			camera->UpdateViewMatrix();
 			break;
 
-		/*case SDL_SCANCODE_SPACE:
-
-			flip *= -1.0f;
-			start = gameBoardTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			gameBoardTC->SlerpOrientation(start, end, 3.0f);
-			break;*/
-
 
 		}
 
@@ -240,13 +245,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			//camera->UpdateViewMatrix();
 			break;
 
-		case SDL_SCANCODE_W:
-		{
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.0f));
-			orientationU= QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)); // Facing upward
-			characterTC->SetTransform(characterTC->GetPosition(), orientationU);
-			break;
-		}
+
 
 		case SDL_SCANCODE_B: { // Check if 'G' key is pressed
 			showTiles = !showTiles; // Toggle the visibility flag
@@ -263,61 +262,41 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 
 			break;
-
+			
+		case SDL_SCANCODE_W:
+		{
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+			orientationU = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)); // Facing upward
+			characterTC->SetTransform(characterTC->GetPosition(), orientationU);
+			break;
+		}
 
 		case SDL_SCANCODE_A:
 
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.0f, 0.0f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
 			orientationL = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) *   // Turn left
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationL);
-			/*flip *= -1.0f;
-			start = characterTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			characterTC->SlerpOrientation(start, end, 2.0f);
-			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
-			//characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f);
-
-			/*direction = Vec3(-1.0f, 0.0f, 0.0f);
-			rotatedDirection = characterTC->GetQuaternion() * direction;
-			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+		
 			break;
 
 
 		case SDL_SCANCODE_S:
 
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.0f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
 			orientationD = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn to face backward
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));     
 			characterTC->SetTransform(characterTC->GetPosition(), orientationD);
-			/*flip *= -1.0f
-			start = characterTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			characterTC->SlerpOrientation(start, end, 2.0f);
-			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
-			//	characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f);
-			/*direction = Vec3(0.0f, -1.0f, 0.0f);
-			rotatedDirection = characterTC->GetQuaternion() * direction;
-			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
 			break;
 
 
 		case SDL_SCANCODE_D:
 
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.0f));
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
 			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
-			/*flip *= -1.0f;
-			start = characterTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			characterTC->SlerpOrientation(start, end, 2.0f);
-			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
-			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
-
-		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
-			rotatedDirection = characterTC->GetQuaternion() * direction;
-			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+			
 			break;
 
 		case SDL_SCANCODE_R:
@@ -326,16 +305,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
-			/*flip *= -1.0f;
-			start = characterTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			characterTC->SlerpOrientation(start, end, 2.0f);
-			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
-			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
-
-		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
-			rotatedDirection = characterTC->GetQuaternion() * direction;
-			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+			
 			break;
 
 		case SDL_SCANCODE_T:
@@ -344,16 +314,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
 				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
 			characterTC->SetTransform(characterTC->GetPosition(), orientationR);
-			/*flip *= -1.0f;
-			start = characterTC->GetQuaternion();
-			end = QMath::angleAxisRotation(180.0f * flip, Vec3(0.0f, 0.0f, 1.0f)) * start;
-			characterTC->SlerpOrientation(start, end, 2.0f);
-			characterTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion());*/
-			//characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f);
-
-		/*	direction = Vec3(1.0f, 0.0f, 0.0f);
-			rotatedDirection = characterTC->GetQuaternion() * direction;
-			characterTC->SetTransform(characterTC->GetPosition() + rotatedDirection * 0.1f, characterTC->GetQuaternion());*/
+			
 			break;
 
 
@@ -456,6 +417,7 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+
 	const float gravity = -9.8f;        // Gravitational acceleration
 	const float jumpStrength = 5.0f;   // Initial jump velocity
 	const float moveSpeed = 3.0f;      // Movement speed
@@ -538,11 +500,6 @@ void Scene1::Update(const float deltaTime) {
 			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
 		}
 	}
-
-	/*Vec3 axis(xAxis, yAxis, 0.0f);
-	if (VMath::mag(axis) > 1) {
-		characterTC->SetPosition(characterTC->GetPosition() + VMath::normalize(axis) * 0.1);
-	}*/
 	
 }
 
@@ -648,6 +605,30 @@ void Scene1::LoadEnemies() {
 	AddActor(enemies[0]);
 	AddActor(enemies[1]);
 }
+//
+//void Scene1::OrientCharacterToCamera()
+//{
+//	// Get positions
+//	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+//	locationManager.mariosPos = mariosPos;
+//	Vec3 cameraPos = camera->GetComponent<TransformComponent>()->GetPosition();
+//	
+//	// Calculate direction vector
+//	Vec3 direction = cameraPos - mariosPos;
+//
+//	// Normalize the direction
+//	direction = VMath::normalize(direction);
+//
+//	// Define the up vector (typically the world's up)
+//	Vec3 up(0.0f, 1.0f, 0.0f);
+//
+//	// Compute the orientation quaternion to look at the camera
+//	Quaternion orientation = QMath::lookAt(direction, up);
+//
+//	// Apply the orientation to the character
+//	character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
+//}
+//
 
 // Creates an 8x8 grid of tiles and initializes nodes
 void Scene1::createTiles() {

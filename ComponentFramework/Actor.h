@@ -25,6 +25,9 @@ public:
 	//ADDED FOR DECISION TREE MAY NEED TO PUT SOMEWHERE ELSE
 	int health = 100;
 
+	// added for follwing character movements on screen
+	void OrientCharacterToCamera();
+
 	template<typename ComponentTemplate>
 	void AddComponent(Ref<ComponentTemplate> component_) {
 		if (GetComponent<ComponentTemplate>().get() != nullptr) {

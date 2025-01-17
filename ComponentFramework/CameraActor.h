@@ -32,5 +32,8 @@ public:
 	void UpdateViewMatrix();
 	void UpdateRayCastMatrix();
 	GLuint GetMatriciesID() const { return uboMatriciesID; }
+
+
+	void OrientCharacterToCamera();
 };
 

@@ -46,6 +46,7 @@ public:
 		scale = scale_;
 	}
 	void SetPosition(const Vec3& pos_) { pos = pos_; }
+	void SetScale(const Vec3& scale_) { scale = scale_; }
 
 
 };

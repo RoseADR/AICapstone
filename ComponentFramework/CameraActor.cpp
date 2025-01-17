@@ -65,6 +65,8 @@ void CameraActor::UpdateRayCastMatrix() {
 	rayCastMatrix = MMath::inverse(MMath::viewportNDC(viewport[2], viewport[3]) * projectionMatrix * viewMatrix);
 }
 
+
+
 CameraActor::~CameraActor() {
 	OnDestroy();
 }
