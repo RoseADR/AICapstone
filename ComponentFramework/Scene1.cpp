@@ -37,9 +37,9 @@ bool Scene1::OnCreate() {
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
-	
+	orientationCam = QMath::angleAxisRotation(-15.0f, Vec3(1.0f, 0.0f, 0.0f));
 	camera = std::make_shared<CameraActor>(nullptr);
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -13.0f), Quaternion());
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -13.0f), orientationCam);
 	camera->OnCreate();
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
 	camera->GetViewMatrix().print("ViewMatrix");
@@ -49,7 +49,7 @@ bool Scene1::OnCreate() {
 	
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	gameboard = std::make_shared<Actor>(nullptr);
-	orientationBoard = QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
@@ -58,12 +58,13 @@ bool Scene1::OnCreate() {
 	AddActor(gameboard); 
 
 	house = std::make_shared<Actor>(nullptr);
-	orientationHouse = QMath::angleAxisRotation(29.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 4.3f, -16.5f), orientationHouse, Vec3(1.2, 1.2, 1.2));
+	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -17.0f), orientationHouse, Vec3(1.2, 1.2, 1.2));
 	house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
 	house->AddComponent<ShaderComponent>(shader);
-	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlackChessTexture"));
+	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
+	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
 	AddActor(house);
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
@@ -89,7 +90,7 @@ bool Scene1::OnCreate() {
 
 
 
-	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 0.1f), mariosQuaternion);
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
 	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
@@ -425,6 +426,22 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+
+	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
+	Vec3 playerPos = playerTransform->GetPosition();
+
+	// Get the camera's transform
+	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();
+	Vec3 cameraPos = cameraTransform->GetPosition();
+
+	// Invert the X-axis movement
+	cameraPos.x = -playerPos.x; // Invert player's X position for the camera
+
+	// Apply the new position to the camera (Y and Z remain constant)
+	cameraTransform->SetTransform(cameraPos, cameraTransform->GetQuaternion());
+
+	// Update the camera's view matrix
+	camera->UpdateViewMatrix();
 
 	const float gravity = -9.8f;        // Gravitational acceleration
 	const float jumpStrength = 5.0f;   // Initial jump velocity

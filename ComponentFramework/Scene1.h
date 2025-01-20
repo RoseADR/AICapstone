@@ -36,6 +36,7 @@ private:
 	LocationManager locationManager;
 	
 	Quaternion orientationBoard;
+	Quaternion orientationCam;
 	Quaternion orientationHouse;//needed for the orientation of the tiles to match the board (evetually ground)
 	//FOR PATHFINDING
 	class Graph* graph;

@@ -48,7 +48,10 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("BlackCheckerTexture", nullptr, "textures/blackCheckerPiece.png");
 	AddComponent<MaterialComponent>("WhiteCheckerTexture", nullptr, "textures/whiteCheckerPiece.png");
 	AddComponent<MaterialComponent>("WalkSpriteSheet", nullptr, "textures/walk_spritesheet.png");
-
+	AddComponent<MaterialComponent>("houseText", nullptr, "textures/BAKE_dach_SPC.jpg");
+	AddComponent<MaterialComponent>("houseTextNor", nullptr, "textures/BAKE_dach_NOR.jpg");
+	AddComponent<MaterialComponent>("houseText2", nullptr, "textures/BAKE_st_beton_SPC.jpg");
+	
 	OnCreate();
 	ListAllComponents();
 }
