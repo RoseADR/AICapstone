@@ -41,7 +41,7 @@ void CameraActor::UpdateViewMatrix() {
 		Matrix4 trans = MMath::translate(position);
 		Matrix4 orient = MMath::toMatrix4(orientation);
 		viewMatrix =  orient * trans;
-		viewMatrix.print("ViewMatrix");
+		//viewMatrix.print("ViewMatrix");
 	}
 	UpdateRayCastMatrix();
 	size_t offset = sizeof(Matrix4);

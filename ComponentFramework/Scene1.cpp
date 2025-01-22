@@ -428,7 +428,7 @@ void Scene1::Update(const float deltaTime) {
 
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
-	Vec3 playerPos = playerTransform->GetPosition();
+	Vec3 playerPos = playerTransform->GetPosition(); 
 
 	// Get the camera's transform
 	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();
