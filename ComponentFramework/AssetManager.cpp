@@ -51,6 +51,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("houseText", nullptr, "textures/BAKE_dach_SPC.jpg");
 	AddComponent<MaterialComponent>("houseTextNor", nullptr, "textures/BAKE_dach_NOR.jpg");
 	AddComponent<MaterialComponent>("houseText2", nullptr, "textures/BAKE_st_beton_SPC.jpg");
+	AddComponent<MaterialComponent>("road", nullptr, "textures/road.png");
 	
 	OnCreate();
 	ListAllComponents();
