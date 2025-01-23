@@ -31,13 +31,15 @@ private:
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
 	Ref<Actor> house;
+	Ref<Actor> bill;
 	Ref<Actor> character;
 	Ref<Actor> enemies;
 	LocationManager locationManager;
 	
 	Quaternion orientationBoard;
 	Quaternion orientationCam;
-	Quaternion orientationHouse;//needed for the orientation of the tiles to match the board (evetually ground)
+	Quaternion orientationHouse;
+	Quaternion orientationBill;//needed for the orientation of the tiles to match the board (evetually ground)
 	//FOR PATHFINDING
 	class Graph* graph;
 	std::vector<Node*> sceneNodes;

@@ -66,6 +66,17 @@ bool Scene1::OnCreate() {
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
 	AddActor(house);
+
+	bill = std::make_shared<Actor>(nullptr);
+	
+	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
+
+	// Apply the updated orientation to the billboard
+	bill->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 5.1f, -17.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
+	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
+	bill->AddComponent<ShaderComponent>(shader);
+	bill->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("billAds"));
+	AddActor(bill);
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 	//std::cout << "GameBoard Position: ("
