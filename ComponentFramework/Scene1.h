@@ -83,6 +83,9 @@ public:
 	void LoadEnemies();
 
 	void OrientCharacterToCamera();
+	float currentTime;
+	int index = 0;
+	float frameSpeed = 0.1f;
 };
 
 

@@ -103,9 +103,9 @@ bool Scene1::OnCreate() {
 
 	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
 	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
-	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
-	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
+	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	AddActor(character);
 
 	LoadEnemies();
@@ -537,6 +537,8 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 	
+	currentTime += deltaTime;
+	index = static_cast <int> (currentTime / frameSpeed) % 8;
 }
 
 
@@ -556,7 +558,9 @@ void Scene1::Render() const {
 		glUseProgram(actor->GetComponent<ShaderComponent>()->GetProgram());
 		glUniformMatrix4fv(actor->GetComponent<ShaderComponent>()->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
 		glBindTexture(GL_TEXTURE_2D, actor->GetComponent<MaterialComponent>()->getTextureID());
+		glUniform1f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index);
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
