@@ -20,6 +20,7 @@
 
 #include <chrono>
 #include <thread>
+#include "CollisionComponent.h"
 
 // test test delete me 
 using namespace MATH;
@@ -60,11 +61,17 @@ bool Scene1::OnCreate() {
 	house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
-	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -17.0f), orientationHouse, Vec3(1.2, 1.2, 1.2));
+	// Add the transform and other components
+	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -17.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
 	house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
 	house->AddComponent<ShaderComponent>(shader);
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
+
+	// Add the CollisionComponent
+	house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(10.0f, 10.0f, 10.0f), 10.0f, Vec3(10.0f, 10.0f, 10.0f));
+
+	// Add the house actor to the scene
 	AddActor(house);
 
 	bill = std::make_shared<Actor>(nullptr);
@@ -103,7 +110,7 @@ bool Scene1::OnCreate() {
 
 	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
 	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	AddActor(character);
@@ -437,6 +444,8 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+	auto houseCollider = house->GetComponent<CollisionComponent>();
+	auto characterCollider = character->GetComponent<CollisionComponent>();
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
 	Vec3 playerPos = playerTransform->GetPosition(); 
