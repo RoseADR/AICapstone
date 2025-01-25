@@ -40,15 +40,14 @@ void CollisionComponent::Render() const {
 }
 
 bool CollisionComponent::CheckCollision(const CollisionComponent& other) const {
-    if (shape == ColliderShape::Sphere && other.GetShape() == ColliderShape::Sphere) {
-        // Sphere-sphere collision
-        Vec3 centerA = transform->GetPosition() + offset;
-        Vec3 centerB = other.transform->GetPosition() + other.GetOffset();
-        float combinedRadius = radius + other.GetRadius();
-        return VMath::mag(centerA - centerB) <= combinedRadius;
-        printf("fjff");
-    }
-    // Add other collision logic (e.g., AABB vs AABB, Sphere vs AABB)
-    return false; // Default: no collision
+    Vec3 thisMin = transform->GetPosition() - size * 0.5f; // Min corner
+    Vec3 thisMax = transform->GetPosition() + size * 0.5f; // Max corner
+
+    Vec3 otherMin = other.transform->GetPosition() - other.size * 0.5f;
+    Vec3 otherMax = other.transform->GetPosition() + other.size * 0.5f;
+
+    return (thisMin.x <= otherMax.x && thisMax.x >= otherMin.x) &&
+        (thisMin.y <= otherMax.y && thisMax.y >= otherMin.y) &&
+        (thisMin.z <= otherMax.z && thisMax.z >= otherMin.z);
 }
 

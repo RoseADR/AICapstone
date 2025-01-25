@@ -62,14 +62,15 @@ bool Scene1::OnCreate() {
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	// Add the transform and other components
-	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -17.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
+	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -12.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
 	house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
 	house->AddComponent<ShaderComponent>(shader);
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
 
 	// Add the CollisionComponent
-	house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(10.0f, 10.0f, 10.0f), 10.0f, Vec3(10.0f, 10.0f, 10.0f));
+	//house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(20.0f, 20.0f, 20.0f), 20.0f, Vec3(20.0f, 20.0f, 0.0f));
+
 
 	// Add the house actor to the scene
 	AddActor(house);
@@ -113,9 +114,14 @@ bool Scene1::OnCreate() {
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+	//character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(2.0f, 2.0f, 2.0f), 1.0f, Vec3(0.0f, 0.0f, 0.0f));
+
 	AddActor(character);
 
 	LoadEnemies();
+
+	house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(20.0f, 20.0f, 20.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
+	character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(2.0f, 2.0f, 2.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
 
 	//PATHFINDING REALTED 
 	
@@ -444,8 +450,22 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+	
+
 	auto houseCollider = house->GetComponent<CollisionComponent>();
 	auto characterCollider = character->GetComponent<CollisionComponent>();
+
+	if (houseCollider && characterCollider) {
+		if (houseCollider->CheckCollision(*characterCollider)) {
+			std::cout << "touch" << std::endl;
+		}
+		else {
+			std::cout << "No collision detected" << std::endl;
+		}
+	}
+	else {
+		std::cout << "Missing collision component!" << std::endl;
+	}
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
 	Vec3 playerPos = playerTransform->GetPosition(); 
