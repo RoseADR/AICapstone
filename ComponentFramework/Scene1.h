@@ -30,6 +30,7 @@ private:
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
+	Ref<Actor> bg;
 	Ref<Actor> house;
 	Ref<Actor> bill;
 	Ref<Actor> character;
@@ -37,6 +38,7 @@ private:
 	LocationManager locationManager;
 	
 	Quaternion orientationBoard;
+	Quaternion orientationBg;
 	Quaternion orientationCam;
 	Quaternion orientationHouse;
 	Quaternion orientationBill;//needed for the orientation of the tiles to match the board (evetually ground)

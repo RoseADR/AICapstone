@@ -48,10 +48,23 @@ bool Scene1::OnCreate() {
 	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(3.0f, 5.0f, -5.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
 	light->OnCreate();
 	
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
-	gameboard = std::make_shared<Actor>(nullptr);
-	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 
+
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
+	
+	bg = std::make_shared<Actor>(nullptr);
+	
+	orientationBg = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+	// Add the transform and other components
+	bg->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 50.0f, -70.0f), orientationBoard, Vec3(14.5f, 14.5f, 10.0f));
+	bg->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	bg->AddComponent<ShaderComponent>(shader);
+	bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	AddActor(bg);
+
+	gameboard = std::make_shared<Actor>(nullptr);
+	
+	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
