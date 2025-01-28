@@ -113,6 +113,12 @@
     <ClCompile Include="BillBoardedCameraActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="ScottCollisionSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ScottCollisionComponent.cpp">
+      <Filter>Source Files\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -297,6 +303,12 @@
     </ClInclude>
     <ClInclude Include="BillBoardedCameraActor.h">
       <Filter>Header Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="ScottCollisionComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ScottCollisionSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
