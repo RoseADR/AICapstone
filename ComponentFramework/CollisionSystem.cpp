@@ -1,49 +1,42 @@
 #include "CollisionSystem.h"
 #include "TransformComponent.h"
 #include <iostream>
+#include "CollisionComponent.h"
 
 bool CollisionHandler::CheckCollision(const std::shared_ptr<Actor>& actor1, const std::shared_ptr<Actor>& actor2) {
-    auto transform1 = actor1->GetComponent<TransformComponent>();
-    auto transform2 = actor2->GetComponent<TransformComponent>();
+    auto collider1 = actor1->GetComponent<CollisionComponent>();
+    auto collider2 = actor2->GetComponent<CollisionComponent>();
 
-    if (!transform1 || !transform2) return false;
+    if (!collider1 || !collider2) return false;
 
-    Vec3 pos1 = transform1->GetPosition();
-    Vec3 pos2 = transform2->GetPosition();
+    Vec3 min1 = collider1->GetMinBounds();
+    Vec3 max1 = collider1->GetMaxBounds();
+    Vec3 min2 = collider2->GetMinBounds();
+    Vec3 max2 = collider2->GetMaxBounds();
 
-    // Define AABB boundaries for the plane (floor)
-    Vec3 floorMin = pos2 - Vec3(5.0f, 5.0f, 0.25f); // Adjust size as needed
-    Vec3 floorMax = pos2 + Vec3(5.0f, 3.0f, 11.25f);
-
-    // Check if the character is within the floor's boundaries
-    if (pos1.x >= floorMin.x && pos1.x <= floorMax.x &&
-        pos1.y >= floorMin.y && pos1.y <= floorMax.y &&
-        pos1.z >= floorMin.z && pos1.z <= floorMax.z) {
-        return true;
-    }
-
-    return false;
+    // AABB overlap check
+    return (min1.x <= max2.x && max1.x >= min2.x) &&
+        (min1.y <= max2.y && max1.y >= min2.y) &&
+        (min1.z <= max2.z && max1.z >= min2.z);
 }
-void CollisionHandler::ResolveCollision(const std::shared_ptr<Actor>& character, const std::shared_ptr<Actor>& floor) {
-    auto transform1 = character->GetComponent<TransformComponent>();
-    auto transform2 = floor->GetComponent<TransformComponent>();
 
-    if (!transform1 || !transform2) return;
+void CollisionHandler::ResolveCollision(const std::shared_ptr<Actor>& actor1, const std::shared_ptr<Actor>& actor2) {
+    // Get collision components
+    auto collider1 = actor1->GetComponent<CollisionComponent>();
+    auto collider2 = actor2->GetComponent<CollisionComponent>();
 
-    Vec3 pos1 = transform1->GetPosition(); // Character position
-    Vec3 pos2 = transform2->GetPosition(); // Floor position
+    if (!collider1 || !collider2) return;
 
-    // Define AABB boundaries for the floor
-    Vec3 floorMin = pos2 - Vec3(4.0f, 5.0f, 0.0f); // Adjust floor bounds to match the actual plane
-    Vec3 floorMax = pos2 + Vec3(4.0f, 5.0f, 0.0f);
+    Vec3 min1 = collider1->GetMinBounds();
+    Vec3 max1 = collider1->GetMaxBounds();
 
-    // Check if character is within the floor's bounds
-    if (pos1.x >= floorMin.x && pos1.x <= floorMax.x &&
-        pos1.z >= floorMin.z && pos1.z <= floorMax.z) {
-        // Align the character's Y position to the floor's surface
-        pos1.y = floorMax.y; // Set Y to the top surface of the plane
-        transform1->SetPosition(pos1);
-    }
+    Vec3 min2 = collider2->GetMinBounds();
+    Vec3 max2 = collider2->GetMaxBounds();
+
+    // Only adjust actor1 (character) to sit above actor2 (road)
+   
 }
+
+
 
 

@@ -1,6 +1,7 @@
 #include "CollisionComponent.h"
 #include "VMath.h"
 #include <iostream>
+#include <glew.h>
 
 CollisionComponent::CollisionComponent(Actor* parent_, ColliderShape shape_, const Vec3& size_, float radius_, const Vec3& offset_)
     : Component(parent_), shape(shape_), size(size_), radius(radius_), offset(offset_) {
@@ -9,6 +10,23 @@ CollisionComponent::CollisionComponent(Actor* parent_, ColliderShape shape_, con
         std::cerr << "[ERROR] CollisionComponent: TransformComponent not found in parent!" << std::endl;
     }
 }
+
+Vec3 CollisionComponent::GetMinBounds() const {
+    Vec3 position = transform->GetPosition() + offset;
+    Vec3 minBounds = position - size * 0.5f;
+
+    std::cout << "Min Bounds: " << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << std::endl;
+    return minBounds;
+}
+
+Vec3 CollisionComponent::GetMaxBounds() const {
+    Vec3 position = transform->GetPosition() + offset;
+    Vec3 maxBounds = position + size * 0.5f;
+
+    std::cout << "Max Bounds: " << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << std::endl;
+    return maxBounds;
+}
+
 
 CollisionComponent::~CollisionComponent() {
     OnDestroy();
@@ -34,10 +52,26 @@ void CollisionComponent::Update(const float deltaTime_) {
 }
 
 void CollisionComponent::Render() const {
-    // This might not need to render anything for a collider
-    // Add debug visualization here, if desired
-    std::cout << "Rendering collision bounds (debug view)" << std::endl;
+    if (!transform) return;
+
+    Vec3 minBounds = GetMinBounds();
+    Vec3 maxBounds = GetMaxBounds();
+
+    glDisable(GL_TEXTURE_2D);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glColor3f(1.0f, 0.0f, 0.0f); // Red for debugging
+
+    glBegin(GL_LINES);
+    // Draw box edges using minBounds and maxBounds
+    glVertex3f(minBounds.x, minBounds.y, minBounds.z);
+    glVertex3f(maxBounds.x, minBounds.y, minBounds.z);
+    // (Repeat for all 12 edges of the box...)
+    glEnd();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
+
+
 
 bool CollisionComponent::CheckCollision(const CollisionComponent& other) const {
     Vec3 thisMin = transform->GetPosition() - size * 0.5f; // Min corner

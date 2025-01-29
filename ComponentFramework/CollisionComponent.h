@@ -18,6 +18,10 @@ private:
     TransformComponent* transform; // Reference to the parent transform
 
 public:
+
+    Vec3 GetMinBounds() const;
+    Vec3 GetMaxBounds() const;
+
     CollisionComponent(Actor* parent_, ColliderShape shape_, const Vec3& size_ = Vec3(10.0f, 10.0f, 1.0f), float radius_ = 0.5f, const Vec3& offset_ = Vec3(0.0f, 0.0f, 0.0f));
     ~CollisionComponent();
 

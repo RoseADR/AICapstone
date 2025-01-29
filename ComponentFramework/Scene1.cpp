@@ -69,8 +69,19 @@ bool Scene1::OnCreate() {
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	AddActor(gameboard); 
+	gameboard->AddComponent<CollisionComponent>(
+		gameboard.get(),
+		ColliderShape::AABB,
+		Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
+		0.0f,
+		Vec3(0.0f, 0.0f, 0.0f) // Offset
+	);
+	AddActor(gameboard);
 
+	
+
+	//hhhhhhhhhhhhyrh
+	
 	house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
@@ -127,14 +138,13 @@ bool Scene1::OnCreate() {
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-	//character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(2.0f, 2.0f, 2.0f), 1.0f, Vec3(0.0f, 0.0f, 0.0f));
+	character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(1.0f, 1.0f, 2.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f));
 
 	AddActor(character);
 
 	LoadEnemies();
 
-	house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(20.0f, 20.0f, 20.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
-	character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(2.0f, 2.0f, 2.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
+	
 
 	//PATHFINDING REALTED 
 	
@@ -465,20 +475,13 @@ void Scene1::Update(const float deltaTime) {
 
 	
 
-	auto houseCollider = house->GetComponent<CollisionComponent>();
-	auto characterCollider = character->GetComponent<CollisionComponent>();
-
-	if (houseCollider && characterCollider) {
-		if (houseCollider->CheckCollision(*characterCollider)) {
-			std::cout << "touch" << std::endl;
-		}
-		else {
-			std::cout << "No collision detected" << std::endl;
-		}
-	}
-	else {
-		std::cout << "Missing collision component!" << std::endl;
-	}
+	for (size_t i = 0; i < actors.size(); ++i) {
+        for (size_t j = i + 1; j < actors.size(); ++j) {
+            if (CollisionHandler::CheckCollision(actors[i], actors[j])) {
+                CollisionHandler::ResolveCollision(actors[i], actors[j]);
+            }
+        }
+    }
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
 	Vec3 playerPos = playerTransform->GetPosition(); 
@@ -607,6 +610,12 @@ void Scene1::Render() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
+	for (auto actor : actors) {
+		auto collider = actor->GetComponent<CollisionComponent>();
+		if (collider) {
+			collider->Render(); // Render collision boxes
+		}
+	}
 	//glPushMatrix();
 	
 	if (showTiles) { // Only render tiles if showTiles is true
