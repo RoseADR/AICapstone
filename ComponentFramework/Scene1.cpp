@@ -47,7 +47,6 @@ bool Scene1::OnCreate() {
 
 	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(3.0f, 5.0f, -5.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
 	light->OnCreate();
-	
 
 
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
@@ -74,8 +73,8 @@ bool Scene1::OnCreate() {
 		ColliderShape::AABB,
 		Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
 		0.0f,
-		Vec3(0.0f, 0.0f, 0.0f) // Offset
-	);
+		Vec3(0.0f, 0.0f, 0.0f)); // Offset
+	
 	AddActor(gameboard);
 	
 	house = std::make_shared<Actor>(nullptr);
@@ -87,6 +86,9 @@ bool Scene1::OnCreate() {
 	house->AddComponent<ShaderComponent>(shader);
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
+	house->AddComponent<CollisionComponent>(house.get(),
+		ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
+		0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
 	AddActor(house);
 
 	bill = std::make_shared<Actor>(nullptr);
@@ -124,9 +126,7 @@ bool Scene1::OnCreate() {
 	TestCube->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	TestCube->AddComponent<CollisionComponent>(
 		TestCube.get(), ColliderShape::AABB,
-		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f)
-	);
-
+		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f));
 
 	AddActor(TestCube);
 
@@ -138,8 +138,9 @@ bool Scene1::OnCreate() {
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-	character->AddComponent<CollisionComponent>(character.get(), ColliderShape::AABB, Vec3(1.0f, 1.0f, 2.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f));
-
+	character->AddComponent<CollisionComponent>(character.get(), 
+		ColliderShape::AABB, Vec3(1.0f, 1.0f, 2.0f), 
+		0.0f, Vec3(0.0f, 0.0f, 1.0f));
 	AddActor(character);
 
 	LoadEnemies();
@@ -611,17 +612,36 @@ void Scene1::Render() const {
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
+
+	// ** Render Collision Boxes **
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set wireframe mode
+	glDisable(GL_TEXTURE_2D); // Disable textures to draw wireframes clearly
+	glColor3f(1.0f, 0.0f, 0.0f); // Red color for collision boxes
 
 	for (auto actor : actors) {
 		auto collider = actor->GetComponent<CollisionComponent>();
 		if (collider) {
-			collider->Render(); // Render collision boxes
+			collider->Render(); // Draw the bounding box
 		}
 	}
-	//glPushMatrix();
-	
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Reset polygon mode to fill
+	glEnable(GL_TEXTURE_2D); // Re-enable textures
+	glUseProgram(0); // Unbind any shaders
+
+
+
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//glUseProgram(0);
+
+	//for (auto actor : actors) {
+	//	auto collider = actor->GetComponent<CollisionComponent>();
+	//	if (collider) {
+	//		collider->Render(); // Render collision boxes
+	//	}
+	//}
+	////glPushMatrix();
+
 	if (showTiles) { // Only render tiles if showTiles is true
 		for (const auto& row : tiles) {
 			for (Tile* tile : row) {

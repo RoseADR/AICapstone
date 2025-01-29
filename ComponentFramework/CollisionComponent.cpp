@@ -58,14 +58,49 @@ void CollisionComponent::Render() const {
     Vec3 maxBounds = GetMaxBounds();
 
     glDisable(GL_TEXTURE_2D);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor3f(1.0f, 0.0f, 0.0f); // Red for debugging
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Render in wireframe mode
+    glColor3f(1.0f, 0.0f, 0.0f); // Red color for debugging
 
     glBegin(GL_LINES);
-    // Draw box edges using minBounds and maxBounds
+    // Draw box edges
+    // Bottom square
     glVertex3f(minBounds.x, minBounds.y, minBounds.z);
     glVertex3f(maxBounds.x, minBounds.y, minBounds.z);
-    // (Repeat for all 12 edges of the box...)
+
+    glVertex3f(maxBounds.x, minBounds.y, minBounds.z);
+    glVertex3f(maxBounds.x, minBounds.y, maxBounds.z);
+
+    glVertex3f(maxBounds.x, minBounds.y, maxBounds.z);
+    glVertex3f(minBounds.x, minBounds.y, maxBounds.z);
+
+    glVertex3f(minBounds.x, minBounds.y, maxBounds.z);
+    glVertex3f(minBounds.x, minBounds.y, minBounds.z);
+
+    // Top square
+    glVertex3f(minBounds.x, maxBounds.y, minBounds.z);
+    glVertex3f(maxBounds.x, maxBounds.y, minBounds.z);
+
+    glVertex3f(maxBounds.x, maxBounds.y, minBounds.z);
+    glVertex3f(maxBounds.x, maxBounds.y, maxBounds.z);
+
+    glVertex3f(maxBounds.x, maxBounds.y, maxBounds.z);
+    glVertex3f(minBounds.x, maxBounds.y, maxBounds.z);
+
+    glVertex3f(minBounds.x, maxBounds.y, maxBounds.z);
+    glVertex3f(minBounds.x, maxBounds.y, minBounds.z);
+
+    // Vertical edges
+    glVertex3f(minBounds.x, minBounds.y, minBounds.z);
+    glVertex3f(minBounds.x, maxBounds.y, minBounds.z);
+
+    glVertex3f(maxBounds.x, minBounds.y, minBounds.z);
+    glVertex3f(maxBounds.x, maxBounds.y, minBounds.z);
+
+    glVertex3f(maxBounds.x, minBounds.y, maxBounds.z);
+    glVertex3f(maxBounds.x, maxBounds.y, maxBounds.z);
+
+    glVertex3f(minBounds.x, minBounds.y, maxBounds.z);
+    glVertex3f(minBounds.x, maxBounds.y, maxBounds.z);
     glEnd();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
