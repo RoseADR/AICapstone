@@ -22,7 +22,7 @@ public:
     Vec3 GetMinBounds() const;
     Vec3 GetMaxBounds() const;
 
-    CollisionComponent(Actor* parent_, ColliderShape shape_, const Vec3& size_ = Vec3(10.0f, 10.0f, 1.0f), float radius_ = 0.5f, const Vec3& offset_ = Vec3(0.0f, 0.0f, 0.0f));
+    CollisionComponent(Actor* parent_, ColliderShape shape_, const Vec3& size_ = Vec3(1.0f, 1.0f, 1.0f), float radius_ = 0.0f, const Vec3& offset_ = Vec3(0.0f, 0.0f, 0.0f));
     ~CollisionComponent();
 
     // Implementing Component's pure virtual methods
@@ -36,6 +36,7 @@ public:
     Vec3 GetSize() const { return size; }
     float GetRadius() const { return radius; }
     Vec3 GetOffset() const { return offset; }
+  
 
     // Utility methods
     bool CheckCollision(const CollisionComponent& other) const;

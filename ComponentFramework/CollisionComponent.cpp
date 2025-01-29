@@ -13,19 +13,29 @@ CollisionComponent::CollisionComponent(Actor* parent_, ColliderShape shape_, con
 
 Vec3 CollisionComponent::GetMinBounds() const {
     Vec3 position = transform->GetPosition() + offset;
-    Vec3 minBounds = position - size * 0.5f;
-
-    //std::cout << "Min Bounds: " << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << std::endl;
-    return minBounds;
+    return position - size * 0.5f;
 }
 
 Vec3 CollisionComponent::GetMaxBounds() const {
     Vec3 position = transform->GetPosition() + offset;
-    Vec3 maxBounds = position + size * 0.5f;
-
-    //std::cout << "Max Bounds: " << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << std::endl;
-    return maxBounds;
+    return position + size * 0.5f;
 }
+//
+//Vec3 CollisionComponent::GetMinBounds() const {
+//    Vec3 position = transform->GetPosition() + offset;
+//    Vec3 minBounds = position - size * 0.5f;
+//
+//    //std::cout << "Min Bounds: " << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << std::endl;
+//    return minBounds;
+//}
+//
+//Vec3 CollisionComponent::GetMaxBounds() const {
+//    Vec3 position = transform->GetPosition() + offset;
+//    Vec3 maxBounds = position + size * 0.5f;
+//
+//    //std::cout << "Max Bounds: " << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << std::endl;
+//    return maxBounds;
+//}
 
 
 CollisionComponent::~CollisionComponent() {
@@ -45,10 +55,18 @@ void CollisionComponent::OnDestroy() {
 }
 
 void CollisionComponent::Update(const float deltaTime_) {
-    // Example: Update the position of the collider based on the parent's transform
-    if (transform) {
-        // Sync collider's position or bounds
-    }
+    if (!transform) return;
+
+    Vec3 position = transform->GetPosition();
+    Vec3 minBounds = GetMinBounds();
+    Vec3 maxBounds = GetMaxBounds();
+
+    std::cout << "[CollisionComponent] Actor Position: ("
+        << position.x << ", " << position.y << ", " << position.z << ")\n";
+    std::cout << "[CollisionComponent] Collision Box Min: ("
+        << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
+    std::cout << "[CollisionComponent] Collision Box Max: ("
+        << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
 }
 
 void CollisionComponent::Render() const {

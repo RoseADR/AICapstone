@@ -68,13 +68,10 @@ bool Scene1::OnCreate() {
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	gameboard->AddComponent<CollisionComponent>(
-		gameboard.get(),
-		ColliderShape::AABB,
-		Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
-		0.0f,
-		Vec3(0.0f, 0.0f, 0.0f)); // Offset
-	
+	gameboard->AddComponent<CollisionComponent>(gameboard.get(),
+		ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
+		0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
+	 
 	AddActor(gameboard);
 	
 	house = std::make_shared<Actor>(nullptr);
@@ -86,10 +83,10 @@ bool Scene1::OnCreate() {
 	house->AddComponent<ShaderComponent>(shader);
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
-	house->AddComponent<CollisionComponent>(house.get(),
-		ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
-		0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
-	AddActor(house);
+	//house->AddComponent<CollisionComponent>(house.get(),
+	//	ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
+	//	0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
+	//AddActor(house);
 
 	bill = std::make_shared<Actor>(nullptr);
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
@@ -140,7 +137,7 @@ bool Scene1::OnCreate() {
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent<CollisionComponent>(character.get(), 
 		ColliderShape::AABB, Vec3(1.0f, 1.0f, 2.0f), 
-		0.0f, Vec3(0.0f, 0.0f, 1.0f));
+		0.0f, Vec3(0.0f, 0.0f, 0.0f));
 	AddActor(character);
 
 	LoadEnemies();
@@ -302,6 +299,17 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			//camera->UpdateViewMatrix();
 			break;
 
+		case SDL_SCANCODE_Z:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
+
+		case SDL_SCANCODE_X:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
 
 
 		case SDL_SCANCODE_B: { // Check if 'G' key is pressed
@@ -474,8 +482,8 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	
 
+	
 	for (size_t i = 0; i < actors.size(); ++i) {
         for (size_t j = i + 1; j < actors.size(); ++j) {
             if (CollisionHandler::CheckCollision(actors[i], actors[j])) {
@@ -487,6 +495,25 @@ void Scene1::Update(const float deltaTime) {
 		std::cout << "TestCube Collision Detected!" << std::endl;
 		CollisionHandler::ResolveCollision(character, TestCube);
 	}
+
+	for (auto actor : actors) {
+		auto transform = actor->GetComponent<TransformComponent>();
+		auto collider = actor->GetComponent<CollisionComponent>();
+
+		if (transform) {
+			Vec3 pos = transform->GetPosition();
+			std::cout << "[Scene1] Actor Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+		}
+
+		if (collider) {
+			Vec3 minBounds = collider->GetMinBounds();
+			Vec3 maxBounds = collider->GetMaxBounds();
+			std::cout << "[Scene1] Collision Box Min: (" << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
+			std::cout << "[Scene1] Collision Box Max: (" << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
+		}
+	}
+
+
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
 	Vec3 playerPos = playerTransform->GetPosition(); 
