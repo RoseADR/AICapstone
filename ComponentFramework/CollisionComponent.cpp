@@ -15,7 +15,7 @@ Vec3 CollisionComponent::GetMinBounds() const {
     Vec3 position = transform->GetPosition() + offset;
     Vec3 minBounds = position - size * 0.5f;
 
-    std::cout << "Min Bounds: " << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << std::endl;
+    //std::cout << "Min Bounds: " << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << std::endl;
     return minBounds;
 }
 
@@ -23,7 +23,7 @@ Vec3 CollisionComponent::GetMaxBounds() const {
     Vec3 position = transform->GetPosition() + offset;
     Vec3 maxBounds = position + size * 0.5f;
 
-    std::cout << "Max Bounds: " << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << std::endl;
+    //std::cout << "Max Bounds: " << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << std::endl;
     return maxBounds;
 }
 

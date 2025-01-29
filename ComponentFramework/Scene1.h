@@ -26,6 +26,7 @@ class Actor;
 
 class Scene1 : public Scene {
 private:
+
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
@@ -34,6 +35,7 @@ private:
 	Ref<Actor> house;
 	Ref<Actor> bill;
 	Ref<Actor> character;
+	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
 	LocationManager locationManager;
 	

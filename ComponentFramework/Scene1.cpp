@@ -77,10 +77,6 @@ bool Scene1::OnCreate() {
 		Vec3(0.0f, 0.0f, 0.0f) // Offset
 	);
 	AddActor(gameboard);
-
-	
-
-	//hhhhhhhhhhhhyrh
 	
 	house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -91,19 +87,10 @@ bool Scene1::OnCreate() {
 	house->AddComponent<ShaderComponent>(shader);
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
 	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
-
-	// Add the CollisionComponent
-	//house->AddComponent<CollisionComponent>(house.get(), ColliderShape::AABB, Vec3(20.0f, 20.0f, 20.0f), 20.0f, Vec3(20.0f, 20.0f, 0.0f));
-
-
-	// Add the house actor to the scene
 	AddActor(house);
 
 	bill = std::make_shared<Actor>(nullptr);
-	
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
-
-	// Apply the updated orientation to the billboard
 	bill->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 5.1f, -17.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
 	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
 	bill->AddComponent<ShaderComponent>(shader);
@@ -117,8 +104,7 @@ bool Scene1::OnCreate() {
 		<< boardPos.z << ")\n"*/;
 
 
-	character = std::make_shared<Actor>(gameboard.get());
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+	
 //
 //// Get the character and camera positions
 //	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
@@ -130,9 +116,23 @@ bool Scene1::OnCreate() {
 //
 //	// Compute the new orientation using QMath::lookAt
 //	Quaternion orientation = QMath::lookAt(directionToCamera);
+	TestCube = std::make_shared<Actor>(gameboard.get());
+	
+	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(2.0f, 0.0f, 2.0f), orientationBill, Vec3(1.0, 1.0, 0.7));
+	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
+	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	TestCube->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+	TestCube->AddComponent<CollisionComponent>(
+		TestCube.get(), ColliderShape::AABB,
+		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f)
+	);
 
 
+	AddActor(TestCube);
 
+
+	character = std::make_shared<Actor>(gameboard.get());
+	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
 	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
@@ -477,11 +477,15 @@ void Scene1::Update(const float deltaTime) {
 
 	for (size_t i = 0; i < actors.size(); ++i) {
         for (size_t j = i + 1; j < actors.size(); ++j) {
-            if (CollisionHandler::CheckCollision(actors[i], actors[j])) {
-                CollisionHandler::ResolveCollision(actors[i], actors[j]);
+            if (CollisionHandler::CheckCollision(character, actors[j])) {
+                CollisionHandler::ResolveCollision(c, actors[j]);
             }
         }
     }
+	if (CollisionHandler::CheckCollision(character, TestCube)) {
+		std::cout << "TestCube Collision Detected!" << std::endl;
+		CollisionHandler::ResolveCollision(character, TestCube);
+	}
 
 	Ref<TransformComponent> playerTransform = character->GetComponent<TransformComponent>();
 	Vec3 playerPos = playerTransform->GetPosition(); 
