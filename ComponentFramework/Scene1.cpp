@@ -477,8 +477,8 @@ void Scene1::Update(const float deltaTime) {
 
 	for (size_t i = 0; i < actors.size(); ++i) {
         for (size_t j = i + 1; j < actors.size(); ++j) {
-            if (CollisionHandler::CheckCollision(character, actors[j])) {
-                CollisionHandler::ResolveCollision(c, actors[j]);
+            if (CollisionHandler::CheckCollision(actors[i], actors[j])) {
+                CollisionHandler::ResolveCollision(actors[i], actors[j]);
             }
         }
     }
