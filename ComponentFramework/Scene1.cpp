@@ -86,7 +86,7 @@ bool Scene1::OnCreate() {
 	//house->AddComponent<CollisionComponent>(house.get(),
 	//	ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
 	//	0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
-	//AddActor(house);
+	AddActor(house);
 
 	bill = std::make_shared<Actor>(nullptr);
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
@@ -121,9 +121,8 @@ bool Scene1::OnCreate() {
 	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 	TestCube->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-	TestCube->AddComponent<CollisionComponent>(
-		TestCube.get(), ColliderShape::AABB,
-		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 1.0f));
+	TestCube->AddComponent<CollisionComponent>(TestCube.get(), ColliderShape::AABB,
+		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
 
 	AddActor(TestCube);
 
@@ -137,7 +136,7 @@ bool Scene1::OnCreate() {
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent<CollisionComponent>(character.get(), 
 		ColliderShape::AABB, Vec3(1.0f, 1.0f, 2.0f), 
-		0.0f, Vec3(0.0f, 0.0f, 0.0f));
+		0.0f, Vec3(0.0f, 0.5f, 0.0f));
 	AddActor(character);
 
 	LoadEnemies();
@@ -498,6 +497,15 @@ void Scene1::Update(const float deltaTime) {
 
 	for (auto actor : actors) {
 		auto transform = actor->GetComponent<TransformComponent>();
+		if (transform) {
+			Vec3 pos = transform->GetPosition();
+			std::cout << "[Scene1] Actor Position Updated: ("
+				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+		}
+	}
+
+	/*for (auto actor : actors) {
+		auto transform = actor->GetComponent<TransformComponent>();
 		auto collider = actor->GetComponent<CollisionComponent>();
 
 		if (transform) {
@@ -511,7 +519,7 @@ void Scene1::Update(const float deltaTime) {
 			//std::cout << "[Scene1] Collision Box Min: (" << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
 			//std::cout << "[Scene1] Collision Box Max: (" << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
 		}
-	}
+	}*/
 
 
 
