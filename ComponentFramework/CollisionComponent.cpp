@@ -61,12 +61,12 @@ void CollisionComponent::Update(const float deltaTime_) {
     Vec3 minBounds = GetMinBounds();
     Vec3 maxBounds = GetMaxBounds();
 
-    std::cout << "[CollisionComponent] Actor Position: ("
+  /*  std::cout << "[CollisionComponent] Actor Position: ("
         << position.x << ", " << position.y << ", " << position.z << ")\n";
     std::cout << "[CollisionComponent] Collision Box Min: ("
         << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
     std::cout << "[CollisionComponent] Collision Box Max: ("
-        << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
+        << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";*/
 }
 
 void CollisionComponent::Render() const {

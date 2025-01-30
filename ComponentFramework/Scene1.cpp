@@ -117,7 +117,7 @@ bool Scene1::OnCreate() {
 //	Quaternion orientation = QMath::lookAt(directionToCamera);
 	TestCube = std::make_shared<Actor>(gameboard.get());
 	
-	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(2.0f, 0.0f, 2.0f), orientationBill, Vec3(1.0, 1.0, 0.7));
+	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 2.0f), orientationBill, Vec3(1.0, 1.0, 0.7));
 	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 	TestCube->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -502,14 +502,14 @@ void Scene1::Update(const float deltaTime) {
 
 		if (transform) {
 			Vec3 pos = transform->GetPosition();
-			std::cout << "[Scene1] Actor Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+			//std::cout << "[Scene1] Actor Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")\n";
 		}
 
 		if (collider) {
 			Vec3 minBounds = collider->GetMinBounds();
 			Vec3 maxBounds = collider->GetMaxBounds();
-			std::cout << "[Scene1] Collision Box Min: (" << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
-			std::cout << "[Scene1] Collision Box Max: (" << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
+			//std::cout << "[Scene1] Collision Box Min: (" << minBounds.x << ", " << minBounds.y << ", " << minBounds.z << ")\n";
+			//std::cout << "[Scene1] Collision Box Max: (" << maxBounds.x << ", " << maxBounds.y << ", " << maxBounds.z << ")\n";
 		}
 	}
 
@@ -538,13 +538,25 @@ void Scene1::Update(const float deltaTime) {
 	
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+
+
 	auto characterTransform = character->GetComponent<TransformComponent>();
+
+
+	/*if (characterTransform) {
+		bool p = true;
+		p = CollisionHandler::CheckCollision(character, TestCube);
+
+		if (p) {
+			CollisionHandler::ResolveCollision(character, TestCube);
+		}
+	}*/
 
 	if (characterTransform) {
 		Vec3 pos = characterTransform->GetPosition();
 
 		// Check if the character is on the floor
-		isGrounded = CollisionHandler::CheckCollision(character, gameboard);
+		isGrounded = CollisionHandler::CheckCollision(character, gameboard) || CollisionHandler::CheckCollision(character, TestCube);
 
 		// Handle vertical motion (gravity and jump)
 		if (isGrounded) {
