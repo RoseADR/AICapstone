@@ -19,6 +19,10 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Plane", nullptr, "meshes/Plane.obj");
 	AddComponent<MeshComponent>("House", nullptr, "meshes/house1.obj");
 	AddComponent<MeshComponent>("Board", nullptr, "meshes/billboard.obj");
+
+	AddComponent<MeshComponent>("Factory", nullptr, "meshes/Factory1.obj");
+
+	AddComponent<MeshComponent>("Box", nullptr, "meshes/box_wooden.obj");
 	
 
 	AddComponent<MeshComponent>("CheckerBoard", nullptr,"meshes/Plane8x8.obj");
@@ -55,6 +59,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("road", nullptr, "textures/road.png");
 	AddComponent<MaterialComponent>("billAds", nullptr, "textures/billBoardAds.png");
 	AddComponent<MaterialComponent>("bg", nullptr, "textures/landscape.png");
+	AddComponent<MaterialComponent>("WoodBox", nullptr, "textures/box_wooden_color.png");
 	
 	OnCreate();
 	ListAllComponents();

@@ -31,6 +31,7 @@ private:
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
+	Ref<Actor> factory;
 	Ref<Actor> bg;
 	Ref<Actor> house;
 	Ref<Actor> bill;

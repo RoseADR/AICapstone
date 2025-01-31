@@ -38,9 +38,9 @@ bool Scene1::OnCreate() {
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
-	orientationCam = QMath::angleAxisRotation(-15.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationCam = QMath::angleAxisRotation(15.0f, Vec3(1.0f, 0.0f, 0.0f));
 	camera = std::make_shared<CameraActor>(nullptr);
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -13.0f), orientationCam);
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -7.0f, -13.0f), orientationCam);
 	camera->OnCreate();
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
 	camera->GetViewMatrix().print("ViewMatrix");
@@ -51,15 +51,15 @@ bool Scene1::OnCreate() {
 
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	
-	bg = std::make_shared<Actor>(nullptr);
+	//bg = std::make_shared<Actor>(nullptr);
 	
 	orientationBg = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	// Add the transform and other components
-	bg->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 50.0f, -70.0f), orientationBoard, Vec3(14.5f, 14.5f, 10.0f));
-	bg->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	bg->AddComponent<ShaderComponent>(shader);
-	bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	AddActor(bg);
+	//// Add the transform and other components
+	//bg->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 50.0f, -70.0f), orientationBoard, Vec3(14.5f, 14.5f, 10.0f));
+	//bg->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	//bg->AddComponent<ShaderComponent>(shader);
+	//bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//AddActor(bg);
 
 	gameboard = std::make_shared<Actor>(nullptr);
 	
@@ -73,28 +73,42 @@ bool Scene1::OnCreate() {
 		0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	 
 	AddActor(gameboard);
+
+
+	factory = std::make_shared<Actor>(gameboard.get());
+
 	
-	house = std::make_shared<Actor>(nullptr);
+	factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, 0.0f), orientationBg, Vec3(0.05, 0.05, 0.05));
+	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
+	factory->AddComponent<ShaderComponent>(shader);
+	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//factory->AddComponent<CollisionComponent>(factory.get(),
+	//	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
+	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
+
+	AddActor(factory);
+	
+	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	// Add the transform and other components
-	house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -12.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
-	house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
-	house->AddComponent<ShaderComponent>(shader);
-	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
-	house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
-	//house->AddComponent<CollisionComponent>(house.get(),
-	//	ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
-	//	0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
-	AddActor(house);
+	//house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -12.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
+	//house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
+	//house->AddComponent<ShaderComponent>(shader);
+	//house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
+	//house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
+	////house->AddComponent<CollisionComponent>(house.get(),
+	////	ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
+	////	0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
+	//AddActor(house);
 
-	bill = std::make_shared<Actor>(nullptr);
+	/*bill = std::make_shared<Actor>(nullptr);
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
 	bill->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 5.1f, -17.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
 	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
 	bill->AddComponent<ShaderComponent>(shader);
 	bill->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("billAds"));
-	AddActor(bill);
+	AddActor(bill);*/
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 	//std::cout << "GameBoard Position: ("
@@ -115,12 +129,13 @@ bool Scene1::OnCreate() {
 //
 //	// Compute the new orientation using QMath::lookAt
 //	Quaternion orientation = QMath::lookAt(directionToCamera);
-	TestCube = std::make_shared<Actor>(gameboard.get());
+
+	TestCube = std::make_shared<Actor>(factory.get());
 	
-	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 2.0f), orientationBill, Vec3(1.0, 1.0, 0.7));
-	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
-	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	TestCube->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(-360.0f, 30.0f, 15.0f), orientationBill, Vec3(20.0, 20.0, 20.0));
+	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+	TestCube->AddComponent<ShaderComponent>(shader);
 	TestCube->AddComponent<CollisionComponent>(TestCube.get(), ColliderShape::AABB,
 		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));
 
@@ -129,7 +144,7 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
+	character->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion, Vec3(2.0,2.0,2.0));
 	//character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
