@@ -1,6 +1,8 @@
 #include "FloatDecision.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
+#include <ConstantsConversions.h>
+#include <cmath>
 
 FloatDecision::FloatDecision(const std::string& type, float min, float max,
     Actor* actor, Actor* targetActor,
@@ -33,7 +35,7 @@ bool FloatDecision::testValue() const {
        // std::cout << "[DEBUG]: Dot Product: " << dotProduct << "\n";
 
         // Define a stricter threshold for facing (cosine of acceptable angle, e.g., 30 degrees)
-        float facingThreshold = cos(M_PI / 6); // ~0.866
+        float facingThreshold = cos(FLOAT_PI / 6); // ~0.866
         bool isFacing = dotProduct > facingThreshold;
 
         //std::cout << "[DEBUG]: Is Facing Enemy with Threshold (" << facingThreshold << "): " << (isFacing ? "Yes" : "No") << "\n";

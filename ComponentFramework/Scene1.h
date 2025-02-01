@@ -12,8 +12,9 @@
 #include "Action.h"
 #include "DecisionTreeNode.h"
 #include "TreeBuilder.h"
-
- #include <irrKlang.h>
+#include "ScottCollisionSystem.h"
+#include "PhysicsSystem.h"
+#include <irrKlang.h>
 
 using namespace MATH;
 using namespace irrklang;
@@ -38,13 +39,18 @@ private:
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
+
 	LocationManager locationManager;
+
+	CollisionSystem collisionSystem;
+	PhysicsSystem physicsSystem;
 	
 	Quaternion orientationBoard;
 	Quaternion orientationBg;
 	Quaternion orientationCam;
 	Quaternion orientationHouse;
 	Quaternion orientationBill;//needed for the orientation of the tiles to match the board (evetually ground)
+
 	//FOR PATHFINDING
 	class Graph* graph;
 	std::vector<Node*> sceneNodes;
@@ -63,7 +69,7 @@ private:
 	bool isGrounded = false;
 	bool isRunning;
 	ISoundEngine* engine;
-	SDL_Joystick* controller;
+
 	float xAxis;
 	float yAxis;
 
@@ -82,12 +88,9 @@ public:
 	int Pick(int x, int y);
 	/// The w component holds the scale of the normal
 	void DrawNormals(const Vec4 color) const;
-
 	void DrawMeshOverlay(const Vec4 color) const;
-	
 	void LoadEnemies();
 
-	void OrientCharacterToCamera();
 	float currentTime;
 	int index = 0;
 	float frameSpeed = 0.1f;

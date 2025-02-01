@@ -1,15 +1,14 @@
 #pragma once
 #include "TransformComponent.h"
 #include "Matrix.h"
-#include "QMath.h"
-#include "Euler.h"
+//#include "QMath.h"
+//#include "Euler.h"
 
 using namespace MATH;
 
 class PhysicsComponent : public TransformComponent {
 	friend class PhysicsSystem;
-	// friend class CollisionSystem;
-	// friend class AISystem;
+	friend class CollisionSystem;
 
 	PhysicsComponent(const PhysicsComponent&) = delete;
 	PhysicsComponent(PhysicsComponent&&) = delete;
@@ -76,4 +75,3 @@ public:
 	void SetAccel(const Vec3 accel_) { accel = accel_; }
 
 };
-

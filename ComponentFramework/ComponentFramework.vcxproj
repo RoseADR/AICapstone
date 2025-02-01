@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\GameDev\IrrKlang\include;C:\GameDev\OpenGL\include;C:\GameDev\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\GameDev\IrrKlang\include;C:\GameDev\OpenGL\include;C:\GameDev\SDL\include;C:\GameDev\MathLibrary\include;C:\GameDev\MathLibraryEx\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\GameDev\OpenGL\include;C:\GameDev\SDL\include;$(IncludePath)</IncludePath>
@@ -158,7 +158,6 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Decision.cpp" />
     <ClCompile Include="DecisionTreeNode.cpp" />
-    <ClCompile Include="EMath.cpp" />
     <ClCompile Include="FloatDecision.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -175,12 +174,10 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
-    <ClCompile Include="QMath.cpp" />
     <ClCompile Include="Scene1.cpp" />
     <ClCompile Include="Scene2.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MMath.cpp" />
     <ClCompile Include="Scene0.cpp" />
     <ClCompile Include="ScottCollisionComponent.cpp" />
     <ClCompile Include="ScottCollisionSystem.cpp" />
@@ -190,7 +187,6 @@
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TreeBuilder.cpp" />
-    <ClCompile Include="VMath.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +194,6 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AiComponent.h" />
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="AxisAngle.h" />
     <ClInclude Include="BillBoardedCameraActor.h" />
     <ClInclude Include="CameraActor.h" />
     <ClInclude Include="CollisionComponent.h" />
@@ -208,12 +203,9 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Decision.h" />
     <ClInclude Include="DecisionTreeNode.h" />
-    <ClInclude Include="EMath.h" />
     <ClInclude Include="EnemyHealthCondition.h" />
-    <ClInclude Include="Euler.h" />
     <ClInclude Include="FloatDecision.h" />
     <ClInclude Include="Graph.h" />
-    <ClInclude Include="ContstantsConversions.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_opengl3.h" />
@@ -232,15 +224,10 @@
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PlayerInRangeCondition.h" />
-    <ClInclude Include="QMath.h" />
-    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene1.h" />
     <ClInclude Include="Scene2.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Matrix.h" />
-    <ClInclude Include="MMath.h" />
-    <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene0.h" />
     <ClInclude Include="ScottCollisionComponent.h" />
@@ -254,8 +241,6 @@
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TreeBuilder.h" />
     <ClInclude Include="UBO_Padding.h" />
-    <ClInclude Include="Vector.h" />
-    <ClInclude Include="VMath.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

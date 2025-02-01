@@ -17,20 +17,11 @@
     <ClCompile Include="CameraActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="EMath.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
     <ClCompile Include="LightActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
     <ClCompile Include="MaterialComponent.cpp">
       <Filter>Source Files\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="MMath.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="QMath.cpp">
-      <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="Scene0.cpp">
       <Filter>Source Files\Scenes</Filter>
@@ -43,9 +34,6 @@
     </ClCompile>
     <ClCompile Include="ShaderComponent.cpp">
       <Filter>Source Files\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="VMath.cpp">
-      <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="MeshComponent.cpp">
       <Filter>Source Files\Component</Filter>
@@ -136,20 +124,8 @@
     <ClInclude Include="Component.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AxisAngle.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="EMath.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Euler.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="MaterialComponent.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Scene2.h">
       <Filter>Header Files\Scenes</Filter>
@@ -163,26 +139,8 @@
     <ClInclude Include="Scene0.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="QMath.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="MMath.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderComponent.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="VMath.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="MeshComponent.h">
       <Filter>Header Files\Components</Filter>
@@ -234,9 +192,6 @@
     </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="ContstantsConversions.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
@@ -377,9 +332,6 @@
     <Filter Include="Header Files\Components">
       <UniqueIdentifier>{ef714aeb-a768-4db6-866d-b2e53897b69b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Math">
-      <UniqueIdentifier>{a9d4d2c7-b375-43c1-b874-78c7f0b084c0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{bdc09dca-47fe-4715-8e19-92a6f3bcf7ad}</UniqueIdentifier>
     </Filter>
@@ -388,9 +340,6 @@
     </Filter>
     <Filter Include="Source Files\Component">
       <UniqueIdentifier>{9b589415-4e9e-4d56-aeb5-d10aae70aa21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{51c85294-d4c0-4931-b3e6-8d08f860160e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{85756b72-0455-4c1a-8147-cd21bff141c7}</UniqueIdentifier>
