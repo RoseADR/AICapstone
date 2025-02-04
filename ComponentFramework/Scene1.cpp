@@ -133,6 +133,18 @@ bool Scene1::OnCreate() {
 
 	AddActor(TestCube);
 
+	auto Barrel = std::make_shared<Actor>(factory.get());
+
+	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0, 13.0, 13.0));
+	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
+	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
+	Barrel->AddComponent<ShaderComponent>(shader);
+	Barrel->AddComponent(cc);
+	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
+	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
+
+	AddActor(Barrel);
+
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
