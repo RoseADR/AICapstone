@@ -24,6 +24,8 @@ AssetManager::AssetManager() {
 
 	AddComponent<MeshComponent>("Box", nullptr, "meshes/box_wooden.obj");
 	AddComponent<MeshComponent>("Barrel", nullptr, "meshes/barrel.obj");
+	AddComponent<MeshComponent>("Tunnels", nullptr, "meshes/Tunnels.obj");
+	AddComponent<MeshComponent>("UTunnel", nullptr, "meshes/UTunnel.obj");
 	
 
 	AddComponent<MeshComponent>("CheckerBoard", nullptr,"meshes/Plane8x8.obj");
