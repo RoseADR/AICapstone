@@ -23,6 +23,8 @@ protected:
 	Vec3 force;
 	float mass;
 	bool useGravity;
+	float lifetime;
+
 	//float rotation;			// rotating at this speed (radians per second?)
 	//float angular;          // angular acceleration
 	//float maxSpeed;
@@ -49,6 +51,7 @@ public:
 	float getMass() const { return mass; }
 	Vec3 getVel() const { return vel; }
 	Vec3 getAccel() const { return accel; }
+	float getLifetime() const { return lifetime; }
 
 	/*Vec3 getVel() const { return vel; }
 	Vec3 getAccel() const { return accel; }
@@ -74,4 +77,10 @@ public:
 	void SetVelocity(const Vec3 vel_) { vel = vel_; }
 	void SetAccel(const Vec3 accel_) { accel = accel_; }
 
+	void Projectile(const Vec3 pos_, Vec3 vel_, Vec3 accel_, float lifetime_ = 5.0f) {
+		SetPosition(pos_);
+		SetVelocity(vel_);
+		SetAccel(accel_);
+		lifetime = lifetime_;
+	}
 };

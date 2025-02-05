@@ -250,6 +250,23 @@ void Scene1::OnDestroy() {
 	return;
 }
 
+void Scene1::FireProjectile(const Vec3& startPos, const Vec3& direction, float speed) {
+	// Normalize direction and apply speed
+	Vec3 velocity = VMath::normalize(direction) * speed;
+
+	// Create a new projectile
+	auto projectile = std::make_shared<PhysicsComponent>(
+		nullptr, startPos, Quaternion(), velocity, Vec3(0.0f, -9.81f, 0.0f) // Gravity
+	);
+
+	// Set a lifetime for the projectile (e.g., 5 seconds)
+	projectile->getLifetime();
+	
+	// Add it to the projectiles list
+	projectiles.push_back(projectile);
+}
+
+
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	//Timing timing("Scene1::HandleEvents");
 
@@ -432,7 +449,17 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 				characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, yAxis, 0.0f), orientationU);*/
 			}
 
+			if (sdlEvent.type == SDL_KEYDOWN) {
+				if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_M) { // 'M' Key
+					Vec3 startPos = character->GetComponent<TransformComponent>()->GetPosition();
+					Vec3 direction = Vec3(0.0f, 1.0f, 0.0f); // Upward
+					FireProjectile(startPos, direction, 10.0f);
+				}
+			}
+
 			break;
+
+
 
 
     }
@@ -589,6 +616,19 @@ void Scene1::Update(const float deltaTime) {
 
 		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
+
+		// Update projectiles
+		for (auto it = projectiles.begin(); it != projectiles.end();) {
+			(*it)->Update(deltaTime);
+
+			// Remove expired projectiles
+			if ((*it)->getLifetime() <= 0.0f) {
+				it = projectiles.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
 	}
 
 	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
@@ -690,6 +730,10 @@ void Scene1::Render() const {
 
 	if (drawNormals == true) {
 		DrawNormals(Vec4(1.0f, 1.0f, 0.0f, 0.01f));
+	}
+
+	for (const auto& projectile : projectiles) {
+		projectile->Render();
 	}
 }
 

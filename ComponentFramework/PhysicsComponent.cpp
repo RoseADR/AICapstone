@@ -30,6 +30,18 @@ void PhysicsComponent::Update(const float deltaTime) {
 	pos += vel * deltaTime + 0.5f * accel * deltaTime * deltaTime;
 	vel += accel * deltaTime;
 
+	// SetAccel(accel + Vec3(0.0f, -9.81f, 0.0f));
+
+	SetPosition(GetPosition() + vel * deltaTime);
+	// Reduce lifetime
+	if (lifetime > 0.0f) {
+		lifetime -= deltaTime;
+		if (lifetime <= 0.0f) {
+			// Destroy or deactivate projectile when lifetime is up
+			OnDestroy();
+		}
+	}
+
 }
 
 void PhysicsComponent::Render() const {
