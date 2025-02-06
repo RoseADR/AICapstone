@@ -183,7 +183,7 @@ bool Scene1::OnCreate() {
 
 
 	character = std::make_shared<Actor>(gameboard.get());
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+	Quaternion mariosQuaternion = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));// * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
@@ -274,7 +274,7 @@ bool Scene1::OnCreate() {
 }
 
 Scene1::~Scene1() {
-	Debug::Info("Deleted Scene0: ", __FILE__, __LINE__);
+	Debug::Info("Deleted Scene1: ", __FILE__, __LINE__);
 	OnDestroy();
 }
 
@@ -334,6 +334,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Quaternion orientationR;
 	Quaternion orientationD;
 
+	bool facingRight = false; // animation
+	bool facingLeft = false;
 
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
@@ -490,8 +492,8 @@ void Scene1::Update(const float deltaTime) {
 		auto transform = actor->GetComponent<TransformComponent>();
 		if (transform) {
 			Vec3 pos = transform->GetPosition();
-			std::cout << "[Scene1] Actor Position Updated: ("
-				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+			//std::cout << "[Scene1] Actor Position Updated: ("
+				//<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
 		}
 	}
 
@@ -566,21 +568,24 @@ void Scene1::Update(const float deltaTime) {
 		}
 
 		// Apply gravity if not grounded
-		if (!isGrounded) {
+		/*if (!isGrounded) {
 			Vec3 currentVel = playerPhysics->getVel();
 			currentVel.z += -9.8f * deltaTime;
 			playerPhysics->SetVelocity(currentVel);
 
-		}
+		}*/
 
 		// Handle horizontal motion (WASD input)
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 		if (keystate[SDL_SCANCODE_W]) horizontalMove.z += 1.0f; // Forward
 		if (keystate[SDL_SCANCODE_S]) horizontalMove.z -= 1.0f; // Backward
-		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
-		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
-
+			if (keystate[SDL_SCANCODE_A]) facingLeft = true; // last part for animation
+			horizontalMove.x -= 1.0f; // Left
+		
+			if (keystate[SDL_SCANCODE_D]) facingRight = true;
+			horizontalMove.x += 1.0f; // Right
+		
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {
 			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
@@ -634,8 +639,16 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 	
-	currentTime += deltaTime;
-	index = static_cast <int> (currentTime / frameSpeed) % 8;
+	// animation movement
+	if (facingRight) {
+		currentTime += deltaTime;
+		index = static_cast <int> (currentTime / frameSpeed) % 8;
+		//std::cout << index << std:: endl;
+		if (facingLeft) {
+			currentTime += deltaTime;
+			index = static_cast <int> (currentTime / frameSpeed) % 8;
+	}
+	}
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
@@ -650,6 +663,7 @@ void Scene1::Render() const {
 	glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS); // JUST ADDED FOR TESTING ROTATION
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
