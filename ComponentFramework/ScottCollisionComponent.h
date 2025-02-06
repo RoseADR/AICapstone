@@ -3,6 +3,7 @@
 #include "ScottCollisionComponent.h"
 #include <cmath>
 #include <Plane.h>
+#include <PMath.h>
 
 using namespace MATHEX;
 
@@ -45,6 +46,7 @@ protected:
 	ColliderType colliderType;
 	float radius; /// sphere collision
 	Plane plane;
+	
 
 
 public:
@@ -55,7 +57,14 @@ public:
 	void Render()const {}
 
 	float GetRadius() const { return radius; }
+	//Vec3 GetNormal() const { return  ; }
 
+	//Plane SetPlane(Vec3 n_, float d_) {
+	//	plane.n = n_;
+	//	plane.d = d_;
+	//}
+
+	Plane GetPlane() const { return plane; }
 
 
 };

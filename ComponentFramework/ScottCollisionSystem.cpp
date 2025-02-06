@@ -98,12 +98,16 @@ void CollisionSystem::SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponen
 
 bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plane& p1)
 {
- /*   float dist = PMath::distance(s1.center, p1);
+    float dist = PMath::distance(s1.center, p1);
    
     if (dist > s1.r) {
         return true;
         std::cout << "Collision with Plane Detected" << std::endl;
-    }*/
-    return true;
+    }
+    return false;
 
+}
+
+void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<PhysicsComponent> pc2)
+{
 }

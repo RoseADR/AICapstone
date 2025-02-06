@@ -69,7 +69,7 @@ bool Scene1::OnCreate() {
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), orientationBoard);
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 10.0f);
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 10.0f);
 	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
@@ -95,7 +95,7 @@ bool Scene1::OnCreate() {
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	factory->OnCreate();
-	AddActor(factory);
+//	AddActor(factory);
 	
 	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -187,8 +187,8 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 1.0f, 4.1f), mariosQuaternion);
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
@@ -488,8 +488,8 @@ void Scene1::Update(const float deltaTime) {
 		auto transform = actor->GetComponent<TransformComponent>();
 		if (transform) {
 			Vec3 pos = transform->GetPosition();
-			std::cout << "[Scene1] Actor Position Updated: ("
-				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+			/*std::cout << "[Scene1] Actor Position Updated: ("
+				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
 		}
 	}
 
@@ -559,6 +559,10 @@ void Scene1::Update(const float deltaTime) {
 				playerSphere.r = playerCollision->GetRadius();
 				playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
 
+				Plane groundPlane;
+				groundPlane = gameboard->GetComponent<CollisionComponent>()->GetPlane();
+				
+
 				Sphere otherSphere;
 				otherSphere.r = collider->GetRadius();
 				otherSphere.center = actor->GetComponent<TransformComponent>()->GetPosition();
@@ -577,12 +581,12 @@ void Scene1::Update(const float deltaTime) {
 					}
 					// Resolve collision to align with the floor
 					if (isGrounded) {
-						collisionSystem.SphereSphereCollisionResponse(playerSphere, playerPhysics, otherSphere, groundPhysics);
+						collisionSystem.SpherePlaneCollisionResponse(playerSphere, playerPhysics, groundPlane, groundPhysics);
 					}
 
-					if (collisionSystem.SphereSphereCollisionDetection(playerSphere, otherSphere)) {
+					if (collisionSystem.SpherePlaneCollisionDetection(playerSphere, groundPlane)) {
 						isGrounded = true;
-						collisionSystem.SphereSphereCollisionResponse(playerSphere, playerPhysics, otherSphere, groundPhysics /*actor->GetComponent<PhysicsComponent>()*/);
+						collisionSystem.SpherePlaneCollisionResponse(playerSphere, playerPhysics, groundPlane, groundPhysics /*actor->GetComponent<PhysicsComponent>()*/);
 					}
 
 				}
