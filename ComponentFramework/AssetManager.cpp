@@ -64,6 +64,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("bg", nullptr, "textures/landscape.png");
 	AddComponent<MaterialComponent>("WoodBox", nullptr, "textures/box_wooden_color.png");
 	AddComponent<MaterialComponent>("BarrelDif", nullptr, "textures/barrel_skin.png");
+	AddComponent<MaterialComponent>("BulletSkin", nullptr, "textures/Bullet.png");
 	
 	OnCreate();
 	ListAllComponents();

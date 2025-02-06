@@ -196,6 +196,12 @@ bool Scene1::OnCreate() {
 	character->OnCreate();
 	AddActor(character);
 
+	projectile = std::make_shared<Actor>(character.get());
+	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
+	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
+	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+
+
 	LoadEnemies();
 
 	collisionSystem.AddActor(gameboard);
