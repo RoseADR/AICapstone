@@ -39,6 +39,7 @@ private:
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
+	Ref<Actor> projectile;
 
 	LocationManager locationManager;
 

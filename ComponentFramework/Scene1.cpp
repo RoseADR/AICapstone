@@ -187,8 +187,8 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 5.0f, 4.1f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
@@ -198,6 +198,12 @@ bool Scene1::OnCreate() {
 	//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
 	character->OnCreate();
 	AddActor(character);
+
+	projectile = std::make_shared<Actor>(character.get());
+	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
+	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
+	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+
 
 	LoadEnemies();
 
