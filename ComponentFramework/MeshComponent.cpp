@@ -32,7 +32,7 @@ void MeshComponent::LoadModel(const char* filename) {
 	uvCoords.clear();
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename)) {
-        throw std::runtime_error(warn + err);
+         throw std::runtime_error(warn + err);
     }
     for (const auto& shape : shapes) {
         for (const auto& index : shape.mesh.indices) {

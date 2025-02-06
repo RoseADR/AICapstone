@@ -4,6 +4,7 @@
 void CollisionSystem::Update(const float deltaTime) {
     for (size_t i = 0; i < collidingActors.size(); ++i) {
         for (size_t j = i + 1; j < collidingActors.size(); ++j) {
+
             Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
             s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
             s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
@@ -19,6 +20,7 @@ void CollisionSystem::Update(const float deltaTime) {
         }
     }
 }
+
 
 bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const {
     float distance = VMath::distance(s1.center, s2.center);
@@ -79,6 +81,7 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
     // Apply new velocities along the collision normal
     pc1->vel = v1 + (v1p_new - v1p) * n;
     pc2->vel = v2 + (v2p_new - v2p) * n;
+
 }
 
 void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2)

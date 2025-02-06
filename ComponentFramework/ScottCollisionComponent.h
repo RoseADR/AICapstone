@@ -50,5 +50,9 @@ public:
 	void OnDestroy() {}
 	void Update(const float deltaTime_) {}
 	void Render()const {}
+
+	float GetRadius() const { return radius; }
+
+
 };
 

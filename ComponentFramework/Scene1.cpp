@@ -68,15 +68,18 @@ bool Scene1::OnCreate() {
 	gameboard = std::make_shared<Actor>(nullptr);
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), orientationBoard);
+	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 	gameboard->AddComponent(cc);
+	gameboard->AddComponent(pc);
 	// <CollisionComponent>(nullptr,
 	//	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	// 
+	gameboard->OnCreate();
 	AddActor(gameboard);
 
 
@@ -90,8 +93,8 @@ bool Scene1::OnCreate() {
 	// <CollisionComponent>(factory.get(),
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-
-	AddActor(factory);
+	factory->OnCreate();
+	//AddActor(factory);
 	
 	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -130,7 +133,7 @@ bool Scene1::OnCreate() {
 	TestCube->AddComponent(cc);
 		/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
-
+	TestCube->OnCreate();
 	AddActor(TestCube);
 
 	auto Barrel = std::make_shared<Actor>(factory.get());
@@ -142,7 +145,7 @@ bool Scene1::OnCreate() {
 	Barrel->AddComponent(cc);
 	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
-
+	Barrel->OnCreate();
 	AddActor(Barrel);
 
 
@@ -157,6 +160,7 @@ bool Scene1::OnCreate() {
 	// <CollisionComponent>(nullptr, 
 	//	ColliderType::Sphere, /*Vec3(1.0f, 1.0f, 2.0f), */
 	//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
+	character->OnCreate();
 	AddActor(character);
 
 	LoadEnemies();
@@ -167,6 +171,9 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(factory);
 
 	physicsSystem.AddActor(character);
+	physicsSystem.AddActor(gameboard);
+
+
 
 	
 
@@ -272,9 +279,6 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Quaternion orientationD;
 
 
-	// was going to use to store the previous position to calulate vel - didnt work
-	//Vec3 currentPosition = characterTC->GetPosition();
-
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
 
@@ -340,38 +344,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			showTiles = !showTiles; // Toggle the visibility flag
 		}
 			break;
-		//	
-		//case SDL_SCANCODE_W:
-		//	orientationU = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)); // Facing upward
-		//	characterTC->SetTransform(characterTC->GetPosition(), orientationU);
-		//	break;
-	
 
-		//case SDL_SCANCODE_A:
-		//	orientationL = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) *   // Turn left
-		//		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-		//	characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-		//
-		//	break;
-
-
-		//case SDL_SCANCODE_S:
-
-		//	//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
-		//	orientationD = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn to face backward
-		//		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));     
-		//	characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-		//	break;
-
-
-		//case SDL_SCANCODE_D:
-
-		//	//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
-		//	orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-		//		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-		//	characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-		//	
-		//	break;
 
 		case SDL_SCANCODE_R:
 
@@ -406,33 +379,6 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 		}
 		break;
-
-		case SDL_JOYBUTTONDOWN :
-			if (sdlEvent.jbutton.button == SDL_CONTROLLER_BUTTON_A)
-			{
-			
-			}
-			break;
-
-		case SDL_JOYAXISMOTION:
-			if (sdlEvent.jaxis.which == 0)
-			{
-			
-				xAxis = sdlEvent.jaxis.value;
-				std::cout << xAxis << '\n';
-				/*characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
-				characterTC->SetTransform(characterTC->GetPosition() + Vec3(xAxis, 0.0f, 0.0f), orientationL);*/
-				
-				
-			}
-			else if (sdlEvent.jaxis.which == 1) {
-				yAxis = sdlEvent.jaxis.value;
-				std::cout << yAxis << '\n';
-				/*characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
-				characterTC->SetTransform(characterTC->GetPosition() + Vec3(0.0f, yAxis, 0.0f), orientationU);*/
-			}
-
-			break;
 
 
     }
@@ -482,20 +428,6 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-
-	//
-	//for (size_t i = 0; i < actors.size(); ++i) {
- //       for (size_t j = i + 1; j < actors.size(); ++j) {
- //           if (CollisionSystem::SphereSphereCollisionDetection(actors[i], actors[j])) {
- //               CollisionSystem::SphereSphereCollisionResponse(actors[i], actors[j]);
- //           }
- //       }
- //   }
-	//if (CollisionSystem::SphereSphereCollisionDetection(character, TestCube)) {
-	//	std::cout << "TestCube Collision Detected!" << std::endl;
-	//	CollisionSystem::SphereSphereCollisionResponse(character, TestCube);
-	//}
-
 	for (auto actor : actors) {
 		auto transform = actor->GetComponent<TransformComponent>();
 		if (transform) {
@@ -527,54 +459,67 @@ void Scene1::Update(const float deltaTime) {
 	const float jumpStrength = 5.0f;   // Initial jump velocity
 	const float moveSpeed = 3.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
-	
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
-
-
 	auto characterTransform = character->GetComponent<TransformComponent>();
 
 
 	/*if (characterTransform) {
 		bool p = true;
-		p = CollisionHandler::CheckCollision(character, TestCube);
+		p = collisionSystem.SphereSphereCollisionDetection(character, TestCube);
 
 		if (p) {
-			CollisionHandler::ResolveCollision(character, TestCube);
+			collisionSystem.SphereSphereCollisionResponse(character, TestCube);
 		}
-	}*/
+	}
+
+	*/
 
 	if (characterTransform) {
 		Vec3 pos = characterTransform->GetPosition();
+		Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
+		Ref<CollisionComponent> playerCollision = character->GetComponent<CollisionComponent>();
 
-		// Check if the character is on the floor
-		/*isGrounded = CollisionSystem::SphereSphereCollisionDetection(character, gameboard) || CollisionSystem::SphereSphereCollisionDetection(character, TestCube);*/
+		if (playerPhysics && playerCollision) {
+			Sphere playerSphere;
+			playerSphere.r = playerCollision->GetRadius();
+			playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
 
-		// Handle vertical motion (gravity and jump)
-		if (isGrounded) {
-			// Reset vertical velocity when grounded
-			verticalVelocity = 0.0f;
+			// Check collision with ground (gameboard)
+			Ref<CollisionComponent> groundCollision = gameboard->GetComponent<CollisionComponent>();
+			if (isGrounded) {
+				Sphere groundSphere;
+				groundSphere.r = groundCollision->GetRadius();
+				groundSphere.center = gameboard->GetComponent<TransformComponent>()->GetPosition();
 
-			// Jump if space is pressed
-			const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-			if (keystate[SDL_SCANCODE_SPACE]) {
-				verticalVelocity = jumpStrength; // Apply jump velocity
-				isGrounded = false;              // Character is no longer grounded
+				//Reset vertical velocity when grounded
+				verticalVelocity = 0.0f;
+
+				// Jump if space is pressed
+				const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+				if (keystate[SDL_SCANCODE_SPACE]) {
+					verticalVelocity = jumpStrength; // Apply jump velocity
+					isGrounded = false;              // Character is no longer grounded
+				}
+
+				// Resolve collision to align with the floor
+				collisionSystem.SphereSphereCollisionDetection(playerSphere, groundSphere);
 			}
-
-			// Resolve collision to align with the floor
-			//CollisionSystem::SphereSphereCollisionResponse(character, gameboard);
 		}
-		else {
-			// Apply gravity when not grounded
-			//verticalVelocity += gravity * deltaTime;
+
+		// Apply gravity if not grounded
+		if (!isGrounded) {
+			Vec3 currentVel = playerPhysics->getVel();
+			currentVel.z += -9.8f * deltaTime;
+			playerPhysics->SetVelocity(currentVel);
+
 		}
 
 		// Handle horizontal motion (WASD input)
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
-		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
+		if (keystate[SDL_SCANCODE_W]) horizontalMove.z += 1.0f; // Forward
+		if (keystate[SDL_SCANCODE_S]) horizontalMove.z -= 1.0f; // Backward
 		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
 		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
 
@@ -591,12 +536,11 @@ void Scene1::Update(const float deltaTime) {
 		characterTransform->SetPosition(pos);
 	}
 
+
+
 	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
-	collisionSystem.Update(deltaTime);
-	// Update the gameboard transform
-	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
 	// Get Mario's position (character's position)
 	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
@@ -621,6 +565,11 @@ void Scene1::Update(const float deltaTime) {
 	
 	currentTime += deltaTime;
 	index = static_cast <int> (currentTime / frameSpeed) % 8;
+
+	collisionSystem.Update(deltaTime);
+	physicsSystem.Update(deltaTime);
+	// Update the gameboard transform
+	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 }
 
 
@@ -666,12 +615,12 @@ void Scene1::Render() const {
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	//glUseProgram(0);
 
-	//for (auto actor : actors) {
-	//	auto collider = actor->GetComponent<CollisionComponent>();
-	//	if (collider) {
-	//		collider->Render(); // Render collision boxes
-	//	}
-	//}
+	for (auto actor : actors) {
+		auto collider = actor->GetComponent<CollisionComponent>();
+		if (collider) {
+			collider->Render(); // Render collision boxes
+		}
+	}
 	////glPushMatrix();
 
 	if (showTiles) { // Only render tiles if showTiles is true
@@ -752,30 +701,7 @@ void Scene1::LoadEnemies() {
 	AddActor(enemies[0]);
 	AddActor(enemies[1]);
 }
-//
-//void Scene1::OrientCharacterToCamera()
-//{
-//	// Get positions
-//	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
-//	locationManager.mariosPos = mariosPos;
-//	Vec3 cameraPos = camera->GetComponent<TransformComponent>()->GetPosition();
-//	
-//	// Calculate direction vector
-//	Vec3 direction = cameraPos - mariosPos;
-//
-//	// Normalize the direction
-//	direction = VMath::normalize(direction);
-//
-//	// Define the up vector (typically the world's up)
-//	Vec3 up(0.0f, 1.0f, 0.0f);
-//
-//	// Compute the orientation quaternion to look at the camera
-//	Quaternion orientation = QMath::lookAt(direction, up);
-//
-//	// Apply the orientation to the character
-//	character->GetComponent<TransformComponent>()->SetTransform(mariosPos, orientation);
-//}
-//
+
 
 // Creates an 8x8 grid of tiles and initializes nodes
 void Scene1::createTiles() {
