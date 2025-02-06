@@ -35,6 +35,10 @@ public:
 	void AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2);
 	void SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2);
 
+
+	bool SpherePlaneCollisionDetection( const Sphere& s1,const Plane& p1);
+	void SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<PhysicsComponent> pc2);
+
 	void Update(const float deltaTime);
 
 };

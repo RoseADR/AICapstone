@@ -1,4 +1,5 @@
 #include "ScottCollisionSystem.h"
+#include <PMath.h>
 
 
 void CollisionSystem::Update(const float deltaTime) {
@@ -39,6 +40,7 @@ bool CollisionSystem::AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb
 
 bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s1, const Sphere& s2) const
 {
+
     return true;
 }
 
@@ -74,6 +76,7 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
     // If already separating, return
     if (v1p - v2p > 0.0f) return;
 
+ 
     // Compute new velocities after collision
     float v1p_new = ((pc1->mass - e * pc2->mass) * v1p + (1.0f + e) * pc2->mass * v2p) / totalMass;
     float v2p_new = ((pc2->mass - e * pc1->mass) * v2p + (1.0f + e) * pc1->mass * v1p) / totalMass;
@@ -90,4 +93,17 @@ void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> 
 
 void CollisionSystem::SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2)
 {
-} 
+}
+
+
+bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plane& p1)
+{
+ /*   float dist = PMath::distance(s1.center, p1);
+   
+    if (dist > s1.r) {
+        return true;
+        std::cout << "Collision with Plane Detected" << std::endl;
+    }*/
+    return true;
+
+}

@@ -2,12 +2,13 @@
 #include "TransformComponent.h"
 #include "ScottCollisionComponent.h"
 #include <cmath>
+#include <Plane.h>
+
+using namespace MATHEX;
 
 enum class ColliderType {
 	Sphere,
-	AABB,
 	PLANE,
-	RECTANGLE
 };
 
 /// Definition of a Sphere and Plane are in the Math library
@@ -40,8 +41,10 @@ class CollisionComponent : public Component {
 	CollisionComponent& operator = (const CollisionComponent&) = delete;
 	CollisionComponent& operator = (CollisionComponent&&) = delete;
 protected:
+	TransformComponent* transform;
 	ColliderType colliderType;
 	float radius; /// sphere collision
+	Plane plane;
 
 
 public:
@@ -52,6 +55,7 @@ public:
 	void Render()const {}
 
 	float GetRadius() const { return radius; }
+
 
 
 };

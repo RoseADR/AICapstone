@@ -53,7 +53,7 @@ bool Scene1::OnCreate() {
 
 
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
-	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 0.5f);
+	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 5.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
 
 	//bg = std::make_shared<Actor>(nullptr);
@@ -69,6 +69,7 @@ bool Scene1::OnCreate() {
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), orientationBoard);
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 10.0f);
 	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
@@ -83,9 +84,9 @@ bool Scene1::OnCreate() {
 	AddActor(gameboard);
 
 
-	factory = std::make_shared<Actor>(gameboard.get());
+	factory = std::make_shared<Actor>(nullptr);
 
-	factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, 0.0f), orientationBg, Vec3(0.05, 0.05, 0.05));
+	factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -94,7 +95,7 @@ bool Scene1::OnCreate() {
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	factory->OnCreate();
-	//AddActor(factory);
+	AddActor(factory);
 	
 	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -158,7 +159,7 @@ bool Scene1::OnCreate() {
 	Tunnels->AddComponent(cc);
 	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
-
+	Tunnels->OnCreate();
 	AddActor(Tunnels);
 
 	Ref <Actor> UTunnels[2];
@@ -170,6 +171,7 @@ bool Scene1::OnCreate() {
 	UTunnels[0]->AddComponent<ShaderComponent>(shader);
 	UTunnels[0]->AddComponent(cc);
 	
+	UTunnels[0]->OnCreate();
 	AddActor(UTunnels[0]);
 
 	UTunnels[1] = std::make_shared<Actor>(factory.get());
@@ -179,12 +181,13 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->AddComponent<ShaderComponent>(shader);
 	UTunnels[1]->AddComponent(cc);
 
+	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
 
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 5.0f, 4.1f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -206,9 +209,6 @@ bool Scene1::OnCreate() {
 	physicsSystem.AddActor(character);
 	physicsSystem.AddActor(gameboard);
 
-
-
-	
 
 	//PATHFINDING REALTED 
 	
@@ -431,8 +431,6 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		break;
 
 
-
-
     }
 
 }
@@ -527,65 +525,100 @@ void Scene1::Update(const float deltaTime) {
 
 	*/
 
+
 	if (characterTransform) {
 		Vec3 pos = characterTransform->GetPosition();
 		Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
 		Ref<CollisionComponent> playerCollision = character->GetComponent<CollisionComponent>();
 
-		if (playerPhysics && playerCollision) {
+		// Check collision with ground (gameboard)
+		Ref<CollisionComponent> groundCollision = gameboard->GetComponent<CollisionComponent>();
+		Ref<PhysicsComponent> groundPhysics = gameboard->GetComponent<PhysicsComponent>();
+
+
+		/*if (playerPhysics && playerCollision ) {
 			Sphere playerSphere;
 			playerSphere.r = playerCollision->GetRadius();
 			playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
 
-			// Check collision with ground (gameboard)
-			Ref<CollisionComponent> groundCollision = gameboard->GetComponent<CollisionComponent>();
-			if (isGrounded) {
-				Sphere groundSphere;
-				groundSphere.r = groundCollision->GetRadius();
-				groundSphere.center = gameboard->GetComponent<TransformComponent>()->GetPosition();
+			Sphere groundSphere;
+			groundSphere.r = groundCollision->GetRadius();
+			groundSphere.center = gameboard->GetComponent<TransformComponent>()->GetPosition();*/
 
-				//Reset vertical velocity when grounded
-				verticalVelocity = 0.0f;
+		for (auto actor : actors) {
+			auto collider = actor->GetComponent<CollisionComponent>();
+			if (collider || actor == character) {
 
-				// Jump if space is pressed
-				const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-				if (keystate[SDL_SCANCODE_SPACE]) {
-					verticalVelocity = jumpStrength; // Apply jump velocity
-					isGrounded = false;              // Character is no longer grounded
+				Sphere playerSphere;
+				playerSphere.r = playerCollision->GetRadius();
+				playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
+
+				Sphere otherSphere;
+				otherSphere.r = collider->GetRadius();
+				otherSphere.center = actor->GetComponent<TransformComponent>()->GetPosition();
+
+
+				if (isGrounded) {
+
+					//Reset vertical velocity when grounded
+					verticalVelocity = 0.0f;
+
+					// Jump if space is pressed
+					const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+					if (keystate[SDL_SCANCODE_SPACE]) {
+						verticalVelocity = jumpStrength; // Apply jump velocity
+						isGrounded = false;              // Character is no longer grounded
+					}
+					// Resolve collision to align with the floor
+					if (isGrounded) {
+						collisionSystem.SphereSphereCollisionResponse(playerSphere, playerPhysics, otherSphere, groundPhysics);
+					}
+
+					if (collisionSystem.SphereSphereCollisionDetection(playerSphere, otherSphere)) {
+						isGrounded = true;
+						collisionSystem.SphereSphereCollisionResponse(playerSphere, playerPhysics, otherSphere, groundPhysics /*actor->GetComponent<PhysicsComponent>()*/);
+					}
+
 				}
 
-				// Resolve collision to align with the floor
-				collisionSystem.SphereSphereCollisionDetection(playerSphere, groundSphere);
+				if (!isGrounded) {
+					Vec3 currentVel = playerPhysics->getVel();
+					currentVel.z += -9.8f * deltaTime;
+					playerPhysics->SetVelocity(currentVel);
+				}
+				else {
+					Vec3 currentPos = playerTransform->GetPosition();
+					if (currentPos.z < otherSphere.center.z + otherSphere.r) {
+						currentPos.z = otherSphere.center.z + otherSphere.r; // makes sure it stays on the ground
+						playerTransform->SetPosition(currentPos);
+					}
+				}
 			}
+
+
+
+			// Handle horizontal motion (WASD input)
+			Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
+			const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+			if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
+			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
+			if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
+			if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
+
+			// Normalize movement direction and scale by speed and deltaTime
+			if (VMath::mag(horizontalMove) > 0.0f) {
+				horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
+			}
+
+			// Combine horizontal and vertical motion
+			pos += horizontalMove;        // Update horizontal position
+			pos.z += verticalVelocity * deltaTime; // Update vertical position
+
+			// Apply updated position to the character
+			characterTransform->SetPosition(pos);
 		}
-
-		// Apply gravity if not grounded
-		if (!isGrounded) {
-			Vec3 currentVel = playerPhysics->getVel();
-			currentVel.z += -9.8f * deltaTime;
-			playerPhysics->SetVelocity(currentVel);
-
-		}
-
-		// Handle horizontal motion (WASD input)
-		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
-		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-		if (keystate[SDL_SCANCODE_W]) horizontalMove.z += 1.0f; // Forward
-		if (keystate[SDL_SCANCODE_S]) horizontalMove.z -= 1.0f; // Backward
-		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
-		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
-
-		// Normalize movement direction and scale by speed and deltaTime
-		if (VMath::mag(horizontalMove) > 0.0f) {
-			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
-		}
-
-		// Combine horizontal and vertical motion
-		pos += horizontalMove;        // Update horizontal position
-		pos.z += verticalVelocity * deltaTime; // Update vertical position
-
-		// Apply updated position to the character
-		characterTransform->SetPosition(pos);
+	
+	}
 
 		// Update projectiles
 		for (auto it = projectiles.begin(); it != projectiles.end();) {
@@ -599,7 +632,6 @@ void Scene1::Update(const float deltaTime) {
 				++it;
 			}
 		}
-	}
 
 
 
@@ -633,6 +665,7 @@ void Scene1::Update(const float deltaTime) {
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
+
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 }
