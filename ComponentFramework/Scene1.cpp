@@ -274,7 +274,7 @@ bool Scene1::OnCreate() {
 }
 
 Scene1::~Scene1() {
-	Debug::Info("Deleted Scene0: ", __FILE__, __LINE__);
+	Debug::Info("Deleted Scene1: ", __FILE__, __LINE__);
 	OnDestroy();
 }
 
@@ -334,6 +334,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Quaternion orientationR;
 	Quaternion orientationD;
 
+	bool facingRight = false; // animation
+	bool facingLeft = false;
 
 	/// Handle Camera movement 
 	switch (sdlEvent.type) {
@@ -488,8 +490,8 @@ void Scene1::Update(const float deltaTime) {
 		auto transform = actor->GetComponent<TransformComponent>();
 		if (transform) {
 			Vec3 pos = transform->GetPosition();
-			/*std::cout << "[Scene1] Actor Position Updated: ("
-				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
+			std::cout << "[Scene1] Actor Position Updated: ("
+				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
 		}
 	}
 
@@ -606,6 +608,7 @@ void Scene1::Update(const float deltaTime) {
 			}
 
 
+		}
 
 			// Handle horizontal motion (WASD input)
 			Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
@@ -670,8 +673,16 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 	
-	currentTime += deltaTime;
-	index = static_cast <int> (currentTime / frameSpeed) % 8;
+	// animation movement
+	if (facingRight) {
+		currentTime += deltaTime;
+		index = static_cast <int> (currentTime / frameSpeed) % 8;
+		//std::cout << index << std:: endl;
+		if (facingLeft) {
+			currentTime += deltaTime;
+			index = static_cast <int> (currentTime / frameSpeed) % 8;
+	}
+	}
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
@@ -687,6 +698,7 @@ void Scene1::Render() const {
 	glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS); // JUST ADDED FOR TESTING ROTATION
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

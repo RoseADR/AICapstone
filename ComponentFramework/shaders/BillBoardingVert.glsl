@@ -47,12 +47,10 @@ void main() {
     texCoord.x = texCoord.x * 0.125 + (index * 0.125);
     
     // for flipping the texture coordinates when the object is facing left or right
-//     texCoord.x * 0.125 + (index * 0.125);
-//     if(facingLeft){
-// Move the texture horizontally based on the 'index' value for animation (currently commented out)
-//     texCoord.x = texCoord.x + 0.125 - (texCoord.x - (index * 0.125)) * 2.0;
-//     }
-//     }
+    if(facingLeft){
+        // Move the texture horizontally based on the 'index' value for animation 
+    texCoord.x = (index * 1) * 0.125 - texCoord.x;
+   }
 
     // Create a normal matrix by transforming the normal vectors using the model and view matrix (correcting for non-uniform scaling)
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
