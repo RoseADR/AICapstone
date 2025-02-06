@@ -73,6 +73,8 @@ private:
 	float xAxis;
 	float yAxis;
 
+	std::vector<std::shared_ptr<PhysicsComponent>> projectiles;
+
 public:
 	bool showTiles = false;
 	explicit Scene1();
@@ -91,6 +93,9 @@ public:
 	void DrawMeshOverlay(const Vec4 color) const;
 	void LoadEnemies();
 
+	void FireProjectile(const Vec3& startPos, const Vec3& direction, float speed);
+
+	// for sprite sheet animations
 	float currentTime;
 	int index = 0;
 	float frameSpeed = 0.1f;

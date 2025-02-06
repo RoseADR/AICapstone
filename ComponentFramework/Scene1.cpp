@@ -149,6 +149,39 @@ bool Scene1::OnCreate() {
 	AddActor(Barrel);
 
 
+	auto Tunnels = std::make_shared<Actor>(factory.get());
+
+	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 50.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Tunnels"));
+	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	Tunnels->AddComponent<ShaderComponent>(shader);
+	Tunnels->AddComponent(cc);
+	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
+	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
+
+	AddActor(Tunnels);
+
+	Ref <Actor> UTunnels[2];
+		
+	UTunnels[0] = std::make_shared<Actor>(factory.get());
+	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 90.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[0]->AddComponent<ShaderComponent>(shader);
+	UTunnels[0]->AddComponent(cc);
+	
+	AddActor(UTunnels[0]);
+
+	UTunnels[1] = std::make_shared<Actor>(factory.get());
+	UTunnels[1]->AddComponent<TransformComponent>(nullptr, Vec3(-1060.0f, 140.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[1]->AddComponent<ShaderComponent>(shader);
+	UTunnels[1]->AddComponent(cc);
+
+	AddActor(UTunnels[1]);
+
+
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), mariosQuaternion);
@@ -256,6 +289,23 @@ void Scene1::OnDestroy() {
 	//engine->drop(); // delete engine
 	return;
 }
+
+void Scene1::FireProjectile(const Vec3& startPos, const Vec3& direction, float speed) {
+	// Normalize direction and apply speed
+	Vec3 velocity = VMath::normalize(direction) * speed;
+
+	// Create a new projectile
+	auto projectile = std::make_shared<PhysicsComponent>(
+		nullptr, startPos, Quaternion(), velocity, Vec3(0.0f, -9.81f, 0.0f) // Gravity
+	);
+
+	// Set a lifetime for the projectile (e.g., 5 seconds)
+	projectile->getLifetime();
+	
+	// Add it to the projectiles list
+	projectiles.push_back(projectile);
+}
+
 
 void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	//Timing timing("Scene1::HandleEvents");
@@ -379,6 +429,8 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 			break;
 		}
 		break;
+
+
 
 
     }
@@ -534,6 +586,19 @@ void Scene1::Update(const float deltaTime) {
 
 		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
+
+		// Update projectiles
+		for (auto it = projectiles.begin(); it != projectiles.end();) {
+			(*it)->Update(deltaTime);
+
+			// Remove expired projectiles
+			if ((*it)->getLifetime() <= 0.0f) {
+				it = projectiles.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
 	}
 
 
@@ -639,6 +704,10 @@ void Scene1::Render() const {
 
 	if (drawNormals == true) {
 		DrawNormals(Vec4(1.0f, 1.0f, 0.0f, 0.01f));
+	}
+
+	for (const auto& projectile : projectiles) {
+		projectile->Render();
 	}
 }
 
