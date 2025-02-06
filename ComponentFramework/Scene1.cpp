@@ -497,7 +497,7 @@ void Scene1::Update(const float deltaTime) {
 
 
 	Ref<PhysicsComponent> playerTransform = character->GetComponent<PhysicsComponent>();
-	Vec3 playerPos = playerTransform->GetPosition(); 
+	Vec3 playerPos = playerTransform->GetPosition();
 
 	// Get the camera's transform
 	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();
@@ -563,7 +563,7 @@ void Scene1::Update(const float deltaTime) {
 
 				Plane groundPlane;
 				groundPlane = gameboard->GetComponent<CollisionComponent>()->GetPlane();
-				
+
 
 				Sphere otherSphere;
 				otherSphere.r = collider->GetRadius();
@@ -610,28 +610,28 @@ void Scene1::Update(const float deltaTime) {
 
 		}
 
-			// Handle horizontal motion (WASD input)
-			Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
-			const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-			if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
-			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
-			if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
-			if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
+		// Handle horizontal motion (WASD input)
+		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
+		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
+		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
+		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
+		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
 
-			// Normalize movement direction and scale by speed and deltaTime
-			if (VMath::mag(horizontalMove) > 0.0f) {
-				horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
-			}
-
-			// Combine horizontal and vertical motion
-			pos += horizontalMove;        // Update horizontal position
-			pos.z += verticalVelocity * deltaTime; // Update vertical position
-
-			// Apply updated position to the character
-			characterTransform->SetPosition(pos);
+		// Normalize movement direction and scale by speed and deltaTime
+		if (VMath::mag(horizontalMove) > 0.0f) {
+			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
 		}
-	
+
+		// Combine horizontal and vertical motion
+		pos += horizontalMove;        // Update horizontal position
+		pos.z += verticalVelocity * deltaTime; // Update vertical position
+
+		// Apply updated position to the character
+		characterTransform->SetPosition(pos);
 	}
+
+	
 
 		// Update projectiles
 		for (auto it = projectiles.begin(); it != projectiles.end();) {
