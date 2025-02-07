@@ -1,25 +1,49 @@
 #include "ScottCollisionSystem.h"
 #include <PMath.h>
+#include <MMath.h>
 
+using namespace MATH;
 
 void CollisionSystem::Update(const float deltaTime) {
     for (size_t i = 0; i < collidingActors.size(); ++i) {
+
+
         for (size_t j = i + 1; j < collidingActors.size(); ++j) {
+
 
             Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
             s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
             s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
 
-            s2.r = collidingActors[j]->GetComponent<CollisionComponent>()->radius;
-            s2.center = collidingActors[j]->GetComponent<PhysicsComponent>()->pos;
+            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::Sphere) {
 
-            if (SphereSphereCollisionDetection(s1, s2) == true) {
-                Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
-                Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
-                SphereSphereCollisionResponse(s1, pc1, s2, pc2);
+                s2.r = collidingActors[j]->GetComponent<CollisionComponent>()->radius;
+                s2.center = collidingActors[j]->GetComponent<PhysicsComponent>()->pos;
+
+                if (SphereSphereCollisionDetection(s1, s2) == true) {
+                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+                    Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+                    SphereSphereCollisionResponse(s1, pc1, s2, pc2);
+                    std::cout << "SphereSphere Collision" << std::endl;
+                }
+            }
+
+            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::PLANE) {
+
+                Plane p1;
+                p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->n;
+                p1.d = VMath::dot(p1.n, (collidingActors[i]->GetComponent<PhysicsComponent>()->pos));
+
+                if (SpherePlaneCollisionDetection(s1, p1) == true) {
+                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+                    Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+                    SpherePlaneCollisionResponse(s1, pc1, p1, pc2);
+                    std::cout << "SpherePlane Collision" << std::endl;
+                }
             }
         }
     }
+
 }
 
 
@@ -100,9 +124,8 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
 {
     float dist = PMath::distance(s1.center, p1);
    
-    if (dist > s1.r) {
+    if (dist <= s1.r ) {
         return true;
-        std::cout << "Collision with Plane Detected" << std::endl;
     }
     return false;
 
@@ -110,4 +133,5 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
 
 void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<PhysicsComponent> pc2)
 {
+
 }

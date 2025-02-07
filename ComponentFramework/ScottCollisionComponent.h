@@ -46,6 +46,8 @@ protected:
 	ColliderType colliderType;
 	float radius; /// sphere collision
 	Plane plane;
+	Vec3 n;
+	float dist;
 	
 
 

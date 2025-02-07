@@ -86,15 +86,15 @@ bool Scene1::OnCreate() {
 
 	factory = std::make_shared<Actor>(nullptr);
 
-	factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
-	factory->AddComponent<ShaderComponent>(shader);
-	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	factory->AddComponent(cc);
-	// <CollisionComponent>(factory.get(),
-	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
-	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-	factory->OnCreate();
+	//factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	//factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
+	//factory->AddComponent<ShaderComponent>(shader);
+	//factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//factory->AddComponent(cc);
+	//// <CollisionComponent>(factory.get(),
+	//////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
+	//////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
+	//factory->OnCreate();
 //	AddActor(factory);
 	
 	//house = std::make_shared<Actor>(nullptr);
@@ -131,7 +131,7 @@ bool Scene1::OnCreate() {
 	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
 	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
 	TestCube->AddComponent<ShaderComponent>(shader);
-	TestCube->AddComponent(cc);
+	//TestCube->AddComponent(cc);
 		/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
 	TestCube->OnCreate();
@@ -143,7 +143,7 @@ bool Scene1::OnCreate() {
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
-	Barrel->AddComponent(cc);
+	//Barrel->AddComponent(cc);
 	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
 	Barrel->OnCreate();
@@ -156,7 +156,7 @@ bool Scene1::OnCreate() {
 	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Tunnels"));
 	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	Tunnels->AddComponent<ShaderComponent>(shader);
-	Tunnels->AddComponent(cc);
+	//Tunnels->AddComponent(cc);
 	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
 	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
 	Tunnels->OnCreate();
@@ -169,7 +169,7 @@ bool Scene1::OnCreate() {
 	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[0]->AddComponent<ShaderComponent>(shader);
-	UTunnels[0]->AddComponent(cc);
+	//UTunnels[0]->AddComponent(cc);
 	
 	UTunnels[0]->OnCreate();
 	AddActor(UTunnels[0]);
@@ -179,7 +179,7 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[1]->AddComponent<ShaderComponent>(shader);
-	UTunnels[1]->AddComponent(cc);
+//	UTunnels[1]->AddComponent(cc);
 
 	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
@@ -210,7 +210,7 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(gameboard);
 	collisionSystem.AddActor(character);
 	collisionSystem.AddActor(TestCube);
-	collisionSystem.AddActor(factory);
+//	collisionSystem.AddActor(factory);
 
 	physicsSystem.AddActor(character);
 	physicsSystem.AddActor(gameboard);
@@ -490,8 +490,8 @@ void Scene1::Update(const float deltaTime) {
 		auto transform = actor->GetComponent<TransformComponent>();
 		if (transform) {
 			Vec3 pos = transform->GetPosition();
-			std::cout << "[Scene1] Actor Position Updated: ("
-				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";
+			/*std::cout << "[Scene1] Actor Position Updated: ("
+				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
 		}
 	}
 
@@ -630,7 +630,7 @@ void Scene1::Update(const float deltaTime) {
 		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
 	}
-
+  
 	
 
 		// Update projectiles
