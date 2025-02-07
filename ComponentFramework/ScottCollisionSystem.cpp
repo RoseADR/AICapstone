@@ -19,7 +19,7 @@ void CollisionSystem::Update(const float deltaTime) {
 
                 s2.r = collidingActors[j]->GetComponent<CollisionComponent>()->radius;
                 s2.center = collidingActors[j]->GetComponent<PhysicsComponent>()->pos;
-
+               
                 if (SphereSphereCollisionDetection(s1, s2) == true) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
                     Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
@@ -27,18 +27,25 @@ void CollisionSystem::Update(const float deltaTime) {
                     std::cout << "SphereSphere Collision" << std::endl;
                 }
             }
-
+ std::string hop2 = "s1.center: (" +
+                    std::to_string(s1.center.x) + ", " +
+                    std::to_string(s1.center.y) + ", " +
+                    std::to_string(s1.center.z) + ")";
             if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::PLANE) {
 
                 Plane p1;
                 p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->n;
                 p1.d = VMath::dot(p1.n, (collidingActors[i]->GetComponent<PhysicsComponent>()->pos));
-
+              std::string hop = "p1.n: (" +
+                  std::to_string(p1.n.x) + ", " +
+                  std::to_string(p1.n.y) + ", " +
+                  std::to_string(p1.n.z) + ")";
                 if (SpherePlaneCollisionDetection(s1, p1) == true) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
                     Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
                     SpherePlaneCollisionResponse(s1, pc1, p1, pc2);
-                    std::cout << "SpherePlane Collision" << std::endl;
+                    std::cout << "SpherePlane Collision: " << hop << hop2 << std::endl;
+
                 }
             }
         }
