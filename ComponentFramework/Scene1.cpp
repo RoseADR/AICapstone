@@ -96,18 +96,21 @@ bool Scene1::OnCreate() {
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	factory->OnCreate();
 	//AddActor(factory);
-	
-	auto road = std::make_shared<Actor>(Bridge.get());
 
-	road->AddComponent<TransformComponent>(nullptr, Vec3(-70.0f, 17.0f, -6.4f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(1.72, 1.0, 0.8));
-	road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	road->AddComponent<ShaderComponent>(shader);
-	road->AddComponent(cc);
 
-	road->OnCreate();
-	AddActor(road);
+	for (int i = 0; i < 8; i++) {
+		float x = -70.0f - (i * 17.0f);
+		auto road = std::make_shared<Actor>(Bridge.get());
 
+		road->AddComponent<TransformComponent>(nullptr, Vec3(x, 17.0f, -6.4f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(1.72, 1.0, 0.8));
+		road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+		road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+		road->AddComponent<ShaderComponent>(shader);
+		road->AddComponent(cc);
+
+		road->OnCreate();
+		AddActor(road);
+	}
 	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
@@ -195,13 +198,12 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
 
-	std::vector<std::shared_ptr<Actor>> streetWalls;
 
-	for (int i = 0; i < 5; i++) {
-		for (float x = 0.0f; x < 5.0f; x++) {
-			auto StreetWalls = std::make_shared<Actor>(gameboard.get());
+	/*for (int i = 0; i < 8; i++) {
+		float x = -70.0f - (i * 17.0f);
+			auto StreetWalls = std::make_shared<Actor>(Bridge.get());
 
-			StreetWalls->AddComponent<TransformComponent>(nullptr, Vec3(x, 0.0f, 0.0f), QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+			StreetWalls->AddComponent<TransformComponent>(nullptr, Vec3(x, 16.8f, -7.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.13, 0.06, 0.06));
 			StreetWalls->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("StreetWall"));
 			StreetWalls->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 			StreetWalls->AddComponent<ShaderComponent>(shader);
@@ -210,21 +212,24 @@ bool Scene1::OnCreate() {
 			StreetWalls->OnCreate();
 			AddActor(StreetWalls);
 
-			streetWalls.push_back(StreetWalls);
+		}*/
+	
+
+	
+	for (int i = 0; i < 8; i++) {
+		float x = -2000.0f - (i * 340.0f);
+			Bridge = std::make_shared<Actor>(factory.get());
+
+			Bridge->AddComponent<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
+			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
+			Bridge->AddComponent<ShaderComponent>(shader);
+			Bridge->AddComponent(cc);
+
+			Bridge->OnCreate();
+			AddActor(Bridge);
+		
 		}
-	}
-
-	Bridge = std::make_shared<Actor>(factory.get());
-
-	Bridge->AddComponent<TransformComponent>(nullptr, Vec3(-2000.0f, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
-	Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
-	Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	Bridge->AddComponent<ShaderComponent>(shader);
-	Bridge->AddComponent(cc);
-
-	Bridge->OnCreate();
-	AddActor(Bridge);
-
 	
 
 	character = std::make_shared<Actor>(gameboard.get());
