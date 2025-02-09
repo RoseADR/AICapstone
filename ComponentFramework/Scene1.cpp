@@ -95,8 +95,19 @@ bool Scene1::OnCreate() {
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	factory->OnCreate();
-//	AddActor(factory);
+	//AddActor(factory);
 	
+	auto road = std::make_shared<Actor>(Bridge.get());
+
+	road->AddComponent<TransformComponent>(nullptr, Vec3(-70.0f, 17.0f, -6.4f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(1.72, 1.0, 0.8));
+	road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	road->AddComponent<ShaderComponent>(shader);
+	road->AddComponent(cc);
+
+	road->OnCreate();
+	AddActor(road);
+
 	//house = std::make_shared<Actor>(nullptr);
 	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 
@@ -184,6 +195,37 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
 
+	std::vector<std::shared_ptr<Actor>> streetWalls;
+
+	for (int i = 0; i < 5; i++) {
+		for (float x = 0.0f; x < 5.0f; x++) {
+			auto StreetWalls = std::make_shared<Actor>(gameboard.get());
+
+			StreetWalls->AddComponent<TransformComponent>(nullptr, Vec3(x, 0.0f, 0.0f), QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+			StreetWalls->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("StreetWall"));
+			StreetWalls->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+			StreetWalls->AddComponent<ShaderComponent>(shader);
+			StreetWalls->AddComponent(cc);
+
+			StreetWalls->OnCreate();
+			AddActor(StreetWalls);
+
+			streetWalls.push_back(StreetWalls);
+		}
+	}
+
+	Bridge = std::make_shared<Actor>(factory.get());
+
+	Bridge->AddComponent<TransformComponent>(nullptr, Vec3(-2000.0f, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+	Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
+	Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	Bridge->AddComponent<ShaderComponent>(shader);
+	Bridge->AddComponent(cc);
+
+	Bridge->OnCreate();
+	AddActor(Bridge);
+
+	
 
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -515,7 +557,7 @@ void Scene1::Update(const float deltaTime) {
 
 	const float gravity = -9.8f;        // Gravitational acceleration
 	const float jumpStrength = 5.0f;   // Initial jump velocity
-	const float moveSpeed = 3.0f;      // Movement speed
+	const float moveSpeed = 30.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
