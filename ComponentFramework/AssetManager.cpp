@@ -20,8 +20,12 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("House", nullptr, "meshes/house1.obj");
 	AddComponent<MeshComponent>("Board", nullptr, "meshes/billboard.obj");
 	AddComponent<MeshComponent>("Bridge", nullptr, "meshes/bridge.obj");
-
+	AddComponent<MeshComponent>("StreetLight", nullptr, "meshes/streetLight.obj");
 	AddComponent<MeshComponent>("Factory", nullptr, "meshes/Factory.obj");
+	AddComponent<MeshComponent>("Car", nullptr, "meshes/Car.obj");
+	AddComponent<MeshComponent>("Scaffolding", nullptr, "meshes/Scaffolding.obj");
+	AddComponent<MeshComponent>("Blocker", nullptr, "meshes/blocker.obj");
+	
 
 	AddComponent<MeshComponent>("Box", nullptr, "meshes/box_wooden.obj");
 	AddComponent<MeshComponent>("Barrel", nullptr, "meshes/barrel.obj");
@@ -68,6 +72,10 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("BulletSkin", nullptr, "textures/Bullet.png");
 	AddComponent<MaterialComponent>("GiantRobot", nullptr, "textures/GiantRobotSpriteSheet.png");
 	AddComponent<MaterialComponent>("stone", nullptr, "textures/stone.jpg");
+	AddComponent<MaterialComponent>("CarText", nullptr, "textures/carText.png");
+	AddComponent<MaterialComponent>("BlockerText", nullptr, "textures/blockerText.png");
+	AddComponent<MaterialComponent>("lavaTexture", nullptr, "textures/lava.png");
+
 
 
 	OnCreate();

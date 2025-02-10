@@ -95,7 +95,7 @@ bool Scene1::OnCreate() {
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
 	factory->OnCreate();
-	//AddActor(factory);
+	AddActor(factory);
 
 
 	for (int i = 0; i < 8; i++) {
@@ -111,46 +111,53 @@ bool Scene1::OnCreate() {
 		road->OnCreate();
 		AddActor(road);
 	}
-	//house = std::make_shared<Actor>(nullptr);
-	orientationHouse = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
+	
+	Ref <Actor> Lava[2];
 
-	// Add the transform and other components
-	//house->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 1.1f, -12.0f), orientationHouse, Vec3(1.2f, 1.2f, 1.2f));
-	//house->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("House"));
-	//house->AddComponent<ShaderComponent>(shader);
-	//house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseText"));
-	//house->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("houseTextNor"));
-	////house->AddComponent<CollisionComponent>(house.get(),
-	////	ColliderShape::AABB, Vec3(9.0f, 9.0f, 22.5f), // Width, height, depth
-	////	0.0f, Vec3(0.0f, 0.0f, 0.0f)); // Offset 
-	//AddActor(house);
+	Lava[0] = std::make_shared<Actor>(factory.get());
+	Lava[0]->AddComponent<TransformComponent>(nullptr,Vec3(-360.0f, 0.0f, 40.0f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(30.0, 30.0, 30.0));
+	Lava[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	Lava[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
+	Lava[0]->AddComponent<ShaderComponent>(shader);
+	Lava[0]->AddComponent(cc);
 
-	//bill = std::make_shared<Actor>(nullptr);
+	Lava[0]->OnCreate();
+	AddActor(Lava[0]);
+
+	Lava[1] = std::make_shared<Actor>(factory.get());
+	Lava[1]->AddComponent<TransformComponent>(nullptr, Vec3(360.0f, 65.0f, 40.0f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(30.0, 30.0, 30.0));
+	Lava[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	Lava[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
+	Lava[1]->AddComponent<ShaderComponent>(shader);
+	Lava[1]->AddComponent(cc);
+
+	Lava[1]->OnCreate();
+	AddActor(Lava[1]);
+
+	bill = std::make_shared<Actor>(Bridge.get());
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
-	/*bill->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 5.1f, -17.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
+	bill->AddComponent<TransformComponent>(nullptr, Vec3(-182.0f, 14.0f, -15.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
 	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
 	bill->AddComponent<ShaderComponent>(shader);
 	bill->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("billAds"));
-	AddActor(bill);*/
+	AddActor(bill);
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 	//std::cout << "GameBoard Position: ("
 		/*<< boardPos.x << ", "
 		<< boardPos.y << ", "
 		<< boardPos.z << ")\n"*/;
-
-	TestCube = std::make_shared<Actor>(factory.get());
-	
-	TestCube->AddComponent<TransformComponent>(nullptr, Vec3(-360.0f, 30.0f, 15.0f), orientationBill, Vec3(20.0, 20.0, 20.0));
-	TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
-	TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
-	TestCube->AddComponent<ShaderComponent>(shader);
-	TestCube->AddComponent(cc);
-		/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
-		Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
-	TestCube->OnCreate();
-	AddActor(TestCube);
-
+		for (int i = 0; i < 2; i++) {
+			float x = -360.0f - (i * -90.0f);
+			TestCube = std::make_shared<Actor>(factory.get());
+			TestCube->AddComponent<TransformComponent>(nullptr, Vec3(x, 30.0f, 15.0f), orientationBill, Vec3(20.0, 20.0, 20.0));
+			TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+			TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+			TestCube->AddComponent<ShaderComponent>(shader);
+			TestCube->AddComponent(cc);
+			TestCube->OnCreate();
+			AddActor(TestCube);
+		}
 	auto Barrel = std::make_shared<Actor>(factory.get());
 
 	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0, 13.0, 13.0));
@@ -158,12 +165,42 @@ bool Scene1::OnCreate() {
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
 	Barrel->AddComponent(cc);
-	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
-	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
+	auto Car = std::make_shared<Actor>(Bridge.get());
 
+	Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
+	Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
+	Car->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CarText"));
+	Car->AddComponent<ShaderComponent>(shader);
+	Car->AddComponent(cc);
+	Car->OnCreate();
+	AddActor(Car);
+
+	
+	auto Scaf = std::make_shared<Actor>(factory.get());
+
+	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 340.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0, 1.0, 1.0));
+	Scaf->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Scaffolding"));
+	Scaf->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+	Scaf->AddComponent<ShaderComponent>(shader);
+	Scaf->AddComponent(cc);
+	Scaf->OnCreate();
+	AddActor(Scaf);
+
+	for (int i = 0; i < 3; i++) {
+		float z = -4.5f - (i * 2.0f);
+		auto Blocker = std::make_shared<Actor>(Bridge.get());
+
+		Blocker->AddComponent<TransformComponent>(nullptr, Vec3(-145.0f, 17.0f, z), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.02, 0.02, 0.02));
+		Blocker->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Blocker"));
+		Blocker->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlockerText"));
+		Blocker->AddComponent<ShaderComponent>(shader);
+		Blocker->AddComponent(cc);
+		Blocker->OnCreate();
+		AddActor(Blocker);
+	}
 	auto Tunnels = std::make_shared<Actor>(factory.get());
 
 	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 50.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
@@ -171,8 +208,6 @@ bool Scene1::OnCreate() {
 	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	Tunnels->AddComponent<ShaderComponent>(shader);
 	Tunnels->AddComponent(cc);
-	/*<CollisionComponent>(TestCube.get(), ColliderType::Sphere,
-	Vec3(1.0f, 1.0f, 1.0f), 0.0f, Vec3(0.0f, 0.0f, 0.0f));*/
 	Tunnels->OnCreate();
 	AddActor(Tunnels);
 
@@ -213,6 +248,22 @@ bool Scene1::OnCreate() {
 			AddActor(StreetWalls);
 
 		}*/
+
+
+		for (int i = 0; i < 8; i++) {
+			float x = -70.0f - (i * 17.0f);
+				auto streetLight = std::make_shared<Actor>(Bridge.get());
+
+				streetLight->AddComponent<TransformComponent>(nullptr, Vec3(x, 16.8f, -12.0f), QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(0.5, 0.5, 0.5));
+				streetLight->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("StreetLight"));
+				streetLight->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+				streetLight->AddComponent<ShaderComponent>(shader);
+				streetLight->AddComponent(cc);
+
+				streetLight->OnCreate();
+				AddActor(streetLight);
+
+			}
 	
 
 	
