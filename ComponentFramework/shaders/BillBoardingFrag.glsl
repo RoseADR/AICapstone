@@ -35,13 +35,17 @@ void main() {
 	/// Reflection is based incedent which means a vector from the light source
 	/// not the direction to the light source
 	vec3 reflection = normalize(reflect(-lightDir, vertNormal)); // Reflect the light direction around the normal
+	
 	float spec = max(dot(eyeDir, reflection), 0.0); // Calculate the specular component based on the eye direction and reflection vector
+	
 	spec = pow(spec,14.0); // Raise specular value to a power for sharpness of the highlight
+	
 	// Final color computation: ambient + diffuse + specular lighting effects
 	vec4 outColor = ka + (textureColor * kd * diff) + (ks * spec); // Calculate the total fragment color with texture, diffuse, and specular
+	
 	// Set the alpha value of the final color to 0.5 (semi-transparent)
-	outColor.a = 0.5;
+	outColor.a = 1.0;
+	
 	// Output the final color to the fragment shader's output
-	fragColor =  ka + (textureColor * kd * diff) + (ks * spec);	
-   
+	fragColor =  ka + (textureColor * kd * diff) + (ks * spec);
 }

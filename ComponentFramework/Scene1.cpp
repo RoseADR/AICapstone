@@ -286,7 +286,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(gameboard.get());
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 1.0f, 4.1f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
@@ -713,8 +713,10 @@ void Scene1::Update(const float deltaTime) {
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
 		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
-		if (keystate[SDL_SCANCODE_A]) horizontalMove.x -= 1.0f; // Left
-		if (keystate[SDL_SCANCODE_D]) horizontalMove.x += 1.0f; // Right
+		if (keystate[SDL_SCANCODE_A]) //facingLeft = true; // last part for animation
+		horizontalMove.x -= 1.0f; // Left
+		if (keystate[SDL_SCANCODE_D]) //facingRight = true;
+		horizontalMove.x += 1.0f; // Right
 
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {
@@ -812,6 +814,8 @@ void Scene1::Render() const {
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	}
+
+	glDisable(GL_BLEND);
 
 	// ** Render Collision Boxes **
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set wireframe mode

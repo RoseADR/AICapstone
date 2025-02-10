@@ -54,15 +54,20 @@ void main() {
 
     // Create a normal matrix by transforming the normal vectors using the model and view matrix (correcting for non-uniform scaling)
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
-     // Normalize and transform the vertex normal to the correct orientation in world space
+    
+    // Normalize and transform the vertex normal to the correct orientation in world space
     vertNormal = normalize(normalMatrix * vNormal); /// Rotate the normal to the correct orientation 
+    
     // Compute the vertex position in view space (camera space)
     vec3 vertPos = vec3(view * modelMatrix * vVertex);
+    
     // Calculate the direction from the vertex to the camera (eye direction)
     vec3 vertDir = normalize(vertPos);
     eyeDir = -vertDir;  // Eye direction is the opposite of vertex direction
+    
     // Calculate the direction from the vertex to the light source
     lightDir = normalize(position - vertPos); // Direction from the vertex to the light position
+    
     // Final position of the vertex in clip space (after applying projection, view, and model transformations)
     gl_Position = projection * view * modelMatrix * vVertex;
 }
