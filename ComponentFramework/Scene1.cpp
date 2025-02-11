@@ -56,15 +56,16 @@ bool Scene1::OnCreate() {
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 0.5f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
 
-	//bg = std::make_shared<Actor>(nullptr);
-	orientationBg = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	//// Add the transform and other components
-	//bg->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 50.0f, -70.0f), orientationBoard, Vec3(14.5f, 14.5f, 10.0f));
-	//bg->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	//bg->AddComponent<ShaderComponent>(shader);
-	//bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	//AddActor(bg);
-
+	for (int i = 0; i < 3; i++) {
+		float x = 0.0f - (i * 90.0f);
+		bg = std::make_shared<Actor>(nullptr);
+		orientationBg = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+		bg->AddComponent<TransformComponent>(nullptr, Vec3(x, 0.0f, -70.0f), orientationBoard, Vec3(15.0f, 15.0f, 1.0f));
+		bg->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+		bg->AddComponent<ShaderComponent>(shader);
+		bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("city"));
+		AddActor(bg);
+	}
 	gameboard = std::make_shared<Actor>(nullptr);
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));

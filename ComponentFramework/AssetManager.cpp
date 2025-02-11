@@ -67,6 +67,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("road", nullptr, "textures/road1.jpg");
 	AddComponent<MaterialComponent>("billAds", nullptr, "textures/billBoardAds.png");
 	AddComponent<MaterialComponent>("bg", nullptr, "textures/landscape.png");
+	AddComponent<MaterialComponent>("city", nullptr, "textures/city3.png");
 	AddComponent<MaterialComponent>("WoodBox", nullptr, "textures/box_wooden_color.png");
 	AddComponent<MaterialComponent>("BarrelDif", nullptr, "textures/barrel_skin.png");
 	AddComponent<MaterialComponent>("BulletSkin", nullptr, "textures/Bullet.png");
