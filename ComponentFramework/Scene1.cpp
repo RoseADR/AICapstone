@@ -212,7 +212,7 @@ bool Scene1::OnCreate() {
 	Tunnels->OnCreate();
 	AddActor(Tunnels);
 
-	Ref <Actor> UTunnels[2];
+	Ref <Actor> UTunnels[3];
 		
 	UTunnels[0] = std::make_shared<Actor>(factory.get());
 	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 90.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
@@ -234,6 +234,16 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
 
+
+	UTunnels[2] = std::make_shared<Actor>(factory.get());
+	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-3320.0f, 300.0f, -170.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[2]->AddComponent<ShaderComponent>(shader);
+	UTunnels[2]->AddComponent(cc);
+
+	UTunnels[2]->OnCreate();
+	AddActor(UTunnels[2]);
 
 	/*for (int i = 0; i < 8; i++) {
 		float x = -70.0f - (i * 17.0f);
