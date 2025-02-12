@@ -87,6 +87,8 @@ public:
 	virtual bool OnCreate();
 	virtual void OnDestroy();
 
+	void FireProjectile();
+
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
 	virtual void HandleEvents(const SDL_Event &sdlEvent);
