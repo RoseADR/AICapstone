@@ -626,21 +626,40 @@ void Scene1::Update(const float deltaTime) {
 
 		// Apply gravity
 		//will have to make x negative when facing left will do it later
-		Vec3 newVel = physics->getVel() + Vec3(4.0f, -9.8f * deltaTime, .0f);
-		physics->SetVelocity(newVel);
+		if (facing) {
+			Vec3 newVel = physics->getVel() + Vec3(4.0f, -9.8f * deltaTime, 0.0f);
 
-		// Move the projectile
-		transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+			physics->SetVelocity(newVel);
 
-		// Remove if it falls below a threshold (e.g., off-screen)
-		if (transform->GetPosition().y < -50.0f) {
-			projectiles.erase(projectiles.begin() + i);
+			// Move the projectile
+			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+
+			// Remove if it falls below a threshold (e.g., off-screen)
+			if (transform->GetPosition().y < -50.0f) {
+				projectiles.erase(projectiles.begin() + i);
+			}
+			else {
+				++i;
+			}
 		}
-		else {
-			++i;
+
+		if (!facing) {
+			Vec3 newVel = physics->getVel() + Vec3(-4.0f, -9.8f * deltaTime, 0.0f);
+
+			physics->SetVelocity(newVel);
+
+			// Move the projectile
+			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+
+			// Remove if it falls below a threshold (e.g., off-screen)
+			if (transform->GetPosition().y < -50.0f) {
+				projectiles.erase(projectiles.begin() + i);
+			}
+			else {
+				++i;
+			}
 		}
 	}
-
 
 
 	for (auto actor : actors) {
@@ -773,9 +792,9 @@ void Scene1::Update(const float deltaTime) {
 		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
 		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
 		if (keystate[SDL_SCANCODE_A]) //facingLeft = true; // last part for animation
-		horizontalMove.x -= 1.0f; // Left
+		facing = false, horizontalMove.x -= 1.0f; // Left
 		if (keystate[SDL_SCANCODE_D]) //facingRight = true;
-		horizontalMove.x += 1.0f; // Right
+		facing = true, horizontalMove.x += 1.0f; // Right
 
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {

@@ -80,6 +80,7 @@ private:
 
 public:
 	bool showTiles = false;
+	bool facing = true;
 	explicit Scene1();
 	virtual ~Scene1();
 	std::vector<std::shared_ptr<Actor>> projectiles;
@@ -99,7 +100,7 @@ public:
 	void DrawMeshOverlay(const Vec4 color) const;
 	void LoadEnemies();
 
-	void FireProjectile(const Vec3& startPos, const Vec3& direction, float speed);
+	//void FireProjectile(const Vec3& startPos, const Vec3& direction, float speed);
 
 	// for sprite sheet animations
 	bool facingRight;
