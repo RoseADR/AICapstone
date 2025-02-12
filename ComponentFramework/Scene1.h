@@ -41,6 +41,7 @@ private:
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
 	Ref<Actor> projectile;
+	
 
 	LocationManager locationManager;
 
@@ -75,13 +76,14 @@ private:
 	float xAxis;
 	float yAxis;
 
-	std::vector<std::shared_ptr<PhysicsComponent>> projectiles;
+	
 
 public:
 	bool showTiles = false;
 	explicit Scene1();
 	virtual ~Scene1();
-	
+	std::vector<std::shared_ptr<Actor>> projectiles;
+
 	virtual bool OnCreate();
 	virtual void OnDestroy();
 

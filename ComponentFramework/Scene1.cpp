@@ -41,7 +41,7 @@ bool Scene1::OnCreate() {
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
-	orientationCam = QMath::angleAxisRotation(15.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationCam = QMath::angleAxisRotation(5.0f, Vec3(1.0f, 0.0f, 0.0f));
 	camera = std::make_shared<CameraActor>(nullptr);
 	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -7.0f, -13.0f), orientationCam);
 	camera->OnCreate();
@@ -294,9 +294,9 @@ bool Scene1::OnCreate() {
 		}
 	
 
-	character = std::make_shared<Actor>(gameboard.get());
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 1.0f, 4.1f), mariosQuaternion);
+	character = std::make_shared<Actor>(nullptr);
+	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 0.0f, 0.0f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -308,10 +308,10 @@ bool Scene1::OnCreate() {
 	character->OnCreate();
 	AddActor(character);
 
-	projectile = std::make_shared<Actor>(character.get());
+	/*projectile = std::make_shared<Actor>(character.get());
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
-	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));*/
 
 
 	LoadEnemies();
@@ -406,18 +406,17 @@ void Scene1::OnDestroy() {
 }
 
 void Scene1::FireProjectile(const Vec3& startPos, const Vec3& direction, float speed) {
-	// Normalize direction and apply speed
 	Vec3 velocity = VMath::normalize(direction) * speed;
 
-	// Create a new projectile
-	auto projectile = std::make_shared<PhysicsComponent>(
-		nullptr, startPos, Quaternion(), velocity, Vec3(0.0f, -9.81f, 0.0f) // Gravity
-	);
+	auto projectile = std::make_shared<Actor>(nullptr);
+	projectile->AddComponent<TransformComponent>(nullptr, startPos, Quaternion());
+	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
+	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
+	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	projectile->AddComponent<PhysicsComponent>(nullptr, startPos, Quaternion(), velocity, Vec3(0.0f, -9.81f, 0.0f)); // Gravity
 
-	// Set a lifetime for the projectile (e.g., 5 seconds)
-	projectile->getLifetime();
-	
-	// Add it to the projectiles list
+	projectile->OnCreate();
+	AddActor(projectile);
 	projectiles.push_back(projectile);
 }
 
@@ -447,7 +446,26 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	bool facingLeft = false;
 
 	/// Handle Camera movement 
+
+
+
+
 	switch (sdlEvent.type) {
+
+
+	case SDL_MOUSEBUTTONDOWN:
+		if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
+			Ref<TransformComponent> charTransform = character->GetComponent<TransformComponent>();
+			if (charTransform) {
+				Vec3 charPos = charTransform->GetPosition();
+				Vec3 shootDirection(0.0f, 0.0f, -1.0f); // Forward
+				float projectileSpeed = 20.0f;
+
+				FireProjectile(charPos, shootDirection, projectileSpeed);
+			}
+		}
+		break;
+
 
 
 	case SDL_KEYDOWN:
@@ -594,6 +612,32 @@ void Scene1::Update(const float deltaTime) {
 	//DECISION TREE RELATED
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
+
+	for (size_t i = 0; i < projectiles.size(); ) {
+		auto projectile = projectiles[i];
+
+		// Ensure projectile has necessary components
+		auto transform = projectile->GetComponent<TransformComponent>();
+		auto physics = projectile->GetComponent<PhysicsComponent>();
+
+		if (!transform || !physics) {
+			projectiles.erase(projectiles.begin() + i);
+			continue;
+		}
+
+		// Move the projectile
+		transform->SetPosition(transform->GetPosition() + physics->getVel() * deltaTime);
+
+		// Remove expired projectiles
+		if (physics->getLifetime() <= 0.0f) {
+			projectiles.erase(projectiles.begin() + i);
+		}
+		else {
+			++i;
+		}
+	}
+
+
 
 	for (auto actor : actors) {
 		auto transform = actor->GetComponent<TransformComponent>();
@@ -744,18 +788,7 @@ void Scene1::Update(const float deltaTime) {
 
 	
 
-		// Update projectiles
-		for (auto it = projectiles.begin(); it != projectiles.end();) {
-			(*it)->Update(deltaTime);
-
-			// Remove expired projectiles
-			if ((*it)->getLifetime() <= 0.0f) {
-				it = projectiles.erase(it);
-			}
-			else {
-				++it;
-			}
-		}
+		
 
 
 
