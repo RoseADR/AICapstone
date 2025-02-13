@@ -27,6 +27,11 @@ void main() {
 	// Sample the texture at the given texture coordinates
 	vec4 textureColor = texture(myTexture,texCoord); 
 
+	// Discard the fragment if the alpha value is below a threshold (e.g., 0.1)
+    if (textureColor.a < 0.5) {
+        discard;
+    }
+
 	// Diffuse lighting component: how much light hits the surface
 	float diff = max(dot(vertNormal, lightDir), 0.0); // Calculate the dot product of the normal and light direction
 
@@ -44,7 +49,7 @@ void main() {
 	vec4 outColor = ka + (textureColor * kd * diff) + (ks * spec); // Calculate the total fragment color with texture, diffuse, and specular
 	
 	// Set the alpha value of the final color to 0.5 (semi-transparent)
-	outColor.a = 1.0;
+	outColor.a = 0.5;
 	
 	// Output the final color to the fragment shader's output
 	fragColor =  ka + (textureColor * kd * diff) + (ks * spec);
