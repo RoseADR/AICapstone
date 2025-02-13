@@ -1,5 +1,6 @@
 #pragma once
 #include "TransformComponent.h"
+#include "ScottCollisionComponent.h"
 #include "Matrix.h"
 //#include "QMath.h"
 //#include "Euler.h"

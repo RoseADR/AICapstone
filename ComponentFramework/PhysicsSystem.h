@@ -21,6 +21,7 @@ public:
 				/// This is a dynamic cast designed for shared_ptr's
 				/// https://en.cppreference.com/w/cpp/memory/shared_ptr/pointer_cast
 				return std::dynamic_pointer_cast<PhysicsComponent>(component);
+
 			}
 		}
 		return Ref<PhysicsComponent>(nullptr);

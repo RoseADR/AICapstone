@@ -15,12 +15,15 @@ private:
 public:
 	/// This function will check the the actor being added is new and has the all proper components 
 	void AddActor(Ref<Actor> actor_) {
+
+
 		if (actor_->GetComponent<CollisionComponent>().get() == nullptr) {
 			Debug::Error("The Actor must have a CollisionComponent - ignored ", __FILE__, __LINE__);
 			return;
 		}
 
-		if (actor_->GetComponent<PhysicsComponent>().get() == nullptr) {
+		if (/*actor_->GetComponent<CollisionComponent>()->colliderType != ColliderType::PLANE && */
+			actor_->GetComponent<PhysicsComponent>().get() == nullptr) {
 			Debug::Error("The Actor must have a PhysicsComponent - ignored ", __FILE__, __LINE__);
 			return;
 		}
@@ -37,7 +40,7 @@ public:
 
 
 	bool SpherePlaneCollisionDetection( const Sphere& s1,const Plane& p1);
-	void SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<PhysicsComponent> pc2);
+	void SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2);
 
 	void Update(const float deltaTime);
 

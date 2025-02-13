@@ -1,7 +1,6 @@
 #include "Actor.h"
 #include "PhysicsSystem.h"
 
-
 void PhysicsSystem::Update(const float deltaTime) {
     for (auto& actor : physicsActors) {
         Ref<PhysicsComponent> pc = actor->GetComponent<PhysicsComponent>();
@@ -14,6 +13,16 @@ void PhysicsSystem::Update(const float deltaTime) {
         pc->pos += pc->vel * deltaTime + 0.5f * pc->accel * deltaTime * deltaTime;
         pc->vel += pc->accel * deltaTime;
         pc->UndoForce();
+
+       
+     
+        Ref<CollisionComponent> cc = actor->GetComponent<CollisionComponent>();
+        // Ensure planes are never affected by physics
+        if (cc->GetColliderType() == ColliderType::PLANE) {
+            pc->SetVelocity(Vec3(0.0f, 0.0f, 0.0f));  // Plane is fully static
+        }
+
     }
+
 
 }

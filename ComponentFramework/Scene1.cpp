@@ -53,7 +53,7 @@ bool Scene1::OnCreate() {
 
 
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
-	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 0.5f);
+	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
 
 	for (int i = 0; i < 3; i++) {
@@ -70,7 +70,7 @@ bool Scene1::OnCreate() {
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f);
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
 	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
@@ -107,7 +107,7 @@ bool Scene1::OnCreate() {
 		road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 		road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 		road->AddComponent<ShaderComponent>(shader);
-		road->AddComponent(cc);
+		//road->AddComponent(cc);
 
 		road->OnCreate();
 		AddActor(road);
@@ -120,7 +120,7 @@ bool Scene1::OnCreate() {
 	Lava[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	Lava[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
 	Lava[0]->AddComponent<ShaderComponent>(shader);
-	Lava[0]->AddComponent(cc);
+	//Lava[0]->AddComponent(cc);
 
 	Lava[0]->OnCreate();
 	AddActor(Lava[0]);
@@ -130,7 +130,7 @@ bool Scene1::OnCreate() {
 	Lava[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	Lava[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
 	Lava[1]->AddComponent<ShaderComponent>(shader);
-	Lava[1]->AddComponent(cc);
+	//Lava[1]->AddComponent(cc);
 
 	Lava[1]->OnCreate();
 	AddActor(Lava[1]);
@@ -155,7 +155,7 @@ bool Scene1::OnCreate() {
 			TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
 			TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
 			TestCube->AddComponent<ShaderComponent>(shader);
-			TestCube->AddComponent(cc);
+			//TestCube->AddComponent(cc);
 			TestCube->OnCreate();
 			AddActor(TestCube);
 		}
@@ -165,7 +165,7 @@ bool Scene1::OnCreate() {
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
-	Barrel->AddComponent(cc);
+	//Barrel->AddComponent(cc);
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
@@ -175,7 +175,7 @@ bool Scene1::OnCreate() {
 	Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
 	Car->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CarText"));
 	Car->AddComponent<ShaderComponent>(shader);
-	Car->AddComponent(cc);
+	//Car->AddComponent(cc);
 	Car->OnCreate();
 	AddActor(Car);
 
@@ -186,7 +186,7 @@ bool Scene1::OnCreate() {
 	Scaf->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Scaffolding"));
 	Scaf->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
 	Scaf->AddComponent<ShaderComponent>(shader);
-	Scaf->AddComponent(cc);
+	//Scaf->AddComponent(cc);
 	Scaf->OnCreate();
 	AddActor(Scaf);
 
@@ -198,7 +198,7 @@ bool Scene1::OnCreate() {
 		Blocker->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Blocker"));
 		Blocker->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlockerText"));
 		Blocker->AddComponent<ShaderComponent>(shader);
-		Blocker->AddComponent(cc);
+		//Blocker->AddComponent(cc);
 		Blocker->OnCreate();
 		AddActor(Blocker);
 	}
@@ -208,7 +208,7 @@ bool Scene1::OnCreate() {
 	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Tunnels"));
 	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	Tunnels->AddComponent<ShaderComponent>(shader);
-	Tunnels->AddComponent(cc);
+	//Tunnels->AddComponent(cc);
 	Tunnels->OnCreate();
 	AddActor(Tunnels);
 
@@ -219,7 +219,7 @@ bool Scene1::OnCreate() {
 	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[0]->AddComponent<ShaderComponent>(shader);
-	UTunnels[0]->AddComponent(cc);
+	//UTunnels[0]->AddComponent(cc);
 	
 	UTunnels[0]->OnCreate();
 	AddActor(UTunnels[0]);
@@ -229,7 +229,7 @@ bool Scene1::OnCreate() {
 	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[1]->AddComponent<ShaderComponent>(shader);
-	UTunnels[1]->AddComponent(cc);
+//	UTunnels[1]->AddComponent(cc);
 
 	UTunnels[1]->OnCreate();
 	AddActor(UTunnels[1]);
@@ -240,7 +240,7 @@ bool Scene1::OnCreate() {
 	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[2]->AddComponent<ShaderComponent>(shader);
-	UTunnels[2]->AddComponent(cc);
+	//UTunnels[2]->AddComponent(cc);
 
 	UTunnels[2]->OnCreate();
 	AddActor(UTunnels[2]);
@@ -269,7 +269,7 @@ bool Scene1::OnCreate() {
 				streetLight->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("StreetLight"));
 				streetLight->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 				streetLight->AddComponent<ShaderComponent>(shader);
-				streetLight->AddComponent(cc);
+				//streetLight->AddComponent(cc);
 
 				streetLight->OnCreate();
 				AddActor(streetLight);
@@ -286,7 +286,7 @@ bool Scene1::OnCreate() {
 			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
 			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 			Bridge->AddComponent<ShaderComponent>(shader);
-			Bridge->AddComponent(cc);
+			//Bridge->AddComponent(cc);
 
 			Bridge->OnCreate();
 			AddActor(Bridge);
@@ -296,8 +296,8 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 0.0f, 0.0f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 10.0f, -10.0f), mariosQuaternion);
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);

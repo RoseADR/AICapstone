@@ -10,10 +10,15 @@ void CollisionSystem::Update(const float deltaTime) {
 
         for (size_t j = i + 1; j < collidingActors.size(); ++j) {
 
-
             Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
             s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
             s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
+
+            std::string hop2 = "s1.center: (" +
+                std::to_string(s1.center.x) + ", " +
+                std::to_string(s1.center.y) + ", " +
+                std::to_string(s1.center.z) + ")";
+
 
             if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::Sphere) {
 
@@ -24,28 +29,28 @@ void CollisionSystem::Update(const float deltaTime) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
                     Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
                     SphereSphereCollisionResponse(s1, pc1, s2, pc2);
-                    std::cout << "SphereSphere Collision" << std::endl;
+
+                    std::cout << "SphereSphere Collision" + hop2 << std::endl;
                 }
             }
- std::string hop2 = "s1.center: (" +
-                    std::to_string(s1.center.x) + ", " +
-                    std::to_string(s1.center.y) + ", " +
-                    std::to_string(s1.center.z) + ")";
+
             if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::PLANE) {
 
                 Plane p1;
-                p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->n;
-                p1.d = VMath::dot(p1.n, (collidingActors[i]->GetComponent<PhysicsComponent>()->pos));
+                p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->normal;
+                p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<PhysicsComponent>()->GetPosition()));
+
               std::string hop = "p1.n: (" +
                   std::to_string(p1.n.x) + ", " +
                   std::to_string(p1.n.y) + ", " +
                   std::to_string(p1.n.z) + ")";
+
                 if (SpherePlaneCollisionDetection(s1, p1) == true) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
                     Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
-                    SpherePlaneCollisionResponse(s1, pc1, p1, pc2);
-                    std::cout << "SpherePlane Collision: " << hop << hop2 << std::endl;
+                    SpherePlaneCollisionResponse(s1, pc1, p1);
 
+                    std::cout << "SpherePlane Collision" + hop << std::endl;
                 }
             }
         }
@@ -57,6 +62,7 @@ void CollisionSystem::Update(const float deltaTime) {
 bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const {
     float distance = VMath::distance(s1.center, s2.center);
     if (distance < s1.r + s2.r) {
+        std::cout << "SphereSphere Collision" << std::endl;
         return true;
     }
     return false;
@@ -129,16 +135,33 @@ void CollisionSystem::SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponen
 
 bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plane& p1)
 {
-    float dist = PMath::distance(s1.center, p1);
+    float dist = VMath::dot(s1.center, p1.n) - p1.d;
+
    
-    if (dist <= s1.r ) {
+    if (fabs(dist <= s1.r)) {
+      //  std::cout << "SpherePlane Collision" << std::endl;
         return true;
     }
     return false;
 
 }
 
-void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<PhysicsComponent> pc2)
+void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2)
 {
+    float dist = VMath::dot(s1.center, p2.n) - p2.d;
+
+    // If the sphere is penetrating the plane, apply MTV
+    if (dist < s1.r) {
+        float penetrationDepth = s1.r - dist;  // Overlap amount
+
+        // Move the sphere completely out of the plane
+        pc1->pos += p2.n * penetrationDepth;
+
+        // Stop downward movement
+        float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
+        if (velocityAlongNormal < 0.0f) {
+            pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
+        }
+    }
 
 }
