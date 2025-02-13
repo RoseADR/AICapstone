@@ -405,15 +405,22 @@ void Scene1::OnDestroy() {
 	return;
 }
 
-void Scene1::FireProjectile(const Vec3& startPos, const Vec3& direction, float speed) {
-	Vec3 velocity = VMath::normalize(direction) * speed;
+void Scene1::FireProjectile() {
+	// Get the character's transform
+	auto charTransform = character->GetComponent<TransformComponent>();
+	if (!charTransform) return;
+
+	Vec3 charPos = charTransform->GetPosition(); // Start position on the character
 
 	auto projectile = std::make_shared<Actor>(nullptr);
-	projectile->AddComponent<TransformComponent>(nullptr, startPos, Quaternion());
+	projectile->AddComponent<TransformComponent>(nullptr, charPos, Quaternion());
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
 	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	projectile->AddComponent<PhysicsComponent>(nullptr, startPos, Quaternion(), velocity, Vec3(0.0f, -9.81f, 0.0f)); // Gravity
+
+	// Gravity-enabled physics
+	Vec3 gravity(0.0f, -9.81f, 0.0f); // Falling downward
+	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), Vec3(0.0f, 0.0f, 0.0f), gravity);
 
 	projectile->OnCreate();
 	AddActor(projectile);
@@ -455,14 +462,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 
 	case SDL_MOUSEBUTTONDOWN:
 		if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-			Ref<TransformComponent> charTransform = character->GetComponent<TransformComponent>();
-			if (charTransform) {
-				Vec3 charPos = charTransform->GetPosition();
-				Vec3 shootDirection(0.0f, 0.0f, -1.0f); // Forward
-				float projectileSpeed = 20.0f;
-
-				FireProjectile(charPos, shootDirection, projectileSpeed);
-			}
+			FireProjectile();
 		}
 		break;
 
@@ -613,10 +613,9 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
-	for (size_t i = 0; i < projectiles.size(); ) {
+	for (size_t i = 0; i < projectiles.size();) {
 		auto projectile = projectiles[i];
 
-		// Ensure projectile has necessary components
 		auto transform = projectile->GetComponent<TransformComponent>();
 		auto physics = projectile->GetComponent<PhysicsComponent>();
 
@@ -625,18 +624,42 @@ void Scene1::Update(const float deltaTime) {
 			continue;
 		}
 
-		// Move the projectile
-		transform->SetPosition(transform->GetPosition() + physics->getVel() * deltaTime);
+		// Apply gravity
+		//will have to make x negative when facing left will do it later
+		if (facing) {
+			Vec3 newVel = physics->getVel() + Vec3(4.0f, -9.8f * deltaTime, 0.0f);
 
-		// Remove expired projectiles
-		if (physics->getLifetime() <= 0.0f) {
-			projectiles.erase(projectiles.begin() + i);
+			physics->SetVelocity(newVel);
+
+			// Move the projectile
+			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+
+			// Remove if it falls below a threshold (e.g., off-screen)
+			if (transform->GetPosition().y < -50.0f) {
+				projectiles.erase(projectiles.begin() + i);
+			}
+			else {
+				++i;
+			}
 		}
-		else {
-			++i;
+
+		if (!facing) {
+			Vec3 newVel = physics->getVel() + Vec3(-4.0f, -9.8f * deltaTime, 0.0f);
+
+			physics->SetVelocity(newVel);
+
+			// Move the projectile
+			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+
+			// Remove if it falls below a threshold (e.g., off-screen)
+			if (transform->GetPosition().y < -50.0f) {
+				projectiles.erase(projectiles.begin() + i);
+			}
+			else {
+				++i;
+			}
 		}
 	}
-
 
 
 	for (auto actor : actors) {
@@ -769,9 +792,9 @@ void Scene1::Update(const float deltaTime) {
 		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
 		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
 		if (keystate[SDL_SCANCODE_A]) //facingLeft = true; // last part for animation
-		horizontalMove.x -= 1.0f; // Left
+		facing = false, horizontalMove.x -= 1.0f; // Left
 		if (keystate[SDL_SCANCODE_D]) //facingRight = true;
-		horizontalMove.x += 1.0f; // Right
+		facing = true, horizontalMove.x += 1.0f; // Right
 
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {

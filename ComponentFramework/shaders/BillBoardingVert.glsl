@@ -45,11 +45,13 @@ void main() {
    // If the texture is moving (or animating), adjust the x texture coordinate based on the index
    // if(movingTexture){
     texCoord.x = texCoord.x * 0.125 + (index * 0.125);
+    //texCoord.y = texCoord.y * 0.125 + (index * 0.125);
     
     // for flipping the texture coordinates when the object is facing left or right
     if(facingLeft){
         // Move the texture horizontally based on the 'index' value for animation 
     texCoord.x = (index * 1) * 0.125 - texCoord.x;
+
    }
 
     // Create a normal matrix by transforming the normal vectors using the model and view matrix (correcting for non-uniform scaling)
