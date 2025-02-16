@@ -63,10 +63,11 @@ private:
 	// Initializes tiles and calculates weights between nodes
 	void createTiles();
 	void calculateConnectionWeights();
-
+	std::vector<std::vector<Tile*>> hackingTiles;
+	bool showHackingGrid = false;
 	//FOR DECISIONTREE
 	DecisionTreeNode* decisionTreeRoot;
-
+	void createHackingGrid();
 	bool drawNormals;
 	bool drawOverlay;
 	bool isGrounded = false;
@@ -79,7 +80,9 @@ private:
 	
 
 public:
+	Vec2 hackingPlayerPos = Vec2(0, 0);
 	bool showTiles = false;
+	bool hackingMode = false;
 	bool facing = true;
 	explicit Scene1();
 	virtual ~Scene1();
@@ -93,6 +96,8 @@ public:
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
 	virtual void HandleEvents(const SDL_Event &sdlEvent);
+
+	
 
 	int Pick(int x, int y);
 	/// The w component holds the scale of the normal

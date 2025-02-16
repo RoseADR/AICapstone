@@ -48,7 +48,7 @@ bool Scene1::OnCreate() {
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
 	camera->GetViewMatrix().print("ViewMatrix");
 
-	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(3.0f, 5.0f, -5.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
+	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(1.0f, 0.0f, 0.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
 	light->OnCreate();
 
 
@@ -530,6 +530,42 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 		}
 			break;
 
+		case SDL_SCANCODE_L:
+			showHackingGrid = !showHackingGrid;
+			hackingMode = showHackingGrid; // Toggle hacking mode
+			if (showHackingGrid && hackingTiles.empty()) {
+				createHackingGrid();
+			}
+			break;
+		case SDL_SCANCODE_S:
+			if (hackingMode && hackingPlayerPos.y > 0) {
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+				hackingPlayerPos.y--;
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+			}
+			break;
+		case SDL_SCANCODE_W:
+			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) {
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+				hackingPlayerPos.y++;
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+			}
+			break;
+		case SDL_SCANCODE_A:
+			if (hackingMode && hackingPlayerPos.x > 0) {
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+				hackingPlayerPos.x--;
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+			}
+			break;
+		case SDL_SCANCODE_D:
+			if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) {
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+				hackingPlayerPos.x++;
+				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+			}
+			break;
+
 
 		case SDL_SCANCODE_R:
 
@@ -623,7 +659,7 @@ void Scene1::Update(const float deltaTime) {
 			projectiles.erase(projectiles.begin() + i);
 			continue;
 		}
-
+		
 		// Apply gravity
 		//will have to make x negative when facing left will do it later
 		if (facing) {
@@ -637,6 +673,7 @@ void Scene1::Update(const float deltaTime) {
 			// Remove if it falls below a threshold (e.g., off-screen)
 			if (transform->GetPosition().y < -50.0f) {
 				projectiles.erase(projectiles.begin() + i);
+				
 			}
 			else {
 				++i;
@@ -789,13 +826,14 @@ void Scene1::Update(const float deltaTime) {
 		Vec3 pos = characterTransform->GetPosition();
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-		if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
-		if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
-		if (keystate[SDL_SCANCODE_A]) //facingLeft = true; // last part for animation
-		facing = false, horizontalMove.x -= 1.0f; // Left
-		if (keystate[SDL_SCANCODE_D]) //facingRight = true;
-		facing = true, horizontalMove.x += 1.0f; // Right
-
+		if (!hackingMode) {
+			if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
+			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
+			if (keystate[SDL_SCANCODE_A]) facingLeft = true, // last part for animation
+				facing = false, horizontalMove.x -= 1.0f; // Left
+			if (keystate[SDL_SCANCODE_D]) facingRight = true,
+				facing = true, horizontalMove.x += 1.0f; // Right
+		}
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {
 			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
@@ -912,6 +950,14 @@ void Scene1::Render() const {
 		}
 	}
 	////glPushMatrix();
+
+	if (showHackingGrid) {
+		for (const auto& row : hackingTiles) {
+			for (Tile* tile : row) {
+				tile->render();
+			}
+		}
+	}
 
 	if (showTiles) { // Only render tiles if showTiles is true
 		for (const auto& row : tiles) {
@@ -1072,6 +1118,9 @@ void Scene1::createTiles() {
 	}
 }
 
+
+
+
 // Sets up connections (left, right, up, down) between adjacent nodes
 void Scene1::calculateConnectionWeights() {
 	int gridSize = 8;
@@ -1106,6 +1155,66 @@ void Scene1::calculateConnectionWeights() {
 		}
 	}
 }
+
+
+
+void Scene1::createHackingGrid() {
+	int gridSize = 6; // Define the grid size
+	float tileWidth = 0.50f;
+	float tileHeight = 0.28f;
+
+	// Adjust for aspect ratio
+	float aspectRatio = 1280.0f / 720.0f;
+	if (aspectRatio > 1.0f) {
+		tileHeight *= aspectRatio;
+	}
+	else {
+		tileWidth /= aspectRatio;
+	}
+
+	// Center offset for positioning the grid
+	float gridCenterX = (gridSize * tileWidth) / 2.0f;
+	float gridCenterY = (gridSize * tileHeight) / 2.8f;
+	float gridCenterZ = -5.0f; // Adjusted depth for better visibility
+
+	// Rotation and Projection
+	Matrix4 rotationMatrix = MMath::rotate(0.0f, 1.0f, 0.0f, 0.0f);
+	Matrix4 projectionMatrix = camera->GetProjectionMatrix();
+
+	hackingTiles.clear();
+	hackingTiles.resize(gridSize, std::vector<Tile*>(gridSize));
+
+	// Ensure sceneNodes can store all nodes
+	sceneNodes.resize(gridSize * gridSize);
+
+	int label = 0;
+
+	for (int i = 0; i < gridSize; ++i) {
+		for (int j = 0; j < gridSize; ++j) {
+			Node* node = new Node(label);
+			sceneNodes[label] = node;
+
+			// Corrected Position Calculation (matches createTiles)
+			Vec3 tilePos = Vec3(
+				(j * tileWidth) - gridCenterX,
+				(i * tileHeight) - gridCenterY,
+				gridCenterZ
+			);
+
+			// Use proper transformation (avoiding unnecessary row offset)
+			Matrix4 translationMatrix = MMath::translate(tilePos);
+			Matrix4 modelMatrix = projectionMatrix * translationMatrix * rotationMatrix;
+
+			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
+			tile->modelMatrix = modelMatrix;
+
+			hackingTiles[i][j] = tile;
+			label++;
+		}
+	}
+	hackingTiles[0][0]->setPathTile(true); // Start position is green
+}
+
 
 int Scene1::Pick(int x, int y) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF
