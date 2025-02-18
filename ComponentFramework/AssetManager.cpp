@@ -79,6 +79,7 @@ AssetManager::AssetManager() {
 
 
 
+
 	OnCreate();
 	ListAllComponents();
 }

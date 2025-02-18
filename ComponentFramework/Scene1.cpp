@@ -428,7 +428,7 @@ void Scene1::FireProjectile() {
 }
 
 
-void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
+void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	//Timing timing("Scene1::HandleEvents");
 
 	static int objID = -1;
@@ -440,7 +440,7 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	Ref<TransformComponent> gameBoardTC;
 
 	Vec3 rotatedDirection;
-	Vec3 direction;  
+	Vec3 direction;
 	Quaternion start;
 	Quaternion end;
 
@@ -455,156 +455,174 @@ void Scene1::HandleEvents(const SDL_Event &sdlEvent) {
 	/// Handle Camera movement 
 
 
-
-
 	switch (sdlEvent.type) {
-
-
-	case SDL_MOUSEBUTTONDOWN:
-		if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-			FireProjectile();
-		}
-		break;
-
-
-
 	case SDL_KEYDOWN:
-		cameraTC = camera->GetComponent<TransformComponent>();
-		characterTC = character->GetComponent<PhysicsComponent>();
-		gameBoardTC = gameboard->GetComponent<TransformComponent>();
-		
+		if (hackingMode) {
+			int newX = hackingPlayerPos.x;
+			int newY = hackingPlayerPos.y;
 
-		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_LEFT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case  SDL_SCANCODE_RIGHT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_UP:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_DOWN:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-
-		}
-
-
-		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_E:
-			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_Q:
-			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_Z:
-			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-				QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_X:
-			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-				QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
-			break;
-
-
-		case SDL_SCANCODE_B: { 
-			showTiles = !showTiles; // Toggle the visibility flag
-		}
-			break;
-
-		case SDL_SCANCODE_L:
-			showHackingGrid = !showHackingGrid;
-			hackingMode = showHackingGrid; // Toggle hacking mode
-			if (showHackingGrid && hackingTiles.empty()) {
-				createHackingGrid();
+			switch (sdlEvent.key.keysym.scancode) {
+			case SDL_SCANCODE_W: 
+				if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+				break;
+			case SDL_SCANCODE_S: 
+				if (hackingPlayerPos.y > 0) newY--;
+				break;
+			case SDL_SCANCODE_A: 
+				if (hackingPlayerPos.x > 0) newX--;
+				break;
+			case SDL_SCANCODE_D: 
+				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+				break;
+			case SDL_SCANCODE_SPACE: 
+				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
+					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
+				}
+				break;
 			}
-			break;
-		case SDL_SCANCODE_S:
-			if (hackingMode && hackingPlayerPos.y > 0) {
+
+			// Update player position
+			if (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y) {
+				// Reset the old tile
 				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
-				hackingPlayerPos.y--;
+
+				// Move player
+				hackingPlayerPos.x = newX;
+				hackingPlayerPos.y = newY;
+
+				// Mark new tile as player's position
 				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
 			}
-			break;
-		case SDL_SCANCODE_W:
-			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) {
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
-				hackingPlayerPos.y++;
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-			}
-			break;
-		case SDL_SCANCODE_A:
-			if (hackingMode && hackingPlayerPos.x > 0) {
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
-				hackingPlayerPos.x--;
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-			}
-			break;
-		case SDL_SCANCODE_D:
-			if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) {
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
-				hackingPlayerPos.x++;
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-			}
-			break;
-
-
-		case SDL_SCANCODE_R:
-
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
-			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-			characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-			
-			break;
-
-		case SDL_SCANCODE_T:
-
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
-			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-			characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-			
-			break;
-
-
-		case SDL_SCANCODE_N:
-			if (drawNormals == false) drawNormals = true;
-			else drawNormals = false;
-			break;
-
-		case SDL_SCANCODE_O:
-			if (drawOverlay == false) drawOverlay = true;
-			else drawOverlay = false;
-			break;
-
-		default:
-			break;
 		}
 		break;
+	}
 
 
-    }
+		switch (sdlEvent.type) {
 
-}
+
+		case SDL_MOUSEBUTTONDOWN:
+			if (!hackingMode) {
+				if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
+					FireProjectile();
+
+				}
+			}
+			break;
+
+
+
+		case SDL_KEYDOWN:
+			cameraTC = camera->GetComponent<TransformComponent>();
+			characterTC = character->GetComponent<PhysicsComponent>();
+			gameBoardTC = gameboard->GetComponent<TransformComponent>();
+
+
+			switch (sdlEvent.key.keysym.scancode) {
+			case SDL_SCANCODE_LEFT:
+				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
+				camera->UpdateViewMatrix();
+				break;
+
+			case  SDL_SCANCODE_RIGHT:
+				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
+				camera->UpdateViewMatrix();
+				break;
+
+			case SDL_SCANCODE_UP:
+				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
+				camera->UpdateViewMatrix();
+				break;
+
+			case SDL_SCANCODE_DOWN:
+				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
+				camera->UpdateViewMatrix();
+				break;
+
+
+			}
+
+
+
+			switch (sdlEvent.key.keysym.scancode) {
+			case SDL_SCANCODE_E:
+				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+					QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+				//camera->UpdateViewMatrix();
+				break;
+
+			case SDL_SCANCODE_Q:
+				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+					QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+				//camera->UpdateViewMatrix();
+				break;
+
+			case SDL_SCANCODE_Z:
+				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+					QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+				//camera->UpdateViewMatrix();
+				break;
+
+			case SDL_SCANCODE_X:
+				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+					QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+				//camera->UpdateViewMatrix();
+				break;
+
+
+			case SDL_SCANCODE_B: {
+				showTiles = !showTiles; // Toggle the visibility flag
+			}
+							   break;
+
+			case SDL_SCANCODE_L:
+				showHackingGrid = !showHackingGrid;
+				hackingMode = showHackingGrid; // Toggle hacking mode
+				if (showHackingGrid && hackingTiles.empty()) {
+					createHackingGrid();
+				}
+				break;
+			
+
+
+			case SDL_SCANCODE_R:
+
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
+				orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+					QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+				characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+
+				break;
+
+			case SDL_SCANCODE_T:
+
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
+				orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+					QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+				characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+
+				break;
+
+
+			case SDL_SCANCODE_N:
+				if (drawNormals == false) drawNormals = true;
+				else drawNormals = false;
+				break;
+
+			case SDL_SCANCODE_O:
+				if (drawOverlay == false) drawOverlay = true;
+				else drawOverlay = false;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+
+		}
+
+	}
 
 void Scene1::Update(const float deltaTime) {
 	//Timing timing("Scene1::Update");
@@ -962,6 +980,7 @@ void Scene1::Render() const {
 	if (showTiles) { // Only render tiles if showTiles is true
 		for (const auto& row : tiles) {
 			for (Tile* tile : row) {
+
 				tile->render(); // Render the tile
 			}
 		}
@@ -1159,7 +1178,7 @@ void Scene1::calculateConnectionWeights() {
 
 
 void Scene1::createHackingGrid() {
-	int gridSize = 6; // Define the grid size
+	int gridSize = 6; // Grid size
 	float tileWidth = 0.50f;
 	float tileHeight = 0.28f;
 
@@ -1172,10 +1191,10 @@ void Scene1::createHackingGrid() {
 		tileWidth /= aspectRatio;
 	}
 
-	// Center offset for positioning the grid
+	// Center offset for positioning
 	float gridCenterX = (gridSize * tileWidth) / 2.0f;
 	float gridCenterY = (gridSize * tileHeight) / 2.8f;
-	float gridCenterZ = -5.0f; // Adjusted depth for better visibility
+	float gridCenterZ = -5.0f;
 
 	// Rotation and Projection
 	Matrix4 rotationMatrix = MMath::rotate(0.0f, 1.0f, 0.0f, 0.0f);
@@ -1184,35 +1203,50 @@ void Scene1::createHackingGrid() {
 	hackingTiles.clear();
 	hackingTiles.resize(gridSize, std::vector<Tile*>(gridSize));
 
-	// Ensure sceneNodes can store all nodes
-	sceneNodes.resize(gridSize * gridSize);
+	std::vector<std::pair<int, int>> redTilePositions;
+	int numRedTiles = (gridSize * gridSize) / 4; // 25% of tiles will be red
+	srand(time(nullptr)); // Seed for randomness
+
+	// Randomly select red tile positions
+	while (redTilePositions.size() < numRedTiles) {
+		int x = rand() % gridSize;
+		int y = rand() % gridSize;
+		if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(x, y)) == redTilePositions.end()) {
+			redTilePositions.push_back({ x, y });
+		}
+	}
 
 	int label = 0;
-
 	for (int i = 0; i < gridSize; ++i) {
 		for (int j = 0; j < gridSize; ++j) {
 			Node* node = new Node(label);
 			sceneNodes[label] = node;
 
-			// Corrected Position Calculation (matches createTiles)
 			Vec3 tilePos = Vec3(
 				(j * tileWidth) - gridCenterX,
 				(i * tileHeight) - gridCenterY,
 				gridCenterZ
 			);
 
-			// Use proper transformation (avoiding unnecessary row offset)
 			Matrix4 translationMatrix = MMath::translate(tilePos);
 			Matrix4 modelMatrix = projectionMatrix * translationMatrix * rotationMatrix;
 
 			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
 			tile->modelMatrix = modelMatrix;
 
+			// Set red tiles as "blocked"
+			if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(i, j)) != redTilePositions.end()) {
+				node->setIsBlocked(true);
+			}
+
 			hackingTiles[i][j] = tile;
 			label++;
 		}
 	}
-	hackingTiles[0][0]->setPathTile(true); // Start position is green
+
+	// Place the player cube at the starting position (Top Left: 0,0)
+	hackingPlayerPos = Vec2(0, 0);
+	hackingTiles[0][0]->setPathTile(true); // Highlight the starting tile
 }
 
 
