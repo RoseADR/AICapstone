@@ -5,6 +5,7 @@
 #include "Scene0.h"
 #include "Scene1.h"
 #include "Scene2.h"
+#include "Scene3.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
@@ -167,6 +168,11 @@ void SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 
 	case SCENE_NUMBER::SCENE2:
 		currentScene = new Scene2();
+		status = currentScene->OnCreate();
+		break;
+
+	case SCENE_NUMBER::SCENE3:
+		currentScene = new Scene3();
 		status = currentScene->OnCreate();
 		break;
 
