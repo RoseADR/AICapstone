@@ -76,7 +76,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("CarText", nullptr, "textures/carText.png");
 	AddComponent<MaterialComponent>("BlockerText", nullptr, "textures/blockerText.png");
 	AddComponent<MaterialComponent>("lavaTexture", nullptr, "textures/lava.png");
-
+	AddComponent<MaterialComponent>("RoboGun", nullptr, "textures/RobotJumpGun.png");
 
 
 

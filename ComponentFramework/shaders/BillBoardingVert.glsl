@@ -45,7 +45,7 @@ void main() {
    // If the texture is moving (or animating), adjust the x texture coordinate based on the index
    // if(movingTexture){
     texCoord.x = texCoord.x * 0.125 + (index * 0.125);
-    //texCoord.y = texCoord.y * 0.125 + (index * 0.125);
+    texCoord.y = texCoord.y * 0.125 + (index * 0.125);
     
     // for flipping the texture coordinates when the object is facing left or right
     if(facingLeft){
