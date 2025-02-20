@@ -69,14 +69,14 @@ bool Scene1::OnCreate() {
 	gameboard = std::make_shared<Actor>(nullptr);
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
+	//pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
-	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
+	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 	gameboard->AddComponent(cc);
-	gameboard->AddComponent(pc);
+	//gameboard->AddComponent(pc);
 	// <CollisionComponent>(nullptr,
 	//	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
@@ -318,11 +318,11 @@ bool Scene1::OnCreate() {
 
 	collisionSystem.AddActor(gameboard);
 	collisionSystem.AddActor(character);
-	collisionSystem.AddActor(TestCube);
-	collisionSystem.AddActor(factory);
+	//collisionSystem.AddActor(TestCube);
+//	collisionSystem.AddActor(factory);
 
 	physicsSystem.AddActor(character);
-	physicsSystem.AddActor(gameboard);
+	//physicsSystem.AddActor(gameboard);
 
 
 	//PATHFINDING REALTED 
@@ -732,99 +732,22 @@ void Scene1::Update(const float deltaTime) {
 	// Update the camera's view matrix
 	camera->UpdateViewMatrix();
 
-	const float gravity = -9.8f;        // Gravitational acceleration
+	//const float gravity = -9.8f;        // Gravitational acceleration
 	const float jumpStrength = 5.0f;   // Initial jump velocity
 	const float moveSpeed = 30.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	auto characterTransform = character->GetComponent<TransformComponent>();
-
-
-	/*if (characterTransform) {
-		bool p = true;
-		p = collisionSystem.SphereSphereCollisionDetection(character, TestCube);
-
-		if (p) {
-			collisionSystem.SphereSphereCollisionResponse(character, TestCube);
-		}
+	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
+	
+	// Gravity
+	/*if (!isGrounded) {
+		Vec3 currentVel = playerPhysics->getVel();
+		currentVel.y += -9.8f * deltaTime;
+		playerPhysics->SetVelocity(currentVel);
 	}
-
-	*/
-
-
-	//if (characterTransform) {
-	//	Vec3 pos = characterTransform->GetPosition();
-	//	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
-	//	Ref<CollisionComponent> playerCollision = character->GetComponent<CollisionComponent>();
-
-	//	// Check collision with ground (gameboard)
-	//	Ref<CollisionComponent> groundCollision = gameboard->GetComponent<CollisionComponent>();
-	//	Ref<PhysicsComponent> groundPhysics = gameboard->GetComponent<PhysicsComponent>();
-
-
-	//	/*if (playerPhysics && playerCollision ) {
-	//		Sphere playerSphere;
-	//		playerSphere.r = playerCollision->GetRadius();
-	//		playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
-
-	//		Sphere groundSphere;
-	//		groundSphere.r = groundCollision->GetRadius();
-	//		groundSphere.center = gameboard->GetComponent<TransformComponent>()->GetPosition();*/
-
-	//	for (auto actor : actors) {
-	//		auto collider = actor->GetComponent<CollisionComponent>();
-	//		if (collider || actor == character) {
-
-	//			Sphere playerSphere;
-	//			playerSphere.r = playerCollision->GetRadius();
-	//			playerSphere.center = character->GetComponent<TransformComponent>()->GetPosition();
-
-	//			Plane groundPlane;
-	//			groundPlane = gameboard->GetComponent<CollisionComponent>()->GetPlane();
-
-
-	//			Sphere otherSphere;
-	//			otherSphere.r = collider->GetRadius();
-	//			otherSphere.center = actor->GetComponent<TransformComponent>()->GetPosition();
-
-
-	//			if (isGrounded) {
-
-	//				//Reset vertical velocity when grounded
-	//				verticalVelocity = 0.0f;
-
-	//				// Jump if space is pressed
-	//				const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-	//				if (keystate[SDL_SCANCODE_SPACE]) {
-	//					verticalVelocity = jumpStrength; // Apply jump velocity
-	//					isGrounded = false;              // Character is no longer grounded
-	//				}
-	//				// Resolve collision to align with the floor
-	//				if (isGrounded) {
-	//					collisionSystem.SpherePlaneCollisionResponse(playerSphere, playerPhysics, groundPlane, groundPhysics);
-	//				}
-
-	//				if (collisionSystem.SpherePlaneCollisionDetection(playerSphere, groundPlane)) {
-	//					isGrounded = true;
-	//					collisionSystem.SpherePlaneCollisionResponse(playerSphere, playerPhysics, groundPlane, groundPhysics /*actor->GetComponent<PhysicsComponent>()*/);
-	//				}
-
-	//			}
-
-	//			if (!isGrounded) {
-	//				Vec3 currentVel = playerPhysics->getVel();
-	//				currentVel.z += -9.8f * deltaTime;
-	//				playerPhysics->SetVelocity(currentVel);
-	//			}
-	//			else {
-	//				Vec3 currentPos = playerTransform->GetPosition();
-	//				if (currentPos.z < otherSphere.center.z + otherSphere.r) {
-	//					currentPos.z = otherSphere.center.z + otherSphere.r; // makes sure it stays on the ground
-	//					playerTransform->SetPosition(currentPos);
-	//				}
-	//			}
-	//		}
+			*/
 
 
 
@@ -851,12 +774,6 @@ void Scene1::Update(const float deltaTime) {
 
 		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
-
-
-	
-
-		
-
 
 
 	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
@@ -897,6 +814,7 @@ void Scene1::Update(const float deltaTime) {
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
+	
 
 	// Update the gameboard transform
 	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);

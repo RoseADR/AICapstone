@@ -22,11 +22,11 @@ public:
 			return;
 		}
 
-		if (/*actor_->GetComponent<CollisionComponent>()->colliderType != ColliderType::PLANE && */
-			actor_->GetComponent<PhysicsComponent>().get() == nullptr) {
-			Debug::Error("The Actor must have a PhysicsComponent - ignored ", __FILE__, __LINE__);
+		if (actor_->GetComponent<PhysicsComponent>().get() == nullptr || actor_->GetComponent<TransformComponent>().get() == nullptr) {
+			Debug::Error("The Actor must have a PhysicsComponent or TransformComponent - ignored ", __FILE__, __LINE__);
 			return;
 		}
+
 		collidingActors.push_back(actor_);
 	}
 
@@ -40,7 +40,7 @@ public:
 
 
 	bool SpherePlaneCollisionDetection( const Sphere& s1,const Plane& p1);
-	void SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2);
+	void SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<TransformComponent> tc2);
 
 	void Update(const float deltaTime);
 

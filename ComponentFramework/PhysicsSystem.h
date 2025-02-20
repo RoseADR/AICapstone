@@ -9,6 +9,8 @@ private:
 	const float gravity = -9.81f;
 	std::vector<Ref<Actor>> physicsActors;
 
+	//CollisionSystem* collisionSystem;
+
 public:
 
 	void AddActor(Ref<Actor> actor_) {

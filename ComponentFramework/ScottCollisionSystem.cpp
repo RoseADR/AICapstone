@@ -38,7 +38,7 @@ void CollisionSystem::Update(const float deltaTime) {
 
                 Plane p1;
                 p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->normal;
-                p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<PhysicsComponent>()->GetPosition()));
+                p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<TransformComponent>()->GetPosition()));
 
               std::string hop = "p1.n: (" +
                   std::to_string(p1.n.x) + ", " +
@@ -47,8 +47,8 @@ void CollisionSystem::Update(const float deltaTime) {
 
                 if (SpherePlaneCollisionDetection(s1, p1) == true) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
-                    Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
-                    SpherePlaneCollisionResponse(s1, pc1, p1);
+                    Ref<TransformComponent> tc2 = collidingActors[j]->GetComponent<TransformComponent>();
+                    SpherePlaneCollisionResponse(s1, pc1, p1, tc2);
 
                     std::cout << "SpherePlane Collision" + hop << std::endl;
                 }
@@ -138,7 +138,7 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
     float dist = VMath::dot(s1.center, p1.n) - p1.d;
 
    
-    if (fabs(dist <= s1.r)) {
+    if (fabs(dist) <= s1.r) {
       //  std::cout << "SpherePlane Collision" << std::endl;
         return true;
     }
@@ -146,7 +146,7 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
 
 }
 
-void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2)
+void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<TransformComponent> tc2)
 {
     float dist = VMath::dot(s1.center, p2.n) - p2.d;
 
@@ -157,11 +157,11 @@ void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsCompone
         // Move the sphere completely out of the plane
         pc1->pos += p2.n * penetrationDepth;
 
-        // Stop downward movement
-        float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
-        if (velocityAlongNormal < 0.0f) {
-            pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
-        }
+        //// Stop downward movement
+        //float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
+        //if (velocityAlongNormal < 0.0f) {
+        //    pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
+        //}
     }
 
 }
