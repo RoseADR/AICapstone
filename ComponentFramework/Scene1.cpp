@@ -410,7 +410,7 @@ void Scene1::FireProjectile() {
 	auto charTransform = character->GetComponent<TransformComponent>();
 	if (!charTransform) return;
 
-	Vec3 charPos = charTransform->GetPosition(); // Start position on the character
+	Vec3 charPos = charTransform->GetPosition(); // Start position of the character
 
 	auto projectile = std::make_shared<Actor>(nullptr);
 	projectile->AddComponent<TransformComponent>(nullptr, charPos, Quaternion());
@@ -418,14 +418,23 @@ void Scene1::FireProjectile() {
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
 	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
 
-	// Gravity-enabled physics
-	Vec3 gravity(0.0f, -9.81f, 0.0f); // Falling downward
-	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), Vec3(0.0f, 0.0f, 0.0f), gravity);
+	
+	Vec3 initialVelocity;
+	if (facing) {
+		initialVelocity = Vec3(30.0f, 0.0f, 0.0f); 
+	}
+	else {
+		initialVelocity = Vec3(-30.0f, 0.0f, 0.0f); 
+	}
+
+
+	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), initialVelocity, Vec3(0.0f, -9.81f, 0.0f));
 
 	projectile->OnCreate();
 	AddActor(projectile);
 	projectiles.push_back(projectile);
 }
+
 
 
 void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
@@ -677,44 +686,23 @@ void Scene1::Update(const float deltaTime) {
 			projectiles.erase(projectiles.begin() + i);
 			continue;
 		}
-		
-		// Apply gravity
-		//will have to make x negative when facing left will do it later
-		if (facing) {
-			Vec3 newVel = physics->getVel() + Vec3(4.0f, -9.8f * deltaTime, 0.0f);
 
-			physics->SetVelocity(newVel);
+		// Get current velocity
+		Vec3 newVel = physics->getVel() + Vec3(0.0f, -9.8f * deltaTime, 0.0f); // Gravity only affects Y-axis
+		physics->SetVelocity(newVel);
 
-			// Move the projectile
-			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+		// Move the projectile
+		transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
 
-			// Remove if it falls below a threshold (e.g., off-screen)
-			if (transform->GetPosition().y < -50.0f) {
-				projectiles.erase(projectiles.begin() + i);
-				
-			}
-			else {
-				++i;
-			}
+		// Remove if it falls below a threshold (e.g., off-screen)
+		if (transform->GetPosition().y < -50.0f) {
+			projectiles.erase(projectiles.begin() + i);
 		}
-
-		if (!facing) {
-			Vec3 newVel = physics->getVel() + Vec3(-4.0f, -9.8f * deltaTime, 0.0f);
-
-			physics->SetVelocity(newVel);
-
-			// Move the projectile
-			transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
-
-			// Remove if it falls below a threshold (e.g., off-screen)
-			if (transform->GetPosition().y < -50.0f) {
-				projectiles.erase(projectiles.begin() + i);
-			}
-			else {
-				++i;
-			}
+		else {
+			++i;
 		}
 	}
+
 
 
 	for (auto actor : actors) {
