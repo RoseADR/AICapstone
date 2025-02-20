@@ -460,6 +460,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 	bool facingRight = false; // animation
 	bool facingLeft = false;
+	bool movingUp = false;
+	bool movingDown = false;
 
 	/// Handle Camera movement 
 
@@ -756,7 +758,8 @@ void Scene1::Update(const float deltaTime) {
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 		if (!hackingMode) {
-			if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
+			if (keystate[SDL_SCANCODE_W]) movingUp = true,
+				facing = true, horizontalMove.y += 1.0f; // Forward
 			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
 			if (keystate[SDL_SCANCODE_A]) facingLeft = true, // last part for animation
 				facing = false, horizontalMove.x -= 1.0f; // Left
