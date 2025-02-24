@@ -847,36 +847,24 @@ void Scene1::Render() const {
 
 	}
 
-	glDisable(GL_BLEND);
+	glUseProgram(0);  // Unbind 
 
-	// ** Render Collision Boxes **
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set wireframe mode
-	glDisable(GL_TEXTURE_2D); // Disable textures to draw wireframes clearly
-	glColor3f(1.0f, 0.0f, 0.0f); // Red color for collision boxes
-
-	for (auto actor : actors) {
-		auto collider = actor->GetComponent<CollisionComponent>();
-		if (collider) {
-			collider->Render(); // Draw the bounding box
-		}
-	}
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Reset polygon mode to fill
-	glEnable(GL_TEXTURE_2D); // Re-enable textures
-	glUseProgram(0); // Unbind any shaders
-
-
-
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glUseProgram(0);
+	// ** Render Collision Boxes (Wireframe Mode) **
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glColor3f(1.0f, 0.0f, 0.0f); 
 
 	for (auto actor : actors) {
 		auto collider = actor->GetComponent<CollisionComponent>();
 		if (collider) {
-			collider->Render(); // Render collision boxes
+			collider->Render();
 		}
 	}
-	////glPushMatrix();
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Reset polygon mode
+
+	
+	glDisable(GL_TEXTURE_2D);
+	glUseProgram(0);  // Ensure fixed-function pipeline for tiles
 
 	if (showHackingGrid) {
 		for (const auto& row : hackingTiles) {
@@ -886,29 +874,37 @@ void Scene1::Render() const {
 		}
 	}
 
-	if (showTiles) { // Only render tiles if showTiles is true
+	if (showTiles) {
 		for (const auto& row : tiles) {
 			for (Tile* tile : row) {
-
-				tile->render(); // Render the tile
+				tile->render();
 			}
 		}
 	}
 
-	//glPopMatrix(); // Restore the previous matrix state
-
-	if (drawOverlay == true) {
+	// ** Render Overlays **
+	if (drawOverlay) {
 		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
 	}
 
-	if (drawNormals == true) {
+	if (drawNormals) {
 		DrawNormals(Vec4(1.0f, 1.0f, 0.0f, 0.01f));
 	}
 
+	// ** Render Projectiles **
 	for (const auto& projectile : projectiles) {
 		projectile->Render();
 	}
+
+	// Reset OpenGL state after rendering
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
 
 void Scene1::DrawMeshOverlay(const Vec4 color) const {
 	glDisable(GL_DEPTH_TEST);

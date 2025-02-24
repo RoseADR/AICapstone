@@ -33,33 +33,34 @@ void Tile::setColour() const {
 
 
 void Tile::render() const {
+    glPushMatrix();
 
-   
+    // Apply the tile's model matrix
+    glMultMatrixf(modelMatrix);
 
+    // Set tile color based on state
+    setColour();
 
-        glPushMatrix();
+    // Render the tile quad
+    glBegin(GL_QUADS);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(width, 0.0f, 0.0f);
+    glVertex3f(width, height, 0.0f);
+    glVertex3f(0.0f, height, 0.0f);
+    glEnd();
 
-        glMultMatrixf(modelMatrix);  // Apply the tile’s model matrix
+    // Render tile border
+    glDisable(GL_DEPTH_TEST);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(width, 0.0f, 0.0f);
+    glVertex3f(width, height, 0.0f);
+    glVertex3f(0.0f, height, 0.0f);
+    glEnd();
+    glEnable(GL_DEPTH_TEST);
 
-        setColour();
+    glPopMatrix();
+}
 
-        glBegin(GL_QUADS);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(width, 0.0f, 0.0f);
-        glVertex3f(width, height, 0.0f);
-        glVertex3f(0.0f, height, 0.0f);
-        glEnd();
-
-        glDisable(GL_DEPTH_TEST);
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(width, 0.0f, 0.0f);
-        glVertex3f(width, height, 0.0f);
-        glVertex3f(0.0f, height, 0.0f);
-        glEnd();
-        glEnable(GL_DEPTH_TEST);
-
-        glPopMatrix();
-    }
 
