@@ -25,6 +25,7 @@ public:
 
     Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_);
     virtual ~Tile() {}
+    void setGreen();
 
     Node* getNode() const { return node; }
     Vec3 getPosition() const { return pos; }

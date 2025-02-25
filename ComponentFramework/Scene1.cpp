@@ -485,11 +485,28 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			case SDL_SCANCODE_D: 
 				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
-			case SDL_SCANCODE_SPACE: 
+			case SDL_SCANCODE_SPACE:
 				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
+
+					
+					redTilePositions.erase(
+						std::remove(redTilePositions.begin(), redTilePositions.end(),
+							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
+						redTilePositions.end()
+					);
+
+					
+					if (redTilePositions.empty()) {
+						
+						SDL_Delay(2000);
+						hackingMode = false;
+						showHackingGrid = false;
+						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
+					}
 				}
 				break;
+
 			}
 
 			// Update player position
@@ -866,7 +883,10 @@ void Scene1::Render() const {
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);  // Ensure fixed-function pipeline for tiles
 
+	
+
 	if (showHackingGrid) {
+
 		for (const auto& row : hackingTiles) {
 			for (Tile* tile : row) {
 				tile->render();
@@ -1108,8 +1128,8 @@ void Scene1::createHackingGrid() {
 	hackingTiles.clear();
 	hackingTiles.resize(gridSize, std::vector<Tile*>(gridSize));
 
-	std::vector<std::pair<int, int>> redTilePositions;
-	int numRedTiles = (gridSize * gridSize) / 4; // 25% of tiles will be red
+	
+	int numRedTiles = (gridSize * gridSize) / 2; // 25% of tiles will be red
 	srand(time(nullptr)); // Seed for randomness
 
 	// Randomly select red tile positions
@@ -1143,6 +1163,7 @@ void Scene1::createHackingGrid() {
 			if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(i, j)) != redTilePositions.end()) {
 				node->setIsBlocked(true);
 			}
+
 
 			hackingTiles[i][j] = tile;
 			label++;

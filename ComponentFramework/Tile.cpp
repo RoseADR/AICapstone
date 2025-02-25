@@ -7,6 +7,11 @@ Tile::Tile(Node* node_, Vec3 pos_, float width_, float height_, Scene* scene_)
 {
 }
 
+void Tile::setGreen()
+{
+    isPathTile = true;
+}
+
 void Tile::setPathTile(bool isPath) {
     isPathTile = isPath;
 }
