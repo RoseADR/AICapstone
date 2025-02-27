@@ -32,7 +32,7 @@ private:
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
-	Ref<Actor> gameboard;
+	//Ref<Actor> gameboard;
 	Ref<Actor> factory;
 	Ref<Actor> bg;
 	Ref<Actor> Bridge;

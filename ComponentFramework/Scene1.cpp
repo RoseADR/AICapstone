@@ -52,6 +52,7 @@ bool Scene1::OnCreate() {
 	light->OnCreate();
 
 
+
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
@@ -67,23 +68,23 @@ bool Scene1::OnCreate() {
 		bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("city"));
 		AddActor(bg);
 	}
-	gameboard = std::make_shared<Actor>(nullptr);
-	
+	//gameboard = std::make_shared<Actor>(nullptr);
+
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	tc = std::make_shared<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
-   // gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	gameboard->AddComponent<ShaderComponent>(shader);
-	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	gameboard->AddComponent(cc);
-	gameboard->AddComponent(tc);
-	// <CollisionComponent>(nullptr,
-	//	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
-	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-	// 
-	gameboard->OnCreate();
-	AddActor(gameboard);
+	//tc = std::make_shared<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
+	//cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
+ //  // gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
+	//gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	//gameboard->AddComponent<ShaderComponent>(shader);
+	//gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	//gameboard->AddComponent(cc);
+	//gameboard->AddComponent(tc);
+	//// <CollisionComponent>(nullptr,
+	////	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
+	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
+	//// 
+	//gameboard->OnCreate();
+	//AddActor(gameboard);
 
 
 	factory = std::make_shared<Actor>(nullptr);
@@ -301,7 +302,7 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 10.0f, -10.0f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 15.0f, -10.0f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -312,7 +313,7 @@ bool Scene1::OnCreate() {
 	//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
 	character->OnCreate();
 	AddActor(character);
-
+	 
 	/*projectile = std::make_shared<Actor>(character.get());
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
@@ -321,12 +322,12 @@ bool Scene1::OnCreate() {
 
 	LoadEnemies();
 
-	collisionSystem.AddActor(gameboard);
+	//collisionSystem.AddActor(gameboard);
 	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
 
-	transformSystem.AddActor(gameboard);
+	//transformSystem.AddActor(gameboard);
 	transformSystem.AddActor(factory);
 	physicsSystem.AddActor(character);
 
@@ -765,8 +766,8 @@ void Scene1::Update(const float deltaTime) {
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
 //	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
-	auto characterTransform = character->GetComponent<TransformComponent>();
-	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
+	auto characterTransform = character->GetComponent<PhysicsComponent>();
+	//Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
 	
 	// Gravity
 	/*if (!isGrounded) {
@@ -814,7 +815,7 @@ void Scene1::Update(const float deltaTime) {
 		characterTransform->SetPosition(pos);
 
 
-	Ref<TransformComponent>characterTC = character->GetComponent<TransformComponent>();
+	Ref<PhysicsComponent>characterTC = character->GetComponent<PhysicsComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
 
@@ -846,11 +847,13 @@ void Scene1::Update(const float deltaTime) {
 		// std::cout << index << std::endl;
 	}
 
-
+	character->Update(deltaTime);
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
 	transformSystem.Update(deltaTime);
 	
+	std::cout << "Checking collision for character at: "
+		<< character->GetComponent<PhysicsComponent>()->GetPosition() << std::endl;
 
 	// Update the gameboard transform
 //	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
@@ -983,7 +986,7 @@ void Scene1::LoadEnemies() {
 	Ref<Actor> enemies[2]{};
 
 	// Set up the first enemy
-	enemies[0] = std::make_shared<Actor>(gameboard.get()); // Make actor and parent it to gameboard
+	enemies[0] = std::make_shared<Actor>(factory.get()); // Make actor and parent it to gameboard
 	enemies[0]->AddComponent<ShaderComponent>(shader); // Add shader
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
@@ -992,7 +995,7 @@ void Scene1::LoadEnemies() {
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
 
 	// Set up the second enemy
-	enemies[1] = std::make_shared<Actor>(gameboard.get()); // Make actor and parent it to gameboard
+	enemies[1] = std::make_shared<Actor>(factory.get()); // Make actor and parent it to gameboard
 	enemies[1]->AddComponent<ShaderComponent>(shader); // Add shader
 	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component

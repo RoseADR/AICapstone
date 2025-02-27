@@ -73,7 +73,7 @@ void CollisionSystem::Update(const float deltaTime) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
                     //Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
                     SpherePlaneCollisionResponse(s1, pc1, p1);
-
+                   
                     std::cout << "SpherePlane Collision" + hop << std::endl;
                 }
             }
