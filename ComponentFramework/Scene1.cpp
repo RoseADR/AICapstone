@@ -480,9 +480,11 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A: 
+				facingRight = false;
 				if (hackingPlayerPos.x > 0) newX--;
 				break;
-			case SDL_SCANCODE_D: 
+			case SDL_SCANCODE_D:
+				facingLeft = false;
 				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
@@ -775,13 +777,24 @@ void Scene1::Update(const float deltaTime) {
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 		if (!hackingMode) {
-			if (keystate[SDL_SCANCODE_W]) movingUp = true,
-				facing = true, horizontalMove.y += 1.0f; // Forward
-			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
-			if (keystate[SDL_SCANCODE_A]) facingLeft = true, // last part for animation
-				facing = false, horizontalMove.x -= 1.0f; // Left
-			if (keystate[SDL_SCANCODE_D]) facingRight = true,
-				facing = true, horizontalMove.x += 1.0f; // Right
+			if (keystate[SDL_SCANCODE_W]) {
+				movingUp = true;
+				facing = true;
+				horizontalMove.y += 1.0f; // Forward
+			}
+			if (keystate[SDL_SCANCODE_S]) {
+				horizontalMove.y -= 1.0f; // Backward
+			}
+			if (keystate[SDL_SCANCODE_A]) {
+				facingLeft = true; // last part for animation
+				facing = true;
+				horizontalMove.x -= 1.0f; // Left
+			}
+			if (keystate[SDL_SCANCODE_D]) {
+				facingRight = true;
+				facing = true;
+				horizontalMove.x += 1.0f; // Right
+			}
 		}
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {
@@ -822,15 +835,12 @@ void Scene1::Update(const float deltaTime) {
 	}
 	
 	// animation movement
-	if (facingRight) {
+	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime;
-		index = static_cast <int> (currentTime / frameSpeed) % 8;
-		//std::cout << index << std:: endl;
-		if (facingLeft) {
-			currentTime += deltaTime;
-			index = static_cast <int> (currentTime / frameSpeed) % 8;
-		}
+		index = static_cast<int>(currentTime / frameSpeed) % 8;
+		// std::cout << index << std::endl;
 	}
+
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
@@ -860,6 +870,9 @@ void Scene1::Render() const {
 		glUniformMatrix4fv(actor->GetComponent<ShaderComponent>()->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
 		glBindTexture(GL_TEXTURE_2D, actor->GetComponent<MaterialComponent>()->getTextureID());
 		glUniform1f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index);
+		
+		
+		
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	}
