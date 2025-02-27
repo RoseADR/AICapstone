@@ -303,8 +303,8 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 15.0f, -10.0f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
-	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
 	character->AddComponent(pc);
@@ -843,7 +843,8 @@ void Scene1::Update(const float deltaTime) {
 	// animation movement
 	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime;
-		index = static_cast<int>(currentTime / frameSpeed) % 8;
+		index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+		index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
 		// std::cout << index << std::endl;
 	}
 
@@ -878,7 +879,7 @@ void Scene1::Render() const {
 		glUseProgram(actor->GetComponent<ShaderComponent>()->GetProgram());
 		glUniformMatrix4fv(actor->GetComponent<ShaderComponent>()->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
 		glBindTexture(GL_TEXTURE_2D, actor->GetComponent<MaterialComponent>()->getTextureID());
-		glUniform1f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index);
+		glUniform2f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index.x, index.y);
 		
 		
 		

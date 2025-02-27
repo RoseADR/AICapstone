@@ -115,7 +115,7 @@ public:
 	bool movingUp;
 	bool movingDown;
 	float currentTime;
-	int index = 0;
+	Vec2 index;
 	float frameSpeed = 0.1f;
 };
 
