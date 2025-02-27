@@ -466,6 +466,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 	bool facingRight = false; // animation
 	bool facingLeft = false;
+	bool movingUp = false;
+	bool movingDown = false;
 
 	/// Handle Camera movement 
 
@@ -484,16 +486,35 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A: 
+				facingRight = false;
 				if (hackingPlayerPos.x > 0) newX--;
 				break;
-			case SDL_SCANCODE_D: 
+			case SDL_SCANCODE_D:
+				facingLeft = false;
 				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
-			case SDL_SCANCODE_SPACE: 
+			case SDL_SCANCODE_SPACE:
 				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
+
+					
+					redTilePositions.erase(
+						std::remove(redTilePositions.begin(), redTilePositions.end(),
+							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
+						redTilePositions.end()
+					);
+
+					
+					if (redTilePositions.empty()) {
+						
+						SDL_Delay(2000);
+						hackingMode = false;
+						showHackingGrid = false;
+						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
+					}
 				}
 				break;
+
 			}
 
 			// Update player position
@@ -761,12 +782,24 @@ void Scene1::Update(const float deltaTime) {
 		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 		if (!hackingMode) {
-			if (keystate[SDL_SCANCODE_W]) horizontalMove.y += 1.0f; // Forward
-			if (keystate[SDL_SCANCODE_S]) horizontalMove.y -= 1.0f; // Backward
-			if (keystate[SDL_SCANCODE_A]) facingLeft = true, // last part for animation
-				facing = false, horizontalMove.x -= 1.0f; // Left
-			if (keystate[SDL_SCANCODE_D]) facingRight = true,
-				facing = true, horizontalMove.x += 1.0f; // Right
+			if (keystate[SDL_SCANCODE_W]) {
+				movingUp = true;
+				facing = true;
+				horizontalMove.y += 1.0f; // Forward
+			}
+			if (keystate[SDL_SCANCODE_S]) {
+				horizontalMove.y -= 1.0f; // Backward
+			}
+			if (keystate[SDL_SCANCODE_A]) {
+				facingLeft = true; // last part for animation
+				facing = true;
+				horizontalMove.x -= 1.0f; // Left
+			}
+			if (keystate[SDL_SCANCODE_D]) {
+				facingRight = true;
+				facing = true;
+				horizontalMove.x += 1.0f; // Right
+			}
 		}
 		// Normalize movement direction and scale by speed and deltaTime
 		if (VMath::mag(horizontalMove) > 0.0f) {
@@ -807,15 +840,12 @@ void Scene1::Update(const float deltaTime) {
 	}
 	
 	// animation movement
-	if (facingRight) {
+	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime;
-		index = static_cast <int> (currentTime / frameSpeed) % 8;
-		//std::cout << index << std:: endl;
-		if (facingLeft) {
-			currentTime += deltaTime;
-			index = static_cast <int> (currentTime / frameSpeed) % 8;
-		}
+		index = static_cast<int>(currentTime / frameSpeed) % 8;
+		// std::cout << index << std::endl;
 	}
+
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
@@ -846,42 +876,36 @@ void Scene1::Render() const {
 		glUniformMatrix4fv(actor->GetComponent<ShaderComponent>()->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
 		glBindTexture(GL_TEXTURE_2D, actor->GetComponent<MaterialComponent>()->getTextureID());
 		glUniform1f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index);
+		
+		
+		
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	}
 
-	glDisable(GL_BLEND);
+	glUseProgram(0);  // Unbind 
 
-	// ** Render Collision Boxes **
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Set wireframe mode
-	glDisable(GL_TEXTURE_2D); // Disable textures to draw wireframes clearly
-	glColor3f(1.0f, 0.0f, 0.0f); // Red color for collision boxes
-
-	for (auto actor : actors) {
-		auto collider = actor->GetComponent<CollisionComponent>();
-		if (collider) {
-			collider->Render(); // Draw the bounding box
-		}
-	}
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Reset polygon mode to fill
-	glEnable(GL_TEXTURE_2D); // Re-enable textures
-	glUseProgram(0); // Unbind any shaders
-
-
-
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glUseProgram(0);
+	// ** Render Collision Boxes (Wireframe Mode) **
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glColor3f(1.0f, 0.0f, 0.0f); 
 
 	for (auto actor : actors) {
 		auto collider = actor->GetComponent<CollisionComponent>();
 		if (collider) {
-			collider->Render(); // Render collision boxes
+			collider->Render();
 		}
 	}
-	////glPushMatrix();
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Reset polygon mode
+
+	
+	glDisable(GL_TEXTURE_2D);
+	glUseProgram(0);  // Ensure fixed-function pipeline for tiles
+
+	
 
 	if (showHackingGrid) {
+
 		for (const auto& row : hackingTiles) {
 			for (Tile* tile : row) {
 				tile->render();
@@ -889,29 +913,37 @@ void Scene1::Render() const {
 		}
 	}
 
-	if (showTiles) { // Only render tiles if showTiles is true
+	if (showTiles) {
 		for (const auto& row : tiles) {
 			for (Tile* tile : row) {
-
-				tile->render(); // Render the tile
+				tile->render();
 			}
 		}
 	}
 
-	//glPopMatrix(); // Restore the previous matrix state
-
-	if (drawOverlay == true) {
+	// ** Render Overlays **
+	if (drawOverlay) {
 		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
 	}
 
-	if (drawNormals == true) {
+	if (drawNormals) {
 		DrawNormals(Vec4(1.0f, 1.0f, 0.0f, 0.01f));
 	}
 
+	// ** Render Projectiles **
 	for (const auto& projectile : projectiles) {
 		projectile->Render();
 	}
+
+	// Reset OpenGL state after rendering
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
 
 void Scene1::DrawMeshOverlay(const Vec4 color) const {
 	glDisable(GL_DEPTH_TEST);
@@ -1115,8 +1147,8 @@ void Scene1::createHackingGrid() {
 	hackingTiles.clear();
 	hackingTiles.resize(gridSize, std::vector<Tile*>(gridSize));
 
-	std::vector<std::pair<int, int>> redTilePositions;
-	int numRedTiles = (gridSize * gridSize) / 4; // 25% of tiles will be red
+	
+	int numRedTiles = (gridSize * gridSize) / 2; // 25% of tiles will be red
 	srand(time(nullptr)); // Seed for randomness
 
 	// Randomly select red tile positions
@@ -1150,6 +1182,7 @@ void Scene1::createHackingGrid() {
 			if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(i, j)) != redTilePositions.end()) {
 				node->setIsBlocked(true);
 			}
+
 
 			hackingTiles[i][j] = tile;
 			label++;

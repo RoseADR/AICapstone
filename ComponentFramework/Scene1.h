@@ -79,8 +79,8 @@ private:
 	float xAxis;
 	float yAxis;
 	Tile* currentlyHoveredTile = nullptr;
+	std::vector<std::pair<int, int>> redTilePositions;
 	
-
 public:
 	Vec2 hackingPlayerPos = Vec2(0, 0);
 	bool showTiles = false;
@@ -112,6 +112,8 @@ public:
 	// for sprite sheet animations
 	bool facingRight;
 	bool facingLeft;
+	bool movingUp;
+	bool movingDown;
 	float currentTime;
 	int index = 0;
 	float frameSpeed = 0.1f;
