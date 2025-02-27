@@ -56,7 +56,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE1);
+	BuildNewScene(SCENE_NUMBER::SCENE0);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -99,6 +99,38 @@ void SceneManager::Run() {
 		ImGui::Text("Health");
 		ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
 		ImGui::End();
+
+		if (dynamic_cast<Scene0*>(currentScene)) {
+			// Set up a full-screen, borderless window for the button
+			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Always);
+
+			ImGui::Begin("##InvisibleWindow", nullptr,
+				ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+			// Get window size (full screen)
+			ImVec2 windowSize = ImGui::GetWindowSize();
+
+			// Button size
+			ImVec2 buttonSize = ImVec2(400, 100); // Large button but fits on screen
+
+			// Centering the button
+			ImVec2 cursorPos = ImVec2((windowSize.x - buttonSize.x) * 0.5f,
+				(windowSize.y - buttonSize.y) * 0.5f);
+			ImGui::SetCursorPos(cursorPos);
+
+			// Bigger button
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 20));
+
+			if (ImGui::Button("Start Game", buttonSize)) {
+				BuildNewScene(SCENE_NUMBER::SCENE1);
+			}
+
+			ImGui::PopStyleVar(); // Restore padding
+			ImGui::End();
+		}
 
 		// Render ImGui draw data
 		ImGui::Render();

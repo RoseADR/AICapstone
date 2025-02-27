@@ -46,11 +46,11 @@ bool Scene0::OnCreate() {
 	Quaternion orientation = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f));
 	someObject->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientation);
 
-	someObject->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	someObject->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-	someObject->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
+	//someObject->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	//someObject->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
+	//someObject->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
 
-	AddActor(someObject);
+	//AddActor(someObject);
 
 	return true;
 }
