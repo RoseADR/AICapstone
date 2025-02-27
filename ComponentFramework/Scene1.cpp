@@ -843,9 +843,14 @@ void Scene1::Update(const float deltaTime) {
 	// animation movement
 	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime;
-		index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-		index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
-		// std::cout << index << std::endl;
+		if (facingRight || facingLeft) {
+			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+		}
+		if (movingUp || movingDown) {
+			index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
+		}
+		std::cout << index.x << ',' << index.y << std::endl;
+		
 	}
 
 	character->Update(deltaTime);
@@ -853,8 +858,8 @@ void Scene1::Update(const float deltaTime) {
 	physicsSystem.Update(deltaTime);
 	transformSystem.Update(deltaTime);
 	
-	std::cout << "Checking collision for character at: "
-		<< character->GetComponent<PhysicsComponent>()->GetPosition() << std::endl;
+	//std::cout << "Checking collision for character at: "
+		//<< character->GetComponent<PhysicsComponent>()->GetPosition() << std::endl;
 
 	// Update the gameboard transform
 //	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
