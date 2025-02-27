@@ -43,6 +43,7 @@ private:
 	Ref<Actor> enemies;
 	Ref<Actor> projectile;
 	
+
 	LocationManager locationManager;
 
 	CollisionSystem collisionSystem;

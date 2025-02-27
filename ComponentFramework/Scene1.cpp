@@ -90,7 +90,7 @@ bool Scene1::OnCreate() {
 	factory = std::make_shared<Actor>(nullptr);
 
 	tc = std::make_shared<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -109,36 +109,14 @@ bool Scene1::OnCreate() {
 		float x = -70.0f - (i * 17.0f);
 		auto road = std::make_shared<Actor>(Bridge.get());
 
-		tc = std::make_shared<TransformComponent>(nullptr, Vec3(x, 17.0f, -6.4f), 
-			QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(1.72, 1.0, 0.8));
-		cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
+		road->AddComponent<TransformComponent>(nullptr, Vec3(x, 17.0f, -6.4f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(1.72, 1.0, 0.8));
 		road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 		road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 		road->AddComponent<ShaderComponent>(shader);
-		road->AddComponent(cc);
-		road->AddComponent(tc);
+		//road->AddComponent(cc);
 
 		road->OnCreate();
 		AddActor(road);
-
-		character = std::make_shared<Actor>(nullptr);
-		Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-		pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(x, 0.1f, -5.0f), mariosQuaternion);
-		character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
-		character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
-		character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-		character->AddComponent(cc);
-		character->AddComponent(pc);
-		// <CollisionComponent>(nullptr, 
-		//	ColliderType::Sphere, /*Vec3(1.0f, 1.0f, 2.0f), */
-		//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
-		character->OnCreate();
-		AddActor(character);
-
-		collisionSystem.AddActor(character);
-		physicsSystem.AddActor(character);
-		collisionSystem.AddActor(road);
-		transformSystem.AddActor(road);
 	}
 	
 	Ref <Actor> Lava[2];
@@ -309,11 +287,13 @@ bool Scene1::OnCreate() {
 	for (int i = 0; i < 8; i++) {
 		float x = -2000.0f - (i * 340.0f);
 			Bridge = std::make_shared<Actor>(factory.get());
+
 			Bridge->AddComponent<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
 			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
 			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 			Bridge->AddComponent<ShaderComponent>(shader);
 			//Bridge->AddComponent(cc);
+
 			Bridge->OnCreate();
 			AddActor(Bridge);
 		
@@ -341,13 +321,15 @@ bool Scene1::OnCreate() {
 
 
 	LoadEnemies();
-	//collisionSystem.AddActor(character);
+
+	//collisionSystem.AddActor(gameboard);
+	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
 
 	//transformSystem.AddActor(gameboard);
 	transformSystem.AddActor(factory);
-	//physicsSystem.AddActor(character);
+	physicsSystem.AddActor(character);
 
 
 	//PATHFINDING REALTED 
