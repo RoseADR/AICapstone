@@ -7,3 +7,4 @@ CollisionComponent::CollisionComponent(Component* parent_, ColliderType type_, f
 Component(parent_), colliderType(type_), radius(radius_), normal(normal_), dist(dist_) {
 
 }
+

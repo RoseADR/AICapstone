@@ -14,6 +14,7 @@
 #include "TreeBuilder.h"
 #include "ScottCollisionSystem.h"
 #include "PhysicsSystem.h"
+#include "TransformSystem.h"
 #include <irrKlang.h>
 
 using namespace MATH;
@@ -47,6 +48,7 @@ private:
 
 	CollisionSystem collisionSystem;
 	PhysicsSystem physicsSystem;
+	TransformSystem transformSystem;
 	
 	Quaternion orientationBoard;
 	Quaternion orientationBg;

@@ -12,7 +12,21 @@ void CollisionSystem::Update(const float deltaTime) {
 
             Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
             s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
-            s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
+            //s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
+            Ref<PhysicsComponent> spherePC = collidingActors[i]->GetComponent<PhysicsComponent>();
+            Ref<TransformComponent> sphereTC = collidingActors[i]->GetComponent<TransformComponent>();
+
+            //// Use PhysicsComponent if available, otherwise fallback to TransformComponent
+            if (spherePC) {
+                s1.center = spherePC->pos;
+            }
+            else if (sphereTC) {
+                s1.center = sphereTC->GetPosition();
+            }
+            //else {
+            //    Debug::Error("Sphere object has no valid position source", __FILE__, __LINE__);
+            //    
+            //}
 
             std::string hop2 = "s1.center: (" +
                 std::to_string(s1.center.x) + ", " +
@@ -38,7 +52,17 @@ void CollisionSystem::Update(const float deltaTime) {
 
                 Plane p1;
                 p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->normal;
-                p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<TransformComponent>()->GetPosition()));
+               // p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<TransformComponent>()->GetPosition()));
+
+                Ref<TransformComponent> planeTC = collidingActors[j]->GetComponent<TransformComponent>();
+
+                if (planeTC) {
+                    p1.d = VMath::dot(p1.n, planeTC->GetPosition());
+                }
+                else {
+                    Debug::Error("Plane object has no TransformComponent", __FILE__, __LINE__);
+                   
+                }
 
               std::string hop = "p1.n: (" +
                   std::to_string(p1.n.x) + ", " +
@@ -47,8 +71,8 @@ void CollisionSystem::Update(const float deltaTime) {
 
                 if (SpherePlaneCollisionDetection(s1, p1) == true) {
                     Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
-                    Ref<TransformComponent> tc2 = collidingActors[j]->GetComponent<TransformComponent>();
-                    SpherePlaneCollisionResponse(s1, pc1, p1, tc2);
+                    //Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+                    SpherePlaneCollisionResponse(s1, pc1, p1);
 
                     std::cout << "SpherePlane Collision" + hop << std::endl;
                 }
@@ -137,16 +161,15 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
 {
     float dist = VMath::dot(s1.center, p1.n) - p1.d;
 
-   
-    if (fabs(dist) <= s1.r) {
-      //  std::cout << "SpherePlane Collision" << std::endl;
+    if (fabs(dist <= s1.r)) {
+        //  std::cout << "SpherePlane Collision" << std::endl;
         return true;
     }
     return false;
 
 }
 
-void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2, Ref<TransformComponent> tc2)
+void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2/*, Ref<PhysicsComponent> tc2*/)
 {
     float dist = VMath::dot(s1.center, p2.n) - p2.d;
 
@@ -157,11 +180,11 @@ void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsCompone
         // Move the sphere completely out of the plane
         pc1->pos += p2.n * penetrationDepth;
 
-        //// Stop downward movement
-        //float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
-        //if (velocityAlongNormal < 0.0f) {
-        //    pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
-        //}
+        // Stop downward movement
+        float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
+        if (velocityAlongNormal < 0.0f) {
+            pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
+        }
     }
 
 }

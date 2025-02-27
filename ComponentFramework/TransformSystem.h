@@ -6,10 +6,7 @@
 
 class TransformSystem {
 private:
-	//const float gravity = -9.81f;
 	std::vector<Ref<Actor>> transformActors;
-
-	//CollisionSystem* collisionSystem;
 
 public:
 

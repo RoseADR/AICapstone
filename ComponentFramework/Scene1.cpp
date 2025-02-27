@@ -55,6 +55,7 @@ bool Scene1::OnCreate() {
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
+	Ref<TransformComponent> tc = std::make_shared<TransformComponent>(nullptr, Vec3(-10.0f, -10.0f, 0.0f), orientationBoard);
 
 	for (int i = 0; i < 3; i++) {
 		float x = 0.0f - (i * 90.0f);
@@ -69,14 +70,14 @@ bool Scene1::OnCreate() {
 	gameboard = std::make_shared<Actor>(nullptr);
 	
 	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	//pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
+	tc = std::make_shared<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
-	gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
+   // gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
 	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	gameboard->AddComponent<ShaderComponent>(shader);
 	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 	gameboard->AddComponent(cc);
-	//gameboard->AddComponent(pc);
+	gameboard->AddComponent(tc);
 	// <CollisionComponent>(nullptr,
 	//	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
@@ -87,11 +88,15 @@ bool Scene1::OnCreate() {
 
 	factory = std::make_shared<Actor>(nullptr);
 
-	factory->AddComponent<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	tc = std::make_shared<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	factory->AddComponent(cc);
+	factory->AddComponent(tc);
+
+
 	// <CollisionComponent>(factory.get(),
 	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
 	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
@@ -297,8 +302,8 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 10.0f, -10.0f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Mario"));
+	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("MarioMain"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
 	character->AddComponent(pc);
@@ -319,10 +324,11 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(gameboard);
 	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
-//	collisionSystem.AddActor(factory);
+    collisionSystem.AddActor(factory);
 
+	transformSystem.AddActor(gameboard);
+	transformSystem.AddActor(factory);
 	physicsSystem.AddActor(character);
-	//physicsSystem.AddActor(gameboard);
 
 
 	//PATHFINDING REALTED 
@@ -524,7 +530,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_KEYDOWN:
 			cameraTC = camera->GetComponent<TransformComponent>();
 			characterTC = character->GetComponent<PhysicsComponent>();
-			gameBoardTC = gameboard->GetComponent<TransformComponent>();
+			//gameBoardTC = gameboard->GetComponent<TransformComponent>();
 
 
 			switch (sdlEvent.key.keysym.scancode) {
@@ -705,14 +711,14 @@ void Scene1::Update(const float deltaTime) {
 
 
 
-	for (auto actor : actors) {
-		auto transform = actor->GetComponent<TransformComponent>();
-		if (transform) {
-			Vec3 pos = transform->GetPosition();
-			/*std::cout << "[Scene1] Actor Position Updated: ("
-				<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
-		}
-	}
+	//for (auto actor : actors) {
+	//	auto transform = actor->GetComponent<TransformComponent>();
+	//	if (transform) {
+	//		Vec3 pos = transform->GetPosition();
+	//		/*std::cout << "[Scene1] Actor Position Updated: ("
+	//			<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
+	//	}
+	//}
 
 
 	Ref<PhysicsComponent> playerTransform = character->GetComponent<PhysicsComponent>();
@@ -737,7 +743,7 @@ void Scene1::Update(const float deltaTime) {
 	const float moveSpeed = 30.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
-	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+//	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	auto characterTransform = character->GetComponent<TransformComponent>();
 	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
 	
@@ -748,7 +754,6 @@ void Scene1::Update(const float deltaTime) {
 		playerPhysics->SetVelocity(currentVel);
 	}
 			*/
-
 
 
 		// Handle horizontal motion (WASD input)
@@ -770,7 +775,7 @@ void Scene1::Update(const float deltaTime) {
 
 		// Combine horizontal and vertical motion
 		pos += horizontalMove;        // Update horizontal position
-		pos.z += verticalVelocity * deltaTime; // Update vertical position
+	 	pos.z += verticalVelocity * deltaTime; // Update vertical position
 
 		// Apply updated position to the character
 		characterTransform->SetPosition(pos);
@@ -814,10 +819,11 @@ void Scene1::Update(const float deltaTime) {
 
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
+	transformSystem.Update(deltaTime);
 	
 
 	// Update the gameboard transform
-	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+//	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 }
 
 
