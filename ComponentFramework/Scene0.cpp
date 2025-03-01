@@ -38,7 +38,7 @@ bool Scene0::OnCreate() {
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
 	
 
-	light = std::make_shared<LightActor>(camera.get(), LightStyle::DirectionLight, Vec3(-10.0f, 0.0f, 0.0f) ,Vec4(0.6f,0.6f,0.6f,0.0f));
+	light = std::make_shared<LightActor>(camera.get(), LightStyle::DirectionLight, Vec3(-10.0f, 0.0f, 0.0f) ,Vec4(1.0f,1.0f,1.0f,0.0f));
 	light->OnCreate();
 	
 	
@@ -46,11 +46,13 @@ bool Scene0::OnCreate() {
 	Quaternion orientation = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f));
 	someObject->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientation);
 
-	//someObject->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	//someObject->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-	//someObject->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WalkSpriteSheet"));
-
-	//AddActor(someObject);
+	backGround = std::make_shared<Actor>(nullptr);
+	
+	backGround->AddComponent<TransformComponent>(nullptr, Vec3(0.02f, 0.08f, -25.1f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.12f, 3.0f, 1.0f));
+	backGround->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	backGround->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	backGround->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboMainMenu"));
+	AddActor(backGround);
 
 	return true;
 }

@@ -73,8 +73,6 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	return true;
 }
 
-float playerHealth = 60.0f; // Current health
-float maxHealth = 100.0f;    // Maximum health
 
 /// This is the whole game
 void SceneManager::Run() {
@@ -92,14 +90,15 @@ void SceneManager::Run() {
 		ImGui::NewFrame();
 
 		// Health bar rendering
-		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); // Position at top-right
-		ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
-		ImGui::Begin("Health Bar", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-		float healthPercentage = playerHealth / maxHealth;
-		ImGui::Text("Health");
-		ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
-		ImGui::End();
-
+		if (dynamic_cast<Scene1*>(currentScene)) {
+			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); 
+			ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
+			ImGui::Begin("Health Bar", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			float healthPercentage = playerHealth / maxHealth;
+			ImGui::Text("Health");
+			ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
+			ImGui::End();
+		}
 		if (dynamic_cast<Scene0*>(currentScene)) {
 			// Set up a full-screen, borderless window for the button
 			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -117,15 +116,23 @@ void SceneManager::Run() {
 			ImVec2 buttonSize = ImVec2(400, 100); // Large button but fits on screen
 
 			// Centering the button
-			ImVec2 cursorPos = ImVec2((windowSize.x - buttonSize.x) * 0.5f,
+			ImVec2 cursorPosStart = ImVec2((windowSize.x - buttonSize.x) * 0.5f,
 				(windowSize.y - buttonSize.y) * 0.5f);
-			ImGui::SetCursorPos(cursorPos);
+			ImVec2 cursorPosQuit = ImVec2((windowSize.x - buttonSize.x) * 0.5f,
+				((windowSize.y - -300) - buttonSize.y) * 0.5f);
+			ImGui::SetCursorPos(cursorPosStart);
 
 			// Bigger button
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 20));
 
 			if (ImGui::Button("Start Game", buttonSize)) {
 				BuildNewScene(SCENE_NUMBER::SCENE1);
+			}
+
+			ImGui::SetCursorPos(cursorPosQuit);
+		
+			if (ImGui::Button("Quit Game", buttonSize)) {
+				isRunning = false;
 			}
 
 			ImGui::PopStyleVar(); // Restore padding

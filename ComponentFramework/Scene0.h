@@ -23,6 +23,7 @@ private:
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
+	Ref<Actor> backGround;
 	bool drawNormals;
 	bool drawOverlay;
 	bool isRunning;

@@ -10,7 +10,9 @@ public:
 	void Run();
 	bool Initialize(std::string name_, int width_, int height_);
 	void HandleEvents();
-	
+	float playerHealth = 60.0f; // Current health
+	float maxHealth = 100.0f;    
+
 	
 private:
 	enum class SCENE_NUMBER {
