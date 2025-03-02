@@ -29,11 +29,11 @@
 using namespace MATH;
 
 
-Scene1::Scene1():engine(nullptr), drawNormals(false), drawOverlay(false){
+Scene1::Scene1(SceneManager* manager) : sceneManager(manager), engine(nullptr), drawNormals(false), drawOverlay(false) {
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	
 }
+
 
 bool Scene1::OnCreate() {
 	
@@ -534,15 +534,16 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		break;
 	}
 
-
+	
 		switch (sdlEvent.type) {
 
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (!hackingMode) {
 				if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-					FireProjectile();
-
+					if (sceneManager->ammo > 0) {
+						FireProjectile(), sceneManager->ammo -= 1;
+					}
 				}
 			}
 			break;

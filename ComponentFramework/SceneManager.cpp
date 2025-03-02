@@ -89,6 +89,20 @@ void SceneManager::Run() {
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
+		if (dynamic_cast<Scene1*>(currentScene)) {
+			// Position and size the ammo counter window
+			ImGui::SetNextWindowPos(ImVec2(10, 70), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
+
+			ImGui::Begin("Ammo Counter", nullptr,
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
+				ImGuiWindowFlags_NoScrollWithMouse);
+
+			ImGui::Text("Ammo: %d", ammo);  // Display the ammo count
+
+			ImGui::End();
+		}
 		// Health bar rendering
 		if (dynamic_cast<Scene1*>(currentScene)) {
 			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); 
@@ -201,7 +215,7 @@ void SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 		break;
 
 	case SCENE_NUMBER::SCENE1:
-		currentScene = new Scene1();
+		currentScene = new Scene1(this);
 		status = currentScene->OnCreate();
 		break;
 

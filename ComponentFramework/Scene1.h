@@ -16,7 +16,7 @@
 #include "PhysicsSystem.h"
 #include "TransformSystem.h"
 #include <irrKlang.h>
-
+#include "SceneManager.h"
 using namespace MATH;
 using namespace irrklang;
 /// let me change
@@ -28,6 +28,8 @@ class Actor;
 
 class Scene1 : public Scene {
 private:
+
+	SceneManager* sceneManager;
 
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
@@ -86,7 +88,7 @@ public:
 	bool showTiles = false;
 	bool hackingMode = false;
 	bool facing = true;
-	explicit Scene1();
+	explicit Scene1(SceneManager* manager);
 	virtual ~Scene1();
 	std::vector<std::shared_ptr<Actor>> projectiles;
 
