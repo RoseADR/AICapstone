@@ -89,8 +89,23 @@ void SceneManager::Run() {
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
+		
+		// Health bar rendering
 		if (dynamic_cast<Scene1*>(currentScene)) {
-			// Position and size the ammo counter window
+			
+			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); 
+			ImGui::SetNextWindowSize(ImVec2(300, 50), ImGuiCond_Always);
+			ImGui::Begin("Health Bar", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			float healthPercentage = playerHealth / maxHealth;
+			ImGui::Text("Health");
+			ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
+			ImGui::SetWindowFontScale(1);
+			ImGui::End();
+		}
+
+		if (dynamic_cast<Scene1*>(currentScene)) {
+			
 			ImGui::SetNextWindowPos(ImVec2(10, 70), ImGuiCond_Always);
 			ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
 
@@ -98,21 +113,11 @@ void SceneManager::Run() {
 				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 				ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
 				ImGuiWindowFlags_NoScrollWithMouse);
-
-			ImGui::Text("Ammo: %d", ammo);  // Display the ammo count
-
+			ImGui::SetWindowFontScale(3);
+			ImGui::Text("Ammo: %d", ammo);  
 			ImGui::End();
 		}
-		// Health bar rendering
-		if (dynamic_cast<Scene1*>(currentScene)) {
-			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); 
-			ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
-			ImGui::Begin("Health Bar", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-			float healthPercentage = playerHealth / maxHealth;
-			ImGui::Text("Health");
-			ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
-			ImGui::End();
-		}
+
 		if (dynamic_cast<Scene0*>(currentScene)) {
 			// Set up a full-screen, borderless window for the button
 			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -134,6 +139,9 @@ void SceneManager::Run() {
 				(windowSize.y - buttonSize.y) * 0.5f);
 			ImVec2 cursorPosQuit = ImVec2((windowSize.x - buttonSize.x) * 0.5f,
 				((windowSize.y - -300) - buttonSize.y) * 0.5f);
+
+			
+
 			ImGui::SetCursorPos(cursorPosStart);
 
 			// Bigger button
@@ -148,7 +156,7 @@ void SceneManager::Run() {
 			if (ImGui::Button("Quit Game", buttonSize)) {
 				isRunning = false;
 			}
-
+			ImGui::SetWindowFontScale(3);
 			ImGui::PopStyleVar(); // Restore padding
 			ImGui::End();
 		}

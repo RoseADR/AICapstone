@@ -186,15 +186,15 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 
 	case SDL_MOUSEBUTTONDOWN:
 
-		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
+		/*currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
 		lastMousePos = currentMousePos;
 		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
-		printf("0x%X %d\n", objID, objID);
+		printf("0x%X %d\n", objID, objID);*/
 		break;
 
 	case SDL_MOUSEBUTTONUP: 
-		if (objID == -1) break;
-		objID = -1; /// Let go of the object
+		/*if (objID == -1) break;
+		objID = -1; /// Let go of the object*/
 		break;
 
 	default:
