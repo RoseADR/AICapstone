@@ -425,24 +425,26 @@ void Scene1::FireProjectile() {
 	Vec3 charPos = charTransform->GetPosition(); // Start position of the character
 
 	auto projectile = std::make_shared<Actor>(nullptr);
-	projectile->AddComponent<TransformComponent>(nullptr, charPos, Quaternion());
+	projectile->AddComponent<TransformComponent>(nullptr, charPos, Quaternion(), Vec3( 0.5,0.5,0.5));
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
 	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
 
 	Vec3 initialVelocity;
 	if (facing) {
-		initialVelocity = Vec3(30.0f, 0.0f, 0.0f);
+		initialVelocity = Vec3(60.0f, 0.0f, 0.0f);
 	}
 	else {
-		initialVelocity = Vec3(-30.0f, 0.0f, 0.0f);
+		initialVelocity = Vec3(-60.0f, 0.0f, 0.0f);
 	}
 
 	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), initialVelocity, Vec3(0.0f, -9.81f, 0.0f));
 
 	projectile->OnCreate();
 	AddActor(projectile);
+
 	projectiles.push_back(projectile);
+	
 
 }
 
@@ -811,7 +813,7 @@ void Scene1::Update(const float deltaTime) {
 			}
 			if (keystate[SDL_SCANCODE_A]) {
 				facingLeft = true; // last part for animation
-				facing = true;
+				facing = false;
 				horizontalMove.x -= 1.0f; // Left
 			}
 			if (keystate[SDL_SCANCODE_D]) {
