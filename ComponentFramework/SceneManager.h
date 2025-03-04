@@ -12,7 +12,9 @@ public:
 	void HandleEvents();
 	float playerHealth = 60.0f; // Current health
 	float maxHealth = 100.0f;    
-	int ammo = 5;
+	int totalAmmo = 15;  
+	int clipAmmo = 5;     // Bullets currently in clip
+	int clipSize = 5;     
 	
 private:
 	enum class SCENE_NUMBER {

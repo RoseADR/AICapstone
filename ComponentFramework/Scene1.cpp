@@ -413,6 +413,11 @@ void Scene1::OnDestroy() {
 }
 
 void Scene1::FireProjectile() {
+	if (sceneManager->clipAmmo <= 0) {
+		std::cout << "Out of bullets! Press R to reload.\n";
+		return;
+	}
+
 	// Get the character's transform
 	auto charTransform = character->GetComponent<TransformComponent>();
 	if (!charTransform) return;
@@ -425,21 +430,32 @@ void Scene1::FireProjectile() {
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
 	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
 
-	
 	Vec3 initialVelocity;
 	if (facing) {
-		initialVelocity = Vec3(30.0f, 0.0f, 0.0f); 
+		initialVelocity = Vec3(30.0f, 0.0f, 0.0f);
 	}
 	else {
-		initialVelocity = Vec3(-30.0f, 0.0f, 0.0f); 
+		initialVelocity = Vec3(-30.0f, 0.0f, 0.0f);
 	}
-
 
 	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), initialVelocity, Vec3(0.0f, -9.81f, 0.0f));
 
 	projectile->OnCreate();
 	AddActor(projectile);
 	projectiles.push_back(projectile);
+
+}
+
+
+void Scene1::Reload()
+{
+	int bulletsNeeded = sceneManager->clipSize - sceneManager->clipAmmo;
+	if (sceneManager->totalAmmo > 0 && bulletsNeeded > 0) {
+		int bulletsToReload = std::min(bulletsNeeded, sceneManager->totalAmmo);
+		sceneManager->clipAmmo += bulletsToReload;
+		sceneManager->totalAmmo -= bulletsToReload;
+	}
+
 }
 
 
@@ -541,8 +557,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_MOUSEBUTTONDOWN:
 			if (!hackingMode) {
 				if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-					if (sceneManager->ammo > 0) {
-						FireProjectile(), sceneManager->ammo -= 1;
+					if (sceneManager->clipAmmo > 0) {
+						FireProjectile(), sceneManager->clipAmmo -= 1;
 					}
 				}
 			}
@@ -625,10 +641,11 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 			case SDL_SCANCODE_R:
 
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
-				orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-					QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-				characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
+				//orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+				//	QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+				//characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+				Reload();
 
 				break;
 

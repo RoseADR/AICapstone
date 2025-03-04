@@ -96,7 +96,7 @@ public:
 	virtual void OnDestroy();
 
 	void FireProjectile();
-
+	void Reload();
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
 	virtual void HandleEvents(const SDL_Event &sdlEvent);

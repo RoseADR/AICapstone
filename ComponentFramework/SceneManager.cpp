@@ -56,7 +56,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE0);
+	BuildNewScene(SCENE_NUMBER::SCENE1);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -100,23 +100,24 @@ void SceneManager::Run() {
 			float healthPercentage = playerHealth / maxHealth;
 			ImGui::Text("Health");
 			ImGui::ProgressBar(healthPercentage, ImVec2(-1.0f, 0.0f));
-			ImGui::SetWindowFontScale(1);
+			ImGui::SetWindowFontScale(1);// text size
 			ImGui::End();
 		}
 
 		if (dynamic_cast<Scene1*>(currentScene)) {
-			
 			ImGui::SetNextWindowPos(ImVec2(10, 70), ImGuiCond_Always);
-			ImGui::SetNextWindowSize(ImVec2(200, 50), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
 
 			ImGui::Begin("Ammo Counter", nullptr,
 				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 				ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar |
 				ImGuiWindowFlags_NoScrollWithMouse);
-			ImGui::SetWindowFontScale(3);
-			ImGui::Text("Ammo: %d", ammo);  
+
+			ImGui::SetWindowFontScale(2.5); // Text size
+			ImGui::Text("Ammo: %d/%d", clipAmmo, totalAmmo);
 			ImGui::End();
 		}
+
 
 		if (dynamic_cast<Scene0*>(currentScene)) {
 			// Set up a full-screen, borderless window for the button
