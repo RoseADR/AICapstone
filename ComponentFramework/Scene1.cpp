@@ -89,13 +89,28 @@ bool Scene1::OnCreate() {
 
 	factory = std::make_shared<Actor>(nullptr);
 
-	tc = std::make_shared<TransformComponent>(nullptr, Vec3(30.0f, 0.1f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
+	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, -5.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	factory->AddComponent(cc);
 	factory->AddComponent(tc);
+
+	for (int i = 0; i < 8; i++) {
+		float x = -2000.0f - (i * 340.0f);
+		Bridge = std::make_shared<Actor>(factory.get());
+
+		Bridge->AddComponent<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
+		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
+		Bridge->AddComponent<ShaderComponent>(shader);
+		//Bridge->AddComponent(cc);
+
+		Bridge->OnCreate();
+		AddActor(Bridge);
+
+	}
 
 
 	// <CollisionComponent>(factory.get(),
@@ -167,7 +182,7 @@ bool Scene1::OnCreate() {
 		}
 	auto Barrel = std::make_shared<Actor>(factory.get());
 
-	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0, 13.0, 13.0));
+	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0f, 13.0f, 13.0f));
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
@@ -177,18 +192,22 @@ bool Scene1::OnCreate() {
 
 	auto Car = std::make_shared<Actor>(Bridge.get());
 
+	//tc = std::make_shared<TransformComponent>(Car.get(), Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
+	cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
+	Car->AddComponent(cc);
+	//Car->AddComponent(tc);
 	Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
 	Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
 	Car->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CarText"));
 	Car->AddComponent<ShaderComponent>(shader);
-	//Car->AddComponent(cc);
 	Car->OnCreate();
 	AddActor(Car);
+
 
 	
 	auto Scaf = std::make_shared<Actor>(factory.get());
 
-	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 340.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0, 1.0, 1.0));
+	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 340.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0f, 1.0f, 1.0f));
 	Scaf->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Scaffolding"));
 	Scaf->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
 	Scaf->AddComponent<ShaderComponent>(shader);
@@ -200,7 +219,7 @@ bool Scene1::OnCreate() {
 		float z = -4.5f - (i * 2.0f);
 		auto Blocker = std::make_shared<Actor>(Bridge.get());
 
-		Blocker->AddComponent<TransformComponent>(nullptr, Vec3(-145.0f, 17.0f, z), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.02, 0.02, 0.02));
+		Blocker->AddComponent<TransformComponent>(nullptr, Vec3(-145.0f, 17.0f, z), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.02f, 0.02f, 0.02f));
 		Blocker->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Blocker"));
 		Blocker->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlockerText"));
 		Blocker->AddComponent<ShaderComponent>(shader);
@@ -280,29 +299,12 @@ bool Scene1::OnCreate() {
 				streetLight->OnCreate();
 				AddActor(streetLight);
 
-			}
-	
-
-	
-	for (int i = 0; i < 8; i++) {
-		float x = -2000.0f - (i * 340.0f);
-			Bridge = std::make_shared<Actor>(factory.get());
-
-			Bridge->AddComponent<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
-			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
-			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
-			Bridge->AddComponent<ShaderComponent>(shader);
-			//Bridge->AddComponent(cc);
-
-			Bridge->OnCreate();
-			AddActor(Bridge);
-		
 		}
 	
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 15.0f, -10.0f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-15.0f, 5.0f, -10.0f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -326,9 +328,11 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
+	collisionSystem.AddActor(Car);
 
 	//transformSystem.AddActor(gameboard);
 	transformSystem.AddActor(factory);
+	//transformSystem.AddActor(Car);
 	physicsSystem.AddActor(character);
 
 
@@ -785,10 +789,10 @@ void Scene1::Update(const float deltaTime) {
 	const float moveSpeed = 30.0f;      // Movement speed
 	static float verticalVelocity = 0.0f; // Character's vertical velocity
 
-//	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+	//	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 	auto characterTransform = character->GetComponent<PhysicsComponent>();
 	//Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
-	
+
 	// Gravity
 	/*if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
@@ -798,41 +802,41 @@ void Scene1::Update(const float deltaTime) {
 			*/
 
 
-		// Handle horizontal motion (WASD input)
-		Vec3 pos = characterTransform->GetPosition();
-		Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
-		const Uint8* keystate = SDL_GetKeyboardState(nullptr);
-		if (!hackingMode) {
-			if (keystate[SDL_SCANCODE_W]) {
-				movingUp = true;
-				facing = true;
-				horizontalMove.y += 1.0f; // Forward
-			}
-			if (keystate[SDL_SCANCODE_S]) {
-				horizontalMove.y -= 1.0f; // Backward
-			}
-			if (keystate[SDL_SCANCODE_A]) {
-				facingLeft = true; // last part for animation
-				facing = false;
-				horizontalMove.x -= 1.0f; // Left
-			}
-			if (keystate[SDL_SCANCODE_D]) {
-				facingRight = true;
-				facing = true;
-				horizontalMove.x += 1.0f; // Right
-			}
+			// Handle horizontal motion (WASD input)
+	Vec3 pos = characterTransform->GetPosition();
+	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
+	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
+	if (!hackingMode) {
+		if (keystate[SDL_SCANCODE_W]) {
+			movingUp = true;
+			facing = true;
+			horizontalMove.y += 1.0f; // Forward
 		}
-		// Normalize movement direction and scale by speed and deltaTime
-		if (VMath::mag(horizontalMove) > 0.0f) {
-			horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
+		if (keystate[SDL_SCANCODE_S]) {
+			horizontalMove.y -= 1.0f; // Backward
 		}
+		if (keystate[SDL_SCANCODE_A]) {
+			facingLeft = true; // last part for animation
+			facing = true;
+			horizontalMove.x -= 1.0f; // Left
+		}
+		if (keystate[SDL_SCANCODE_D]) {
+			facingRight = true;
+			facing = true;
+			horizontalMove.x += 1.0f; // Right
+		}
+	}
+	// Normalize movement direction and scale by speed and deltaTime
+	if (VMath::mag(horizontalMove) > 0.0f) {
+		horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
+	}
 
-		// Combine horizontal and vertical motion
-		pos += horizontalMove;        // Update horizontal position
-	 	pos.z += verticalVelocity * deltaTime; // Update vertical position
+	// Combine horizontal and vertical motion
+	pos += horizontalMove;        // Update horizontal position
+	pos.z += verticalVelocity * deltaTime; // Update vertical position
 
-		// Apply updated position to the character
-		characterTransform->SetPosition(pos);
+	// Apply updated position to the character
+	characterTransform->SetPosition(pos);
 
 
 	Ref<PhysicsComponent>characterTC = character->GetComponent<PhysicsComponent>();
@@ -844,7 +848,7 @@ void Scene1::Update(const float deltaTime) {
 	locationManager.mariosPos = mariosPos;
 
 	// Enemy 1 (actors[2]) Decision Tree Logic 
-	auto& enemy = actors[2]; 
+	auto& enemy = actors[2];
 
 	// Update Enemy 1's state
 	enemy->Update(deltaTime); // THIS DOES NOTHING 
@@ -859,7 +863,7 @@ void Scene1::Update(const float deltaTime) {
 			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
 		}
 	}
-	
+
 	// animation movement
 	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime;
@@ -872,6 +876,15 @@ void Scene1::Update(const float deltaTime) {
 		std::cout << index.x << ',' << index.y << std::endl;
 		
 	}
+
+	if (facingRight || facingLeft) {
+		index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+	}
+	if (movingUp || movingDown) {
+		index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
+	}
+	std::cout << index.x << ',' << index.y << std::endl;
+
 
 	character->Update(deltaTime);
 	collisionSystem.Update(deltaTime);
