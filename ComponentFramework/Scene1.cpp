@@ -24,9 +24,11 @@
 #include <chrono>
 #include <thread>
 #include "CollisionComponent.h"
-
+#include <Quad.h>
+#include <QuadMath.h>
 // test test delete me 
 using namespace MATH;
+using namespace MATHEX;
 
 
 Scene1::Scene1(SceneManager* manager) : sceneManager(manager), engine(nullptr), drawNormals(false), drawOverlay(false) {
@@ -36,7 +38,22 @@ Scene1::Scene1(SceneManager* manager) : sceneManager(manager), engine(nullptr), 
 
 
 bool Scene1::OnCreate() {
-	
+	// testing new math stuff
+	Vec3 pos(-1, 0.5, 0); // This would be the position of your character. I've given an example
+
+	// Fill in the corners of the platform in the quad constructor
+	// Wind the quad anti-clockwise
+	// Here's an example of a strange looking quad
+	MATHEX::Quad quad = MATHEX::Quad(
+		Vec3(0, 0, 0),
+		Vec3(1, 0, 0),
+		Vec3(0.5, 1, 0),
+		Vec3(0, 1, 0)
+	);
+
+	// Find the closest point between the character's centre position and the quad
+	// In this example it should return the vector (0, 0.5, 0) I think
+	Vec3 closestPoint = MATHEX::QuadMath::closestPointOnQuad(pos, quad);
 	//Timing timing("Scene1::OnCreate");
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
@@ -328,7 +345,7 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
-	collisionSystem.AddActor(Car);
+	//collisionSystem.AddActor(Car);
 
 	//transformSystem.AddActor(gameboard);
 	transformSystem.AddActor(factory);
