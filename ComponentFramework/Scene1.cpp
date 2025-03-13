@@ -818,15 +818,15 @@ void Scene1::Update(const float deltaTime) {
 			facing = true;
 			horizontalMove.y += 1.0f; // Forward
 		}
-		if (keystate[SDL_SCANCODE_S]) {
+		else if (keystate[SDL_SCANCODE_S]) {
 			horizontalMove.y -= 1.0f; // Backward
 		}
-		if (keystate[SDL_SCANCODE_A]) {
+		else if (keystate[SDL_SCANCODE_A]) {
 			facingLeft = true; // last part for animation
 			facing = true;
 			horizontalMove.x -= 1.0f; // Left
 		}
-		if (keystate[SDL_SCANCODE_D]) {
+		else if (keystate[SDL_SCANCODE_D]) {
 			facingRight = true;
 			facing = true;
 			horizontalMove.x += 1.0f; // Right
@@ -872,12 +872,14 @@ void Scene1::Update(const float deltaTime) {
 
 	// animation movement
 	if (facingRight || facingLeft || movingUp || movingDown) {
-		currentTime += deltaTime;
+		currentTime += deltaTime; // fix or statement not checking for all conditions
 		if (facingRight || facingLeft) {
 			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+			index.y = 0;
 		}
-		if (movingUp || movingDown) {
-			index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
+		else if (movingUp || movingDown) {
+			index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
+			index.x = 0;
 		}
 		std::cout << index.x << ',' << index.y << std::endl;
 		

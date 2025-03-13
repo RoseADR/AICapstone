@@ -113,6 +113,7 @@
     <ClCompile Include="TransformSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -277,6 +278,7 @@
     <ClInclude Include="TransformSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">

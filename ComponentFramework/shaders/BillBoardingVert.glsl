@@ -63,6 +63,7 @@ void main() {
     // for flipping the texture coordinates when the object is facing left or right
     if(facingLeft){
         // Move the texture horizontally based on the 'index' value for animation 
+        texCoord.x = 1.0 - texCoord.x;
      texCoord.x = (index.x * 1) * 0.125 - texCoord.x;
    }
 
