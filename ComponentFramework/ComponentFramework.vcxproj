@@ -149,6 +149,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AiComponent.cpp" />
+    <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BillBoardedCameraActor.cpp" />
     <ClCompile Include="CameraActor.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AiComponent.h" />
+    <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BillBoardedCameraActor.h" />
     <ClInclude Include="CameraActor.h" />
