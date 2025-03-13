@@ -69,7 +69,6 @@ bool Scene1::OnCreate() {
 	light->OnCreate();
 
 
-
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
@@ -113,28 +112,30 @@ bool Scene1::OnCreate() {
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	factory->AddComponent(cc);
 	factory->AddComponent(tc);
+	collisionSystem.SetFactory(factory);
+	factory->OnCreate();
+	AddActor(factory);
 
 	for (int i = 0; i < 8; i++) {
 		float x = -2000.0f - (i * 340.0f);
 		Bridge = std::make_shared<Actor>(factory.get());
 
-		Bridge->AddComponent<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+		tc = std::make_shared<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
 		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
 		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 		Bridge->AddComponent<ShaderComponent>(shader);
-		//Bridge->AddComponent(cc);
+		Bridge->AddComponent(cc);
+		Bridge->AddComponent(tc);
 
 		Bridge->OnCreate();
 		AddActor(Bridge);
 
+		collisionSystem.AddActor(Bridge);
+		transformSystem.AddActor(Bridge);
+
+
 	}
-
-
-	// <CollisionComponent>(factory.get(),
-	////	ColliderShape::AABB, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
-	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-	factory->OnCreate();
-	AddActor(factory);
 
 
 	for (int i = 0; i < 8; i++) {
@@ -209,11 +210,11 @@ bool Scene1::OnCreate() {
 
 	auto Car = std::make_shared<Actor>(Bridge.get());
 
-	//tc = std::make_shared<TransformComponent>(Car.get(), Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
+	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
 	cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
 	Car->AddComponent(cc);
-	//Car->AddComponent(tc);
-	Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
+	Car->AddComponent(tc);
+	//Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
 	Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
 	Car->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CarText"));
 	Car->AddComponent<ShaderComponent>(shader);
@@ -345,11 +346,11 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(character);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
-	//collisionSystem.AddActor(Car);
+	collisionSystem.AddActor(Car);
 
 	//transformSystem.AddActor(gameboard);
 	transformSystem.AddActor(factory);
-	//transformSystem.AddActor(Car);
+	transformSystem.AddActor(Car);
 	physicsSystem.AddActor(character);
 
 
@@ -772,20 +773,8 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
-
-
-	//for (auto actor : actors) {
-	//	auto transform = actor->GetComponent<TransformComponent>();
-	//	if (transform) {
-	//		Vec3 pos = transform->GetPosition();
-	//		/*std::cout << "[Scene1] Actor Position Updated: ("
-	//			<< pos.x << ", " << pos.y << ", " << pos.z << ")\n";*/
-	//	}
-	//}
-
-
-	Ref<PhysicsComponent> playerTransform = character->GetComponent<PhysicsComponent>();
-	Vec3 playerPos = playerTransform->GetPosition();
+	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
+	Vec3 playerPos = playerPhysics->GetPosition();
 
 	// Get the camera's transform
 	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();

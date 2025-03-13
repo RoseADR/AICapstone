@@ -5,12 +5,14 @@
 #include "Actor.h"
 #include "Debug.h"
 #include <Sphere.h>
+
 using namespace MATH;
 
 class CollisionSystem {
 private:
 
 	std::vector<Ref<Actor>> collidingActors;
+	Ref<Actor> factory;
 
 public:
 	/// This function will check the the actor being added is new and has the all proper components 
@@ -30,6 +32,7 @@ public:
 		collidingActors.push_back(actor_);
 	}
 
+	void SetFactory(Ref<Actor> factory_) { factory = factory_; }
 
 	bool SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const;
 	bool AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const;

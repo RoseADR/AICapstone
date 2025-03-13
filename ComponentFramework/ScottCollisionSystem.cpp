@@ -5,82 +5,176 @@
 using namespace MATH;
 
 void CollisionSystem::Update(const float deltaTime) {
-    for (size_t i = 0; i < collidingActors.size(); ++i) {
 
+    for (size_t i = 0; i < collidingActors.size(); ++i) {
+        Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+        Ref<TransformComponent> tc1 = collidingActors[i]->GetComponent<TransformComponent>();
+        Ref<CollisionComponent> cc1 = collidingActors[i]->GetComponent<CollisionComponent>();
+
+        if (!cc1 || (!pc1 && !tc1)) continue;
+
+        Sphere s1;
+        s1.r = cc1->GetRadius();
+        s1.center = pc1 ? pc1->pos : tc1->GetPosition();
 
         for (size_t j = i + 1; j < collidingActors.size(); ++j) {
+            Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+            Ref<TransformComponent> tc2 = collidingActors[j]->GetComponent<TransformComponent>();
+            Ref<CollisionComponent> cc2 = collidingActors[j]->GetComponent<CollisionComponent>();
 
-            Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
-            s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
-            //s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
-            Ref<PhysicsComponent> spherePC = collidingActors[i]->GetComponent<PhysicsComponent>();
-            Ref<TransformComponent> sphereTC = collidingActors[i]->GetComponent<TransformComponent>();
+            if (!cc2 || (!pc2 && !tc2)) continue;
 
-            //// Use PhysicsComponent if available, otherwise fallback to TransformComponent
-            if (spherePC) {
-                s1.center = spherePC->pos;
+            Vec3 factoryPos = factory->GetComponent<TransformComponent>()->GetPosition();
+            float factoryX = factoryPos.x;
+            float threshold = 30.0f;  // Define a threshold if needed
+
+            Vec3 obj1Pos = tc1 ? tc1->GetPosition() : pc1->pos;
+            Vec3 obj2Pos = tc2 ? tc2->GetPosition() : pc2->pos;
+
+            if (obj1Pos.x < factoryX - threshold || obj1Pos.x > factoryX + threshold ||
+                obj2Pos.x < factoryX - threshold || obj2Pos.x > factoryX + threshold) {
+                continue;  // Skip collision check if objects are out of factory bounds
             }
-            else if (sphereTC) {
-                s1.center = sphereTC->GetPosition();
-            }
-            //else {
-            //    Debug::Error("Sphere object has no valid position source", __FILE__, __LINE__);
-            //    
-            //}
 
-            std::string hop2 = "s1.center: (" +
-                std::to_string(s1.center.x) + ", " +
-                std::to_string(s1.center.y) + ", " +
-                std::to_string(s1.center.z) + ")";
+            if (cc2->GetColliderType() == ColliderType::Sphere) {
+                Sphere s2;
+                s2.r = cc2->GetRadius();
+                s2.center = pc2 ? pc2->pos : tc2->GetPosition();
 
-
-            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::Sphere) {
-
-                s2.r = collidingActors[j]->GetComponent<CollisionComponent>()->radius;
-                s2.center = collidingActors[j]->GetComponent<PhysicsComponent>()->pos;
-               
-                if (SphereSphereCollisionDetection(s1, s2) == true) {
-                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
-                    Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+                if (SphereSphereCollisionDetection(s1, s2)) {
                     SphereSphereCollisionResponse(s1, pc1, s2, pc2);
-
-                    std::cout << "SphereSphere Collision" + hop2 << std::endl;
                 }
             }
-
-            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::PLANE) {
-
+            else if (cc2->GetColliderType() == ColliderType::PLANE) {
                 Plane p1;
-                p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->normal;
-               // p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<TransformComponent>()->GetPosition()));
+                p1.n = cc2->normal;
+                p1.d = VMath::dot(p1.n, tc2->GetPosition());
 
-                Ref<TransformComponent> planeTC = collidingActors[j]->GetComponent<TransformComponent>();
-
-                if (planeTC) {
-                    p1.d = VMath::dot(p1.n, planeTC->GetPosition());
-                }
-                else {
-                    Debug::Error("Plane object has no TransformComponent", __FILE__, __LINE__);
-                   
-                }
-
-              std::string hop = "p1.n: (" +
-                  std::to_string(p1.n.x) + ", " +
-                  std::to_string(p1.n.y) + ", " +
-                  std::to_string(p1.n.z) + ")";
-
-                if (SpherePlaneCollisionDetection(s1, p1) == true) {
-                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
-                    //Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+                if (SpherePlaneCollisionDetection(s1, p1)) {
                     SpherePlaneCollisionResponse(s1, pc1, p1);
-                   
-                    std::cout << "SpherePlane Collision" + hop << std::endl;
                 }
             }
         }
     }
-
 }
+
+  /*  for (size_t i = 0; i < collidingActors.size(); ++i) {
+        Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+        Ref<TransformComponent> tc1 = collidingActors[i]->GetComponent<TransformComponent>();
+        Ref<CollisionComponent> cc1 = collidingActors[i]->GetComponent<CollisionComponent>();
+
+        if (!cc1 || (!pc1 && !tc1));
+
+        Sphere s1;
+        s1.r = cc1->GetRadius();
+        s1.center = pc1 ? pc1->pos : tc1->GetPosition();
+
+        for (size_t j = i + 1; j < collidingActors.size(); ++j) {
+            Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+            Ref<TransformComponent> tc2 = collidingActors[j]->GetComponent<TransformComponent>();
+            Ref<CollisionComponent> cc2 = collidingActors[j]->GetComponent<CollisionComponent>();
+
+            if (!cc2 || (!pc2 && !tc2));
+
+            if (cc2->GetColliderType() == ColliderType::Sphere) {
+                Sphere s2;
+                s2.r = cc2->GetRadius();
+                s2.center = pc2 ? pc2->pos : tc2->GetPosition();
+
+                if (SphereSphereCollisionDetection(s1, s2)) {
+                    SphereSphereCollisionResponse(s1, pc1, s2, pc2);
+                }
+            }
+            else if (cc2->GetColliderType() == ColliderType::PLANE) {
+                Plane p1;
+                p1.n = cc2->normal;
+                p1.d = VMath::dot(p1.n, tc2->GetPosition());
+
+                if (SpherePlaneCollisionDetection(s1, p1)) {
+                    SpherePlaneCollisionResponse(s1, pc1, p1);
+                }
+            }
+
+            std::cout << "Collision detected between " << i << " and " << j << std::endl;
+        }
+    }
+
+}*/
+
+//    for (size_t i = 0; i < collidingActors.size(); ++i) {
+//        for (size_t j = i + 1; j < collidingActors.size(); ++j) {
+//
+//            Sphere s1, s2;  /// I'm just going to do sphere-sphere collions first
+//            s1.r = collidingActors[i]->GetComponent<CollisionComponent>()->radius;
+//            //s1.center = collidingActors[i]->GetComponent<PhysicsComponent>()->pos;
+//            Ref<PhysicsComponent> spherePC = collidingActors[i]->GetComponent<PhysicsComponent>();
+//            Ref<TransformComponent> sphereTC = collidingActors[i]->GetComponent<TransformComponent>();
+//
+//            //// Use PhysicsComponent if available, otherwise fallback to TransformComponent
+//            if (spherePC) {
+//                s1.center = spherePC->pos;
+//            }
+//            else if (sphereTC) {
+//                s1.center = sphereTC->GetPosition();
+//            }
+//            //else {
+//            //    Debug::Error("Sphere object has no valid position source", __FILE__, __LINE__);
+//            //    
+//            //}
+//
+//            std::string hop2 = "s1.center: (" +
+//                std::to_string(s1.center.x) + ", " +
+//                std::to_string(s1.center.y) + ", " +
+//                std::to_string(s1.center.z) + ")";
+//
+//
+//            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::Sphere) {
+//
+//                s2.r = collidingActors[j]->GetComponent<CollisionComponent>()->radius;
+//                s2.center = collidingActors[j]->GetComponent<PhysicsComponent>()->pos;
+//               
+//                if (SphereSphereCollisionDetection(s1, s2) == true) {
+//                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+//                    Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+//                    SphereSphereCollisionResponse(s1, pc1, s2, pc2);
+//
+//                    std::cout << "SphereSphere Collision" + hop2 << std::endl;
+//                }
+//            }
+//
+//            if (collidingActors[j]->GetComponent<CollisionComponent>()->colliderType == ColliderType::PLANE) {
+//
+//                Plane p1;
+//                p1.n = collidingActors[j]->GetComponent<CollisionComponent>()->normal;
+//               // p1.d = VMath::dot(p1.n, (collidingActors[j]->GetComponent<TransformComponent>()->GetPosition()));
+//
+//                Ref<TransformComponent> planeTC = collidingActors[j]->GetComponent<TransformComponent>();
+//
+//                if (planeTC) {
+//                    p1.d = VMath::dot(p1.n, planeTC->GetPosition());
+//                }
+//                else {
+//                    Debug::Error("Plane object has no TransformComponent", __FILE__, __LINE__);
+//                   
+//                }
+//
+//              std::string hop = "p1.n: (" +
+//                  std::to_string(p1.n.x) + ", " +
+//                  std::to_string(p1.n.y) + ", " +
+//                  std::to_string(p1.n.z) + ")";
+//
+//                if (SpherePlaneCollisionDetection(s1, p1) == true) {
+//                    Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
+//                    //Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
+//                    SpherePlaneCollisionResponse(s1, pc1, p1);
+//                   
+//                    std::cout << "SpherePlane Collision" + hop << std::endl;
+//                }
+//            }
+//        }
+//    }
+//
+//}
 
 
 bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const {
