@@ -306,7 +306,7 @@ bool Scene1::OnCreate() {
 			Bridge = std::make_shared<Actor>(factory.get());
 
 			tc = std::make_shared<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
-			cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
+			cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
 			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
 			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 			Bridge->AddComponent<ShaderComponent>(shader);
@@ -315,12 +315,12 @@ bool Scene1::OnCreate() {
 
 			Bridge->OnCreate();
 			AddActor(Bridge);
+		}
+			collisionSystem.SetBridge(Bridge);
 
 			collisionSystem.AddActor(Bridge);
 			transformSystem.AddActor(Bridge);
-
-
-		}
+		
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
@@ -379,17 +379,31 @@ bool Scene1::OnCreate() {
 
 	// DECISION TREE RELATED
 	// Load the decision tree from XML
+// Find the first enemy dynamically
+	Actor* enemy = nullptr;
+	for (const auto& actor : actors) {
+		if (actor->GetComponent<AiComponent>()) {
+			enemy = actor.get();
+			break; // Take the first enemy found
+		}
+	}
 
-	Actor* enemy = actors[2].get();    // Assuming actors[2] is the enemy
+	// Ensure an enemy was found
+	if (!enemy) {
+		std::cerr << "[ERROR]: No enemy found for the decision tree!" << std::endl;
+		return false;
+	}
+
 	Actor* player = character.get(); // Assuming character is the player
 
 	std::cout << "[LOG]: Building Decision Tree..." << std::endl;
 	decisionTreeRoot = TreeBuilder::buildTree("Scene1.xml", enemy, player);
 	if (!decisionTreeRoot) {
 		std::cerr << "[ERROR]: Failed to build decision tree" << std::endl;
-		//return;
+		return false;
 	}
 	std::cout << "[LOG]: Decision tree successfully built" << std::endl;
+
 
 	// Test decision tree evaluation
 	/*if (decisionTreeRoot) {
@@ -883,7 +897,7 @@ void Scene1::Update(const float deltaTime) {
 			index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
 			index.x = 0;
 		}
-		std::cout << index.x << ',' << index.y << std::endl;
+		//std::cout << index.x << ',' << index.y << std::endl;
 		
 	}
 
@@ -893,7 +907,7 @@ void Scene1::Update(const float deltaTime) {
 	if (movingUp || movingDown) {
 		index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
 	}
-	std::cout << index.x << ',' << index.y << std::endl;
+	//std::cout << index.x << ',' << index.y << std::endl;
 
 
 	character->Update(deltaTime);
@@ -1035,22 +1049,22 @@ void Scene1::LoadEnemies() {
 	Ref<Actor> enemies[2]{};
 
 	// Set up the first enemy
-	enemies[0] = std::make_shared<Actor>(factory.get()); // Make actor and parent it to gameboard
+	enemies[0] = std::make_shared<Actor>(nullptr); // Make actor and parent it to gameboard
 	enemies[0]->AddComponent<ShaderComponent>(shader); // Add shader
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
 	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
 	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(-5.0f, 0.0f, 0.05f),
-		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.15f, 0.15f, 0.15f));
+		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.15f, 5.15f, 5.15f));
 
 	// Set up the second enemy
-	enemies[1] = std::make_shared<Actor>(factory.get()); // Make actor and parent it to gameboard
+	enemies[1] = std::make_shared<Actor>(nullptr); // Make actor and parent it to gameboard
 	enemies[1]->AddComponent<ShaderComponent>(shader); // Add shader
 	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
 	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
 	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f), // Different position
-		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(0.75f, 0.75f, 0.75f));
+		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.75f, 5.75f, 5.75f));
 
 	// Add both enemies to the actor list
 	AddActor(enemies[0]);

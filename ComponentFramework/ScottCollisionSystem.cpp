@@ -21,20 +21,30 @@ void CollisionSystem::Update(const float deltaTime) {
             Ref<PhysicsComponent> pc2 = collidingActors[j]->GetComponent<PhysicsComponent>();
             Ref<TransformComponent> tc2 = collidingActors[j]->GetComponent<TransformComponent>();
             Ref<CollisionComponent> cc2 = collidingActors[j]->GetComponent<CollisionComponent>();
-
             if (!cc2 || (!pc2 && !tc2)) continue;
 
+            // Factory Collision Bounds
             Vec3 factoryPos = factory->GetComponent<TransformComponent>()->GetPosition();
             float factoryX = factoryPos.x;
-            float threshold = 30.0f;  // Define a threshold if needed
+            float factoryThreshold = 30.0f;  // Define a threshold for factory
 
             Vec3 obj1Pos = tc1 ? tc1->GetPosition() : pc1->pos;
             Vec3 obj2Pos = tc2 ? tc2->GetPosition() : pc2->pos;
+         // Bridge Collision Bounds
+            Vec3 bridgePos = bridge->GetComponent<TransformComponent>()->GetPosition();
+            float bridgeX = bridgePos.x;
+            float bridgeThreshold = 30.0f;  // Adjust threshold for bridge
 
-            if (obj1Pos.x < factoryX - threshold || obj1Pos.x > factoryX + threshold ||
-                obj2Pos.x < factoryX - threshold || obj2Pos.x > factoryX + threshold) {
+            if (obj1Pos.x < factoryX - factoryThreshold || obj1Pos.x > factoryX + factoryThreshold ||
+                obj2Pos.x < factoryX - factoryThreshold || obj2Pos.x > factoryX + factoryThreshold /*&&  
+                obj1Pos.x < bridgeX - bridgeThreshold || obj1Pos.x > bridgeX + bridgeThreshold ||
+                obj2Pos.x < bridgeX - bridgeThreshold || obj2Pos.x > bridgeX + bridgeThreshold*/) {
                 continue;  // Skip collision check if objects are out of factory bounds
             }
+
+           
+
+
 
             if (cc2->GetColliderType() == ColliderType::Sphere) {
                 Sphere s2;

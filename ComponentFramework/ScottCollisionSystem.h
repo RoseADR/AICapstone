@@ -13,6 +13,7 @@ private:
 
 	std::vector<Ref<Actor>> collidingActors;
 	Ref<Actor> factory;
+	Ref<Actor> bridge;
 
 public:
 	/// This function will check the the actor being added is new and has the all proper components 
@@ -33,6 +34,7 @@ public:
 	}
 
 	void SetFactory(Ref<Actor> factory_) { factory = factory_; }
+	void SetBridge(Ref<Actor> bridge_) { bridge = bridge_; }
 
 	bool SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const;
 	bool AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const;
