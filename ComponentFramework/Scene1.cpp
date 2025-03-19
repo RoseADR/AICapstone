@@ -189,7 +189,7 @@ bool Scene1::OnCreate() {
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
-	auto Car = std::make_shared<Actor>(Bridge.get());
+	Ref<Actor> Car = std::make_shared<Actor>(Bridge.get());
 
 	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-130.0f, 13.5f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
 	cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
@@ -324,7 +324,7 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-15.0f, 5.0f, -10.0f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 5.0f, -10.0f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -820,8 +820,7 @@ void Scene1::Update(const float deltaTime) {
 		Vec3 currentVel = playerPhysics->getVel();
 		currentVel.y += -9.8f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
-	}
-			*/
+	} */
 
 
 			// Handle horizontal motion (WASD input)

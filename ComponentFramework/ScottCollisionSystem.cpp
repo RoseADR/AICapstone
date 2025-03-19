@@ -6,13 +6,13 @@ using namespace MATH;
 
 void CollisionSystem::Update(const float deltaTime) {
 
-    for (size_t i = 0; i < collidingActors.size(); ++i) {
+    for (size_t i = 0; i < collidingActors.size()-1; ++i) {
         Ref<PhysicsComponent> pc1 = collidingActors[i]->GetComponent<PhysicsComponent>();
         Ref<TransformComponent> tc1 = collidingActors[i]->GetComponent<TransformComponent>();
         Ref<CollisionComponent> cc1 = collidingActors[i]->GetComponent<CollisionComponent>();
 
         if (!cc1 || (!pc1 && !tc1)) continue;
-
+         
         Sphere s1;
         s1.r = cc1->GetRadius();
         s1.center = pc1 ? pc1->pos : tc1->GetPosition();
@@ -64,6 +64,8 @@ void CollisionSystem::Update(const float deltaTime) {
                     SpherePlaneCollisionResponse(s1, pc1, p1);
                 }
             }
+
+            std::cout << "Collision detected between " << i << " and " << j << std::endl;
         }
     }
 }
