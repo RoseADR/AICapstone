@@ -42,10 +42,6 @@ void CollisionSystem::Update(const float deltaTime) {
                 continue;  // Skip collision check if objects are out of factory bounds
             }
 
-           
-
-
-
             if (cc2->GetColliderType() == ColliderType::Sphere) {
                 Sphere s2;
                 s2.r = cc2->GetRadius();
