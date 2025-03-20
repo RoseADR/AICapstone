@@ -508,7 +508,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	static Vec2	lastMousePos;
 	static float flip = 1.0f;
 	Ref<TransformComponent> cameraTC;
-	Ref<PhysicsComponent> characterTC;
+	Ref<PhysicsComponent> characterPC;
+	Ref<TransformComponent> characterTC;
 	Ref<TransformComponent> gameBoardTC;
 
 	Vec3 rotatedDirection;
@@ -526,28 +527,37 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	bool movingUp = false;
 	bool movingDown = false;
 
+
 	/// Handle Camera movement 
 
 
 	switch (sdlEvent.type) {
 	case SDL_KEYDOWN:
+
+		characterTC = character->GetComponent<TransformComponent>();
+		characterPC = character->GetComponent<PhysicsComponent>();
+
 		if (hackingMode) {
 			int newX = hackingPlayerPos.x;
 			int newY = hackingPlayerPos.y;
 
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+				break;
+				movingUp = true;
 				if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S: 
+				movingDown = true;
 				if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A: 
-				facingRight = false;
+				facingLeft = true;
 				if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
-				facingLeft = false;
+				facingRight = true;
 				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
@@ -624,6 +634,10 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				break;
 
 			case SDL_SCANCODE_UP:
+				movingUp = false;
+				movingDown = false;
+				facingRight = false;
+				facingLeft = false;
 				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
 				camera->UpdateViewMatrix();
 				break;
@@ -829,24 +843,26 @@ void Scene1::Update(const float deltaTime) {
 	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 	if (!hackingMode) {
-		if (keystate[SDL_SCANCODE_W]) {
-			movingUp = true;
-			facing = true;
-			horizontalMove.y += 1.0f; // Forward
-		}
-		else if (keystate[SDL_SCANCODE_S]) {
-			horizontalMove.y -= 1.0f; // Backward
-		}
-		else if (keystate[SDL_SCANCODE_A]) {
-			facingLeft = true; // last part for animation
-			facing = true;
-			horizontalMove.x -= 1.0f; // Left
-		}
-		else if (keystate[SDL_SCANCODE_D]) {
-			facingRight = true;
-			facing = true;
-			horizontalMove.x += 1.0f; // Right
-		}
+		//if (keystate[SDL_SCANCODE_W]) {
+		//	movingUp = true;
+		//	facing = true;
+		//	horizontalMove.y += 1.0f; // Forward
+		//}
+		//else if (keystate[SDL_SCANCODE_S]) {
+		//	movingDown = true;
+		//	facing = true;
+		//	horizontalMove.y -= 1.0f; // Backward
+		//}
+		//else if (keystate[SDL_SCANCODE_A]) {
+		//	facingLeft = true; // last part for animation
+		//	facing = true;
+		//	horizontalMove.x -= 1.0f; // Left
+		//}
+		//else if (keystate[SDL_SCANCODE_D]) {
+		//	facingRight = true;
+		//	facing = true;
+		//	horizontalMove.x += 1.0f; // Right
+		//}
 	}
 	// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
@@ -889,24 +905,37 @@ void Scene1::Update(const float deltaTime) {
 	// animation movement
 	if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime; // fix or statement not checking for all conditions
-		if (facingRight || facingLeft) {
+		//if (facingRight || facingLeft) {
+		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+		//	index.y = 0;
+		//}
+		//else if (movingUp || movingDown) {
+		//	index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
+		//	index.x = 0;
+		//}
+
+		if (facingRight) {
 			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
 			index.y = 0;
 		}
-		else if (movingUp || movingDown) {
-			index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
+		else if (facingLeft) {
+			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+			index.y = 0; // Assuming different y value for left-facing animation
+		}
+		else if (movingUp) {
+			index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
 			index.x = 0;
 		}
-		//std::cout << index.x << ',' << index.y << std::endl;
+		std::cout << index.x << ',' << index.y << std::endl;
 		
 	}
 
-	if (facingRight || facingLeft) {
-		index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-	}
-	if (movingUp || movingDown) {
-		index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
-	}
+	//if (facingRight || facingLeft) {
+	//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+	//}
+	//if (movingUp || movingDown) {
+	//	index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
+	//}
 	//std::cout << index.x << ',' << index.y << std::endl;
 
 

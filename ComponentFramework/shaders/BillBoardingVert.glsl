@@ -50,10 +50,10 @@ void main() {
 
     if(movingUp){
         // texCoord.y += index * 0.5;
-        texCoord.y = (index.y * 1) * 0.5 + texCoord.y;
+        texCoord.y = index.y * 0.5 + texCoord.y * 0.5;
     }
     if(movingDown){
-    texCoord.y = (index.y * 1.0) * 0.5 - texCoord.y;
+    texCoord.y = index.y * 0.5 - texCoord.y;
     }
 
     if(facingRight){
