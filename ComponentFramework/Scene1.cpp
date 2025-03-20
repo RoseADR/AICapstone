@@ -4,14 +4,12 @@
 #include "Debug.h"
 #include "Scene1.h"
 #include "MMath.h"
-#include "Debug.h"
 #include "CameraActor.h"
 #include "LightActor.h"
 #include "TransformComponent.h"
 #include "MeshComponent.h"
 #include "ShaderComponent.h"
 #include "MaterialComponent.h"
-#include "MMath.h"
 #include "AiComponent.h"
 #include "LocationManager.h"
 #include "Timing.h"
@@ -543,18 +541,18 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
 				movingUp = true;
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
-			case SDL_SCANCODE_S: 
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
+			case SDL_SCANCODE_S:
 				movingDown = true;
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
 				facingLeft = true;
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
@@ -924,9 +922,9 @@ void Scene1::Update(const float deltaTime) {
 	// if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime; // fix or statement not checking for all conditions
 		if (currentTime >= frameSpeed * 8) {
-			currentTime = 0.5f;
+			currentTime = 0.0f;
 			if (facingRight) {
-				index.x = static_cast<int>(index.x + 1) % 8;
+				index.x = static_cast<int>((currentTime/frameSpeed) + index.x + 1) % 8;
 				index.y = 0;
 			}
 			else if (facingLeft) {
@@ -943,6 +941,7 @@ void Scene1::Update(const float deltaTime) {
 			}
 			//index.x = static_cast<int>(index.x + 1) % 8;
 			//index.y = static_cast<int>(index.y + 1) % 8;
+			std::cout << index.x << ',' << index.y << std::endl;
 		}
 		/*else if (currentTime >= frameSpeed * 8) {
 			currentTime = 0.0f;
