@@ -582,6 +582,27 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
 					}*/
 				//}
+
+			case SDL_KEYUP:
+				if (!hackingMode) {
+					switch (sdlEvent.key.keysym.scancode) {
+					case SDL_SCANCODE_W:
+						movingUp = false;
+						break;
+					case SDL_SCANCODE_S:
+						movingDown = false;
+						break;
+					case SDL_SCANCODE_A:
+						facingLeft = false;
+						break;
+					case SDL_SCANCODE_D:
+						facingRight = false;
+						break;
+					default:
+						break;
+					}
+				}
+
 				break;
 
 			}
@@ -636,10 +657,6 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				break;
 
 			case SDL_SCANCODE_UP:
-				movingUp = false;
-				movingDown = false;
-				facingRight = false;
-				facingLeft = false;
 				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
 				camera->UpdateViewMatrix();
 				break;
@@ -730,8 +747,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			}
 			break;
 
-
 		}
+
 
 	}
 
@@ -904,17 +921,8 @@ void Scene1::Update(const float deltaTime) {
 	}
 
 	// animation movement
-	if (facingRight || facingLeft || movingUp || movingDown) {
+	if (facingRight && facingLeft && movingUp && movingDown) {
 		currentTime += deltaTime; // fix or statement not checking for all conditions
-		//if (facingRight || facingLeft) {
-		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-		//	index.y = 0;
-		//}
-		//else if (movingUp || movingDown) {
-		//	index.y = static_cast<int>(currentTime / frameSpeed) % 4; // Update y component for vertical frames
-		//	index.x = 0;
-		//}
-
 		if (facingRight) {
 			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
 			index.y = 0;
@@ -927,17 +935,13 @@ void Scene1::Update(const float deltaTime) {
 			index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
 			index.x = 0;
 		}
+		else if (movingDown) {
+			index.y = static_cast<int>(currentTime / frameSpeed) % 8;
+			index.x = 0;
+		}
 		std::cout << index.x << ',' << index.y << std::endl;
-		
-	}
 
-	//if (facingRight || facingLeft) {
-	//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-	//}
-	//if (movingUp || movingDown) {
-	//	index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
-	//}
-	//std::cout << index.x << ',' << index.y << std::endl;
+	}
 
 
 	character->Update(deltaTime);
