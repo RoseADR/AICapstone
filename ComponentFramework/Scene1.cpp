@@ -543,23 +543,23 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 1.0f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
 				movingUp = true;
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S: 
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -1.0f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
 				movingDown = true;
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
 				facingLeft = true;
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
 				facingRight = true;
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
@@ -584,7 +584,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				//}
 
 			case SDL_KEYUP:
-				if (!hackingMode) {
+				//if (!hackingMode) {
 					switch (sdlEvent.key.keysym.scancode) {
 					case SDL_SCANCODE_W:
 						movingUp = false;
@@ -601,7 +601,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 					default:
 						break;
 					}
-				}
+				//}
 
 				break;
 
@@ -921,27 +921,57 @@ void Scene1::Update(const float deltaTime) {
 	}
 
 	// animation movement
-	if (facingRight && facingLeft && movingUp && movingDown) {
+	// if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime; // fix or statement not checking for all conditions
-		if (facingRight) {
-			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-			index.y = 0;
+		if (currentTime >= frameSpeed * 8) {
+			currentTime = 0.5f;
+			if (facingRight) {
+				index.x = static_cast<int>(index.x + 1) % 8;
+				index.y = 0;
+			}
+			else if (facingLeft) {
+				index.x = static_cast<int>(index.x + 1) % 8;
+				index.y = 1;
+			}
+			else if (movingUp) {
+				index.x = 0;
+				index.y = static_cast<int>(index.y + 1) % 8;
+			}
+			else if (movingDown) {
+				index.x = 0;
+				index.y = static_cast<int>(index.y + 1) % 8;
+			}
+			//index.x = static_cast<int>(index.x + 1) % 8;
+			//index.y = static_cast<int>(index.y + 1) % 8;
 		}
-		else if (facingLeft) {
-			index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-			index.y = 0; // Assuming different y value for left-facing animation
-		}
-		else if (movingUp) {
-			index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
-			index.x = 0;
-		}
-		else if (movingDown) {
-			index.y = static_cast<int>(currentTime / frameSpeed) % 8;
-			index.x = 0;
-		}
+		/*else if (currentTime >= frameSpeed * 8) {
+			currentTime = 0.0f;
+			index.y = static_cast<int>(index.y + 1) % 8;
+		}*/
+		//else{
+		//	index.x = 0; // Reset to the first frame when not moving
+		//	index.y = 0;
+		//}
+	
+		//if (facingRight) {
+		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+		//	index.y = 0;
+		//}
+		//else if (facingLeft) {
+		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
+		//	index.y = 0; // Assuming different y value for left-facing animation
+		//}
+		//else if (movingUp) {
+		//	index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
+		//	index.x = 0;
+		//}
+		//else if (movingDown) {
+		//	index.y = static_cast<int>(currentTime / frameSpeed) % 8;
+		//	index.x = 0;
+		//}
 		std::cout << index.x << ',' << index.y << std::endl;
 
-	}
+	//}
 
 
 	character->Update(deltaTime);

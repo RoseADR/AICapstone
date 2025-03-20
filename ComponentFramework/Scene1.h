@@ -119,7 +119,7 @@ public:
 	bool movingDown;
 	float currentTime;
 	Vec2 index;
-	float frameSpeed = 0.5f;
+	float frameSpeed = 0.01f;
 };
 
 
