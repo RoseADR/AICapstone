@@ -537,31 +537,33 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		characterTC = character->GetComponent<TransformComponent>();
 		characterPC = character->GetComponent<PhysicsComponent>();
 
-		if (hackingMode) {
+		/*if (hackingMode) {
 			int newX = hackingPlayerPos.x;
-			int newY = hackingPlayerPos.y;
+			int newY = hackingPlayerPos.y;*/
 
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
-				break;
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 1.0f, 0.0f));
 				movingUp = true;
-				if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S: 
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -1.0f, 0.0f));
 				movingDown = true;
-				if (hackingPlayerPos.y > 0) newY--;
+				//if (hackingPlayerPos.y > 0) newY--;
 				break;
-			case SDL_SCANCODE_A: 
+			case SDL_SCANCODE_A:
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
 				facingLeft = true;
-				if (hackingPlayerPos.x > 0) newX--;
+				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
 				facingRight = true;
-				if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
-				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
+				/*if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
 
 					
@@ -578,26 +580,26 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 						hackingMode = false;
 						showHackingGrid = false;
 						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
-					}
-				}
+					}*/
+				//}
 				break;
 
 			}
 
 			// Update player position
-			if (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y) {
-				// Reset the old tile
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+		//	if (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y) {
+		//		// Reset the old tile
+		//		hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
 
-				// Move player
-				hackingPlayerPos.x = newX;
-				hackingPlayerPos.y = newY;
+		//		// Move player
+		//		hackingPlayerPos.x = newX;
+		//		hackingPlayerPos.y = newY;
 
-				// Mark new tile as player's position
-				hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-			}
-		}
-		break;
+		//		// Mark new tile as player's position
+		//		hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+		//	}
+		//}
+		//break;
 	}
 
 	
