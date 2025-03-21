@@ -561,6 +561,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
+				sceneManager->playerHealth -= 10;
 				/*if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
 
@@ -911,13 +912,22 @@ void Scene1::Update(const float deltaTime) {
 	if (decisionTreeRoot) {
 		DecisionTreeNode* result = decisionTreeRoot->makeDecision(deltaTime);
 		if (auto* action = dynamic_cast<Action*>(result)) {
-			action->makeDecision(deltaTime); // Execute the encapsulated action logic
+			action->makeDecision(deltaTime);
+
+			
+			if (action->GetActionName() == "Attack Player") {
+				sceneManager->playerHealth -= 10;
+				std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
+			}
 		}
 		else {
 			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
 		}
 	}
 
+	
+
+	
 	// animation movement
 	// if (facingRight || facingLeft || movingUp || movingDown) {
 		currentTime += deltaTime; // fix or statement not checking for all conditions
@@ -941,7 +951,7 @@ void Scene1::Update(const float deltaTime) {
 			}
 			//index.x = static_cast<int>(index.x + 1) % 8;
 			//index.y = static_cast<int>(index.y + 1) % 8;
-			std::cout << index.x << ',' << index.y << std::endl;
+			//std::cout << index.x << ',' << index.y << std::endl;
 		}
 		/*else if (currentTime >= frameSpeed * 8) {
 			currentTime = 0.0f;
@@ -968,7 +978,7 @@ void Scene1::Update(const float deltaTime) {
 		//	index.y = static_cast<int>(currentTime / frameSpeed) % 8;
 		//	index.x = 0;
 		//}
-		std::cout << index.x << ',' << index.y << std::endl;
+		//std::cout << index.x << ',' << index.y << std::endl;
 
 	//}
 

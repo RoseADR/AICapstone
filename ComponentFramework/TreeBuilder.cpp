@@ -110,9 +110,12 @@ DecisionTreeNode* TreeBuilder::buildNode(XMLElement* xmlNode, std::unordered_map
 
         auto* action = new Action(
             actionName,
-            actor,          // Enemy actor
-            targetActor     // Player actor
+            actor,        // Enemy actor
+            targetActor,  // Player actor
+            SceneManager::GetInstance()  // Now you can use this
         );
+
+
         nodeMap[nodeId] = action;
         logNodeParsing(nodeId, "Action");
         return action;

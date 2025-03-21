@@ -1,8 +1,9 @@
 #include "Action.h"
 #include "AiComponent.h"  // Include for AI-specific logic
+#include "SceneManager.h"
 
-Action::Action(const std::string& name, Actor* actor, Actor* targetActor)
-    : actionName(name), actor(actor), targetActor(targetActor), attackCooldown(2.0f), attackTimer(0.0f) {}
+Action::Action(const std::string& name, Actor* actor, Actor* targetActor, SceneManager* manager)
+    :sceneManager(manager), actionName(name), actor(actor), targetActor(targetActor), attackCooldown(2.0f), attackTimer(0.0f) {}
 
 DecisionTreeNode* Action::makeDecision(float deltaTime) {
     if (actionName == "Seek Player") {
@@ -41,11 +42,17 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
         }
     }
     else if (actionName == "Attack Player") {
-        auto aiComponent = actor->GetComponent<AiComponent>();
+        Ref <AiComponent> aiComponent = actor->GetComponent<AiComponent>();
         // Check cooldown
         attackTimer += deltaTime;
         if (attackTimer >= attackCooldown) {
-            aiComponent->Attack(targetActor); // Execute the attack
+             aiComponent->Attack(targetActor); // Execute the attack
+             attackTimer = 0.0f;
+             bool cool = true;
+            if (cool) {
+                sceneManager->playerHealth -= 10;
+                std::cout << sceneManager->playerHealth;
+            }
             //std::cout << "[LOG]: Attacking Player!\n";
             attackTimer = 0.0f; // Reset the timer after the attack
         }
@@ -53,6 +60,8 @@ DecisionTreeNode* Action::makeDecision(float deltaTime) {
             //std::cout << "[LOG]: Attack on cooldown. Time remaining: " << (attackCooldown - attackTimer) << "s\n";
         }
     }
+
+
     else if (actionName == "Idle") {
         //std::cout << "[LOG]: Action - Idle\n";
         // Do nothing

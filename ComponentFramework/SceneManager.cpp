@@ -11,6 +11,19 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 
+// Initialize static instance
+SceneManager* SceneManager::instance = nullptr;
+
+// Singleton function to get the instance
+SceneManager* SceneManager::GetInstance() {
+	if (instance == nullptr) {
+		instance = new SceneManager();
+	}
+	return instance;
+}
+
+
+
 SceneManager::SceneManager(): 
 	currentScene(nullptr), window(nullptr), timer(nullptr),
 	fps(60), isRunning(false), fullScreen(false), show_demo_window(true), show_another_window(true) {

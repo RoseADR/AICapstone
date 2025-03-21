@@ -15,7 +15,7 @@ public:
 	int totalAmmo = 15;  
 	int clipAmmo = 5;     // Bullets currently in clip
 	int clipSize = 5;     
-	
+	static SceneManager* GetInstance();
 private:
 	enum class SCENE_NUMBER {
 		SCENE0 = 0,
@@ -30,6 +30,8 @@ private:
 	class Scene* currentScene;
 	class Timer* timer;
 	class Window* window;
+
+	static SceneManager* instance;
 
 	bool show_demo_window;
 	bool show_another_window;
