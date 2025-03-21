@@ -26,7 +26,7 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Scaffolding", nullptr, "meshes/Scaffolding.obj");
 	AddComponent<MeshComponent>("Blocker", nullptr, "meshes/blocker.obj");
 	//AddComponent<MeshComponent>("Robot", nullptr, "meshes/robot.obj");
-	
+	AddComponent<MeshComponent>("Bridge2", nullptr, "meshes/bridge2.obj");
 
 	AddComponent<MeshComponent>("Box", nullptr, "meshes/box_wooden.obj");
 	AddComponent<MeshComponent>("Barrel", nullptr, "meshes/barrel.obj");
@@ -79,6 +79,8 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("lavaTexture", nullptr, "textures/lava.png");
 	AddComponent<MaterialComponent>("RoboGun", nullptr, "textures/RobotJumpGun.png");
 	AddComponent<MaterialComponent>("RoboMainMenu", nullptr, "textures/MainMenuRobot.png");
+	
+
 	//AddComponent<MaterialComponent>("RobotTexture", nullptr, "textures/robo.png");
 
 

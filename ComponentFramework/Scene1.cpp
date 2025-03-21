@@ -114,7 +114,7 @@ bool Scene1::OnCreate() {
 	factory->OnCreate();
 	AddActor(factory);
 
-
+	//factory->ListComponents();
 
 
 	for (int i = 0; i < 8; i++) {
@@ -177,21 +177,25 @@ bool Scene1::OnCreate() {
 			TestCube->OnCreate();
 			AddActor(TestCube);
 		}
-	auto Barrel = std::make_shared<Actor>(factory.get());
+	 Barrel = std::make_shared<Actor>(factory.get());
 
-	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0f, 13.0f, 13.0f));
+//	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0f, 13.0f, 13.0f));
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-600.0f, -5.0f, -10.0f), orientationBill, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 
+		Vec3(0.0f, 0.0f, 0.0f), Vec3(13.0f, 13.0f, 13.0f));
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f); 
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
-	//Barrel->AddComponent(cc);
+	Barrel->AddComponent(pc);
+	Barrel->AddComponent(cc);
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
 	Ref<Actor> Car = std::make_shared<Actor>(Bridge.get());
 
 	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-130.0f, 13.5f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
-	cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
-	Car->AddComponent(cc);
+	//cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
+	//Car->AddComponent(cc);
 	Car->AddComponent(tc);
 	//Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
 	Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
@@ -297,13 +301,29 @@ bool Scene1::OnCreate() {
 				AddActor(streetLight);
 
 		}
+
+		Bridge = std::make_shared<Actor>(nullptr);
+		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-30, 10.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
+		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge2"));
+		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
+		Bridge->AddComponent<ShaderComponent>(shader);
+		Bridge->AddComponent(cc);
+		Bridge->AddComponent(tc);
+		Bridge->OnCreate();
+		AddActor(Bridge);
+
+		collisionSystem.SetBridge(Bridge);
+		collisionSystem.AddActor(Bridge);
+		transformSystem.AddActor(Bridge);
+		//Bridge->ListComponents();
 	
 
-		for (int i = 0; i < 8; i++) {
+		/*for (int i = 0; i < 8; i++) {
 			float x = -2000.0f - (i * 340.0f);
 			Bridge = std::make_shared<Actor>(factory.get());
 
-			tc = std::make_shared<TransformComponent>(nullptr, Vec3(x, 208.0f, 55.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+			tc = std::make_shared<TransformComponent>(nullptr, Vec3(x, 10.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
 			cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
 			Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge"));
 			Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
@@ -313,27 +333,29 @@ bool Scene1::OnCreate() {
 
 			Bridge->OnCreate();
 			AddActor(Bridge);
-		}
-			collisionSystem.SetBridge(Bridge);
 
+			collisionSystem.SetBridge(Bridge);
 			collisionSystem.AddActor(Bridge);
 			transformSystem.AddActor(Bridge);
+			Bridge->ListComponents();
+		}
+			*/
 		
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 5.0f, -10.0f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-10.0f, 5.0f, -10.0f), mariosQuaternion);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
 	character->AddComponent(pc);
-	// <CollisionComponent>(nullptr, 
-	//	ColliderType::Sphere, /*Vec3(1.0f, 1.0f, 2.0f), */
-	//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
+	
 	character->OnCreate();
 	AddActor(character);
-	 
+	collisionSystem.SetCharacter(character);
+	//character->ListComponents();
+
 	/*projectile = std::make_shared<Actor>(character.get());
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
@@ -344,13 +366,15 @@ bool Scene1::OnCreate() {
 
 	//collisionSystem.AddActor(gameboard);
 	collisionSystem.AddActor(character);
+	collisionSystem.AddActor(Barrel);
 	//collisionSystem.AddActor(TestCube);
     collisionSystem.AddActor(factory);
-	collisionSystem.AddActor(Car);
+	//collisionSystem.AddActor(Car);
 
 	//transformSystem.AddActor(gameboard);
+	physicsSystem.AddActor(Barrel);
 	transformSystem.AddActor(factory);
-	transformSystem.AddActor(Car);
+	//transformSystem.AddActor(Car);
 	physicsSystem.AddActor(character);
 
 
@@ -542,26 +566,26 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
 				movingUp = true;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.1f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 1.0f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S:
 				movingDown = true;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.1f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -1.0f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
 				facingLeft = true;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
 				facingRight = true;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
-				sceneManager->playerHealth -= 10;
+				
 				/*if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
 

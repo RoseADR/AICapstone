@@ -38,6 +38,7 @@ private:
 	Ref<Actor> factory;
 	Ref<Actor> bg;
 	Ref<Actor> Bridge;
+	Ref<Actor> Barrel;
 	Ref<Actor> house;
 	Ref<Actor> bill;
 	Ref<Actor> character;
