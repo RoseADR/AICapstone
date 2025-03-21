@@ -10,12 +10,13 @@ public:
 	void Run();
 	bool Initialize(std::string name_, int width_, int height_);
 	void HandleEvents();
-	float playerHealth = 60.0f; // Current health
+	float playerHealth = 100.0f; // Current health
 	float maxHealth = 100.0f;    
 	int totalAmmo = 15;  
 	int clipAmmo = 5;     // Bullets currently in clip
 	int clipSize = 5;     
 	static SceneManager* GetInstance();
+	bool dead = false;
 private:
 	enum class SCENE_NUMBER {
 		SCENE0 = 0,

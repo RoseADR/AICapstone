@@ -459,14 +459,14 @@ void Scene1::OnDestroy() {
 
 	//FOR PATHFINDING
 	// Delete each tile and its associated node in the 2D tiles vector
-	for (auto& row : tiles) {
-		for (Tile* tile : row) {
-			delete tile->getNode();  // Delete the node associated with each tile
-			delete tile;              // Delete the tile itself
-		}
-	}
+	//for (auto& row : tiles) {
+	//	for (Tile* tile : row) {
+	//		delete tile->getNode();  // Delete the node associated with each tile
+	//		delete tile;              // Delete the tile itself
+	//	}
+	//}
 	//Delete the graph
-	delete graph;
+	
 
 	//engine->drop(); // delete engine
 	return;
@@ -575,11 +575,13 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
+				facing = false;
 				facingLeft = true;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
+				facing = true;
 				facingRight = true;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
@@ -940,7 +942,7 @@ void Scene1::Update(const float deltaTime) {
 
 			
 			if (action->GetActionName() == "Attack Player") {
-				sceneManager->playerHealth -= 10;
+				sceneManager->playerHealth -= 1.2;
 				std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 			}
 		}
@@ -949,8 +951,10 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
+	if (sceneManager->playerHealth <= 0) {
+		sceneManager->dead = true;
+	}
 	
-
 	
 	// animation movement
 	// if (facingRight || facingLeft || movingUp || movingDown) {
@@ -1138,9 +1142,9 @@ void Scene1::DrawNormals(const Vec4 color) const {
 }
 
 void Scene1::LoadEnemies() {
-	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Sphere");
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
-	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("BlackChessTexture");
+	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Plane");
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("Billboard");
+	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("Enemy");
 
 	// Create an array of 2 enemy actors
 	Ref<Actor> enemies[2]{};
@@ -1151,8 +1155,9 @@ void Scene1::LoadEnemies() {
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
 	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(-5.0f, 0.0f, 0.05f),
-		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.15f, 5.15f, 5.15f));
+	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f),
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * 
+		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)) , Vec3(5.15f, 5.15f, 5.15f));
 
 	// Set up the second enemy
 	enemies[1] = std::make_shared<Actor>(nullptr); // Make actor and parent it to gameboard

@@ -93,7 +93,16 @@ void SceneManager::Run() {
 	isRunning = true;
 	while (isRunning) {
 		timer->UpdateFrameTicks();
+		
+
+		if (dead) {
+			BuildNewScene(SCENE_NUMBER::SCENE0);
+			dead = false;
+			
+		}
+
 		currentScene->Update(timer->GetDeltaTime());
+
 		HandleEvents();
 		currentScene->Render();
 
@@ -175,6 +184,8 @@ void SceneManager::Run() {
 			ImGui::End();
 		}
 
+		
+
 		// Render ImGui draw data
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -231,10 +242,13 @@ void SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 	}
 
 	switch (scene) {
+
+	
 	case SCENE_NUMBER::SCENE0:
 		currentScene = new Scene0();
 		status = currentScene->OnCreate();
 		break;
+		
 
 	case SCENE_NUMBER::SCENE1:
 		currentScene = new Scene1(this);
