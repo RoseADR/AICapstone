@@ -481,15 +481,15 @@ void Scene1::FireProjectile() {
 	// Get the character's transform
 	auto charTransform = character->GetComponent<TransformComponent>();
 	if (!charTransform) return;
-
+	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Vec3 charPos = charTransform->GetPosition(); // Start position of the character
 
-	auto projectile = std::make_shared<Actor>(nullptr);
+	projectile = std::make_shared<Actor>(nullptr);
 	projectile->AddComponent<TransformComponent>(nullptr, charPos, Quaternion(), Vec3( 0.5,0.5,0.5));
 	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
 	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
 	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-
+	projectile->AddComponent(cc);
 	Vec3 initialVelocity;
 	if (facing) {
 		initialVelocity = Vec3(60.0f, 0.0f, 0.0f);
@@ -499,10 +499,10 @@ void Scene1::FireProjectile() {
 	}
 
 	projectile->AddComponent<PhysicsComponent>(nullptr, charPos, Quaternion(), initialVelocity, Vec3(0.0f, -9.81f, 0.0f));
-
+	
 	projectile->OnCreate();
 	AddActor(projectile);
-
+	collisionSystem.AddActor(projectile);
 	projectiles.push_back(projectile);
 	
 
@@ -942,7 +942,7 @@ void Scene1::Update(const float deltaTime) {
 
 			
 			if (action->GetActionName() == "Attack Player") {
-				sceneManager->playerHealth -= 1.2;
+				sceneManager->playerHealth -= 0.2;
 				std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 			}
 		}
@@ -1145,7 +1145,7 @@ void Scene1::LoadEnemies() {
 	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Plane");
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("Billboard");
 	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("Enemy");
-
+	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	// Create an array of 2 enemy actors
 	Ref<Actor> enemies[2]{};
 
@@ -1155,6 +1155,7 @@ void Scene1::LoadEnemies() {
 	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
 	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
+	enemies[0]->AddComponent(cc);
 	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f),
 		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * 
 		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)) , Vec3(5.15f, 5.15f, 5.15f));
@@ -1165,10 +1166,13 @@ void Scene1::LoadEnemies() {
 	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
 	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
 	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
+	enemies[1]->AddComponent(cc);
 	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f), // Different position
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.75f, 5.75f, 5.75f));
 
 	// Add both enemies to the actor list
+	collisionSystem.AddActor(enemies[0]);
+	collisionSystem.AddActor(enemies[1]);
 	AddActor(enemies[0]);
 	AddActor(enemies[1]);
 }

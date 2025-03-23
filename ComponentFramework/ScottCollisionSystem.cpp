@@ -61,8 +61,8 @@ void CollisionSystem::Update(const float deltaTime) {
             p.n = cc2->normal;
             p.d = VMath::dot(p.n, tc2->GetPosition());
 
-            std::cout << "Bridge: " << withinBridgeBounds << std::endl;
-            std::cout << "factory: " << withinFactoryBounds << std::endl;
+            //std::cout << "Bridge: " << withinBridgeBounds << std::endl;
+            //std::cout << "factory: " << withinFactoryBounds << std::endl;
 
             if (SpherePlaneCollisionDetection(s1, p)) {
                 if (withinFactoryBounds || withinBridgeBounds) {
@@ -269,8 +269,8 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
     float distance = VMath::mag(L);
     float radiusSum = s1.r + s2.r;
 
-    // If no overlap, return
-    if (distance >= radiusSum) return;
+    // If no overlap or if the centers are nearly identical, return to avoid division by zero
+    if (distance < VERY_SMALL || distance >= radiusSum) return;
 
     // Normalize collision normal
     Vec3 n = VMath::normalize(L);
@@ -294,16 +294,15 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
     // If already separating, return
     if (v1p - v2p > 0.0f) return;
 
- 
-    // Compute new velocities after collision
-    float v1p_new = ((pc1->mass - e * pc2->mass) * v1p + (1.0f + e) * pc2->mass * v2p) / totalMass;
-    float v2p_new = ((pc2->mass - e * pc1->mass) * v2p + (1.0f + e) * pc1->mass * v1p) / totalMass;
+    // Impulse scalar
+    float j = -(1 + e) * (v1p - v2p) / (1 / pc1->mass + 1 / pc2->mass);
 
-    // Apply new velocities along the collision normal
-    pc1->vel = v1 + (v1p_new - v1p) * n;
-    pc2->vel = v2 + (v2p_new - v2p) * n;
-
+    // Apply impulse
+    Vec3 impulse = j * n;
+    pc1->vel += impulse / pc1->mass;
+    pc2->vel -= impulse / pc2->mass;
 }
+
 
 void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2)
 {

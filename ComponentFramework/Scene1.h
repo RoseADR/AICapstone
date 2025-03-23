@@ -37,6 +37,7 @@ private:
 	//Ref<Actor> gameboard;
 	Ref<Actor> factory;
 	Ref<Actor> bg;
+	Ref<Actor> projectile;
 	Ref<Actor> Bridge;
 	Ref<Actor> Barrel;
 	Ref<Actor> house;
@@ -44,7 +45,7 @@ private:
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
-	Ref<Actor> projectile;
+	
 	
 	
 
