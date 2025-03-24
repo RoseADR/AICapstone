@@ -822,30 +822,59 @@ void Scene1::Update(const float deltaTime) {
 
 	for (size_t i = 0; i < projectiles.size();) {
 		auto projectile = projectiles[i];
+		auto projTransform = projectile->GetComponent<TransformComponent>();
+		auto projPhysics = projectile->GetComponent<PhysicsComponent>();
+		auto projCollision = projectile->GetComponent<CollisionComponent>();
 
-		auto transform = projectile->GetComponent<TransformComponent>();
-		auto physics = projectile->GetComponent<PhysicsComponent>();
-
-		if (!transform || !physics) {
+		if (!projTransform || !projPhysics || !projCollision) {
 			projectiles.erase(projectiles.begin() + i);
 			continue;
 		}
 
-		// Get current velocity
-		Vec3 newVel = physics->getVel() + Vec3(0.0f, -9.8f * deltaTime, 0.0f); // Gravity only affects Y-axis
-		physics->SetVelocity(newVel);
+		// Apply gravity and update position
+		Vec3 newVel = projPhysics->getVel() + Vec3(0.0f, -9.8f * deltaTime, 0.0f);
+		projPhysics->SetVelocity(newVel);
+		projTransform->SetPosition(projTransform->GetPosition() + newVel * deltaTime);
 
-		// Move the projectile
-		transform->SetPosition(transform->GetPosition() + newVel * deltaTime);
+		// Check for collision with enemies
+		bool hitEnemy = false;
+		for (auto& pair : enemyHealth) {
+			Actor* enemy = pair.first;
+			auto enemyTransform = enemy->GetComponent<TransformComponent>();
+			auto enemyCollision = enemy->GetComponent<CollisionComponent>();
+			if (!enemyTransform || !enemyCollision) continue;
 
-		// Remove if it falls below a threshold (e.g., off-screen)
-		if (transform->GetPosition().y < -50.0f) {
-			projectiles.erase(projectiles.begin() + i);
+			Sphere s1{ projTransform->GetPosition(), projCollision->GetRadius() };
+			Sphere s2{ enemyTransform->GetPosition(), enemyCollision->GetRadius() };
+
+			if (collisionSystem.SphereSphereCollisionDetection(s1, s2)) {
+				enemyHealth[enemy] -= 50.0f; // Damage
+				std::cout << "Enemy hit! Remaining health: " << enemyHealth[enemy] << std::endl;
+
+				if (enemyHealth[enemy] <= 0.0f) {
+					std::cout << "Enemy destroyed!" << std::endl;
+					enemy->OnDestroy();
+					enemyHealth.erase(enemy);
+					actors.erase(std::remove_if(actors.begin(), actors.end(),
+						[enemy](const Ref<Actor>& a) { return a.get() == enemy; }),
+						actors.end());
+					
+				}
+
+				projectiles.erase(projectiles.begin() + i);
+				hitEnemy = true;
+				break;
+			}
 		}
-		else {
+
+		if (!hitEnemy && projTransform->GetPosition().y > -50.0f) {
 			++i;
 		}
+		else if (!hitEnemy) {
+			projectiles.erase(projectiles.begin() + i);
+		}
 	}
+
 
 	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
 	Vec3 playerPos = playerPhysics->GetPosition();
@@ -1148,29 +1177,33 @@ void Scene1::LoadEnemies() {
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	// Create an array of 2 enemy actors
 	Ref<Actor> enemies[2]{};
-
+	
 	// Set up the first enemy
-	enemies[0] = std::make_shared<Actor>(nullptr); // Make actor and parent it to gameboard
-	enemies[0]->AddComponent<ShaderComponent>(shader); // Add shader
-	enemies[0]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
-	enemies[0]->AddComponent<AiComponent>(enemies[0].get()); // Add AI component
-	enemies[0]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[0]->AddComponent(cc);
+	// Set up the first enemy
+	enemies[0] = std::make_shared<Actor>(nullptr);
+	enemies[0]->AddComponent<ShaderComponent>(shader);
+	enemies[0]->AddComponent<MaterialComponent>(enemyTexture);
+	enemies[0]->AddComponent<AiComponent>(enemies[0].get());
+	enemies[0]->AddComponent<MeshComponent>(e);
+	enemies[0]->AddComponent(std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f));
 	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f),
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * 
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)) , Vec3(5.15f, 5.15f, 5.15f));
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
+		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.15f, 5.15f, 5.15f));
 
 	// Set up the second enemy
-	enemies[1] = std::make_shared<Actor>(nullptr); // Make actor and parent it to gameboard
-	enemies[1]->AddComponent<ShaderComponent>(shader); // Add shader
-	enemies[1]->AddComponent<MaterialComponent>(enemyTexture); // Add texture
-	enemies[1]->AddComponent<AiComponent>(enemies[1].get()); // Add AI component
-	enemies[1]->AddComponent<MeshComponent>(e); // Add mesh
-	enemies[1]->AddComponent(cc);
-	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f), // Different position
+	enemies[1] = std::make_shared<Actor>(nullptr);
+	enemies[1]->AddComponent<ShaderComponent>(shader);
+	enemies[1]->AddComponent<MaterialComponent>(enemyTexture);
+	enemies[1]->AddComponent<AiComponent>(enemies[1].get());
+	enemies[1]->AddComponent<MeshComponent>(e);
+	enemies[1]->AddComponent(std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f));
+	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f),
 		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.75f, 5.75f, 5.75f));
 
+
 	// Add both enemies to the actor list
+	enemyHealth[enemies[0].get()] = 100.0f;
+	enemyHealth[enemies[1].get()] = 100.0f;
 	collisionSystem.AddActor(enemies[0]);
 	collisionSystem.AddActor(enemies[1]);
 	AddActor(enemies[0]);

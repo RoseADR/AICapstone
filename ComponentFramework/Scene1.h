@@ -17,6 +17,7 @@
 #include "TransformSystem.h"
 #include <irrKlang.h>
 #include "SceneManager.h"
+#include <unordered_map>
 using namespace MATH;
 using namespace irrklang;
 /// let me change
@@ -87,6 +88,7 @@ private:
 	std::vector<std::pair<int, int>> redTilePositions;
 	
 public:
+	std::unordered_map<Actor*, float> enemyHealth;
 	Vec2 hackingPlayerPos = Vec2(0, 0);
 	bool showTiles = false;
 	bool hackingMode = false;
