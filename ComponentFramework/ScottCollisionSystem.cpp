@@ -299,8 +299,15 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
 
     // Apply impulse
     Vec3 impulse = j * n;
-    pc1->vel += impulse / pc1->mass;
-    pc2->vel -= impulse / pc2->mass;
+    if (totalMass > 0.0f) {
+        float correctionFactor = penetrationDepth / totalMass;
+
+       
+        pc1->pos += n * penetrationDepth; 
+       
+        // pc2->pos -= n * 0.01f; 
+    }
+
 }
 
 
