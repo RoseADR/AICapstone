@@ -29,44 +29,42 @@ layout(location = 3) out vec2 texCoord;     // Texture coordinates
 
 // Uniform variables (parameters passed to the shader)
 // For Sprite Sheet Animations
-uniform vec2 index;        // Index for texture animation or variation
+uniform vec2 index;        // Index for texture animation
 uniform bool movingUp;
 uniform bool movingDown;
 uniform bool facingLeft;    // Is the object facing left
 uniform bool facingRight;   // Is the object facing right
-uniform bool movingTexture; // Is the texture moving/animating
+uniform bool IdleTexture; // Is the object idle
 
 
 
 void main() {
-    texCoord = uvCoord; // Set the texture coordinates to the incoming ones
-    texCoord.y *= -1.0; // Invert the y-coordinate for texture mapping (GL's texture coords start from the top-left)
+  texCoord = uvCoord; // Set the texture coordinates to the incoming ones
+  texCoord.y *= -1.0; // Invert the y-coordinate for texture mapping (GL's texture coords start from the top-left)
    
    // If the texture is moving (or animating), adjust the x texture coordinate based on the index
-   // if(movingTexture){
+   // if(IdleTexture){
    
     texCoord.x = texCoord.x * 0.125 + (index.x * 0.125);
     texCoord.y = texCoord.y * 0.5 + (index.y * 0.5);
 
     if(movingUp){
         // texCoord.y += index * 0.5;
-        texCoord.y = index.y * 0.5 + texCoord.y * 0.5;
+        texCoord.y = index.y * 0.5 + texCoord.y;
     }
     if(movingDown){
-    texCoord.y = index.y * 0.5 - texCoord.y;
+    texCoord.y = -index.y * -0.5 - texCoord.y;
     }
-
     if(facingRight){
-    texCoord.x = (index.x * 1) * 0.125 + texCoord.x;
+    texCoord.x = index.x * 0.125 + texCoord.x;
     }
-
     // for flipping the texture coordinates when the object is facing left or right
     if(facingLeft){
         // Move the texture horizontally based on the 'index' value for animation 
-        texCoord.x = 1.0 - texCoord.x;
-     texCoord.x = (index.x * 1) * 0.125 - texCoord.x;
-   }
-
+     //texCoord.x = 1.0 - texCoord.x;
+     texCoord = -uvCoord;
+     texCoord.x = -index.x * -0.125 - texCoord.x;
+     }
 
     // Create a normal matrix by transforming the normal vectors using the model and view matrix (correcting for non-uniform scaling)
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));

@@ -19,6 +19,10 @@ protected:
 	float animationSpeed;
 	bool isPlaying;
 	bool isLooping;
+	bool movingUp;
+	bool movingDown;
+	bool facingLeft;
+	bool facingRight;
 
 public:
 	AnimationComponent(Component* parent_);

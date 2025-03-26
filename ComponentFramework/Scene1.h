@@ -47,8 +47,6 @@ private:
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
 	
-	
-	
 
 	LocationManager locationManager;
 
@@ -123,7 +121,9 @@ public:
 	bool movingDown;
 	float currentTime;
 	Vec2 index;
-	float frameSpeed = 0.01f;
+	float frameSpeed = 0.1f;
+
+	uint64_t frameCount = 0;
 };
 
 

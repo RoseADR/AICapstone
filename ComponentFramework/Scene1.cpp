@@ -345,7 +345,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-10.0f, 5.0f, -10.0f), mariosQuaternion);
-	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
@@ -544,11 +544,6 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	Quaternion orientationR;
 	Quaternion orientationD;
 
-	bool facingRight = false; // animation
-	bool facingLeft = false;
-	bool movingUp = false;
-	bool movingDown = false;
-
 
 	/// Handle Camera movement 
 
@@ -565,17 +560,20 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_W: 
+				facing = true;
 				movingUp = true;
+				index.y = 1.0f;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 1.0f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S:
+				facing = true;
 				movingDown = true;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -1.0f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
-				facing = false;
+				facing = true;
 				facingLeft = true;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
@@ -583,6 +581,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			case SDL_SCANCODE_D:
 				facing = true;
 				facingRight = true;
+				index.x = 0.0f;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
@@ -612,16 +611,22 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				//if (!hackingMode) {
 					switch (sdlEvent.key.keysym.scancode) {
 					case SDL_SCANCODE_W:
+						facing = false;
 						movingUp = false;
+						index.y = 0.0f;
 						break;
 					case SDL_SCANCODE_S:
+						facing = false;
 						movingDown = false;
 						break;
 					case SDL_SCANCODE_A:
+						facing = false;
 						facingLeft = false;
 						break;
 					case SDL_SCANCODE_D:
+						facing = false;
 						facingRight = false;
+						index.x = 0.0f;
 						break;
 					default:
 						break;
@@ -778,6 +783,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	}
 
 void Scene1::Update(const float deltaTime) {
+	frameCount++;
 	//Timing timing("Scene1::Update");
 	//START OF PREVIOUS SPRINT WORK
 	//Ref<PhysicsComponent> characterTC;
@@ -858,7 +864,7 @@ void Scene1::Update(const float deltaTime) {
 					actors.erase(std::remove_if(actors.begin(), actors.end(),
 						[enemy](const Ref<Actor>& a) { return a.get() == enemy; }),
 						actors.end());
-					
+
 				}
 
 				projectiles.erase(projectiles.begin() + i);
@@ -910,7 +916,7 @@ void Scene1::Update(const float deltaTime) {
 	} */
 
 
-			// Handle horizontal motion (WASD input)
+	// Handle horizontal motion (WASD input)
 	Vec3 pos = characterTransform->GetPosition();
 	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
@@ -969,7 +975,7 @@ void Scene1::Update(const float deltaTime) {
 		if (auto* action = dynamic_cast<Action*>(result)) {
 			action->makeDecision(deltaTime);
 
-			
+
 			if (action->GetActionName() == "Attack Player") {
 				sceneManager->playerHealth -= 0.2;
 				std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
@@ -983,67 +989,35 @@ void Scene1::Update(const float deltaTime) {
 	if (sceneManager->playerHealth <= 0) {
 		sceneManager->dead = true;
 	}
-	
-	
-	// animation movement
-	// if (facingRight || facingLeft || movingUp || movingDown) {
-		currentTime += deltaTime; // fix or statement not checking for all conditions
-		if (currentTime >= frameSpeed * 8) {
-			currentTime = 0.0f;
-			if (facingRight) {
-				index.x = static_cast<int>((currentTime/frameSpeed) + index.x + 1) % 8;
-				index.y = 0;
-			}
-			else if (facingLeft) {
-				index.x = static_cast<int>(index.x + 1) % 8;
-				index.y = 1;
-			}
-			else if (movingUp) {
-				index.x = 0;
-				index.y = static_cast<int>(index.y + 1) % 8;
-			}
-			else if (movingDown) {
-				index.x = 0;
-				index.y = static_cast<int>(index.y + 1) % 8;
-			}
-			//index.x = static_cast<int>(index.x + 1) % 8;
-			//index.y = static_cast<int>(index.y + 1) % 8;
-			//std::cout << index.x << ',' << index.y << std::endl;
-		}
-		/*else if (currentTime >= frameSpeed * 8) {
-			currentTime = 0.0f;
-			index.y = static_cast<int>(index.y + 1) % 8;
-		}*/
-		//else{
-		//	index.x = 0; // Reset to the first frame when not moving
-		//	index.y = 0;
-		//}
-	
-		//if (facingRight) {
-		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-		//	index.y = 0;
-		//}
-		//else if (facingLeft) {
-		//	index.x = static_cast<int>(currentTime / frameSpeed) % 8; // Update x component for horizontal frames
-		//	index.y = 0; // Assuming different y value for left-facing animation
-		//}
-		//else if (movingUp) {
-		//	index.y = static_cast<int>(currentTime / frameSpeed) % 8; // Update y component for vertical frames
-		//	index.x = 0;
-		//}
-		//else if (movingDown) {
-		//	index.y = static_cast<int>(currentTime / frameSpeed) % 8;
-		//	index.x = 0;
-		//}
-		//std::cout << index.x << ',' << index.y << std::endl;
-
-	//}
-
 
 	character->Update(deltaTime);
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
 	transformSystem.Update(deltaTime);
+
+	// animation movement
+	if (frameCount % 2 == 0) {
+		if (facingRight) {
+			currentTime += deltaTime; // fix or statement not checking for all conditions
+			// Update x component for horizontal frames
+			index.x += 1.0f;
+			if (index.x > 7.0f) {
+				index.x = 0.0f;
+			}
+			index.y = 0;
+		}
+		else if (movingUp) {
+			currentTime += deltaTime;
+			index.y = 1.0f; // Update y component for vertical frames
+			index.x += 1.0f;
+			if (index.x > 7.0f) {
+				index.x = 0.0f;
+			}
+		}
+
+		std::cout << index.x << ',' << index.y << std::endl;
+}
+
 	
 	//std::cout << "Checking collision for character at: "
 		//<< character->GetComponent<PhysicsComponent>()->GetPosition() << std::endl;
