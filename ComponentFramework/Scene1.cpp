@@ -866,8 +866,11 @@ void Scene1::Update(const float deltaTime) {
 						actors.end());
 
 				}
-
-				projectiles.erase(projectiles.begin() + i);
+				projectile->OnDestroy(); 
+				actors.erase(std::remove_if(actors.begin(), actors.end(),
+					[&](const Ref<Actor>& a) { return a == projectile; }),
+					actors.end());
+				projectiles.erase(projectiles.begin() + i); 
 				hitEnemy = true;
 				break;
 			}
