@@ -564,12 +564,14 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			case SDL_SCANCODE_S:
 				facing = true;
 				movingDown = true;
+				idleTexture = false;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
 				facing = true;
 				facingLeft = true;
+				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
@@ -639,11 +641,13 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_SCANCODE_S:
 			facing = false;
 			movingDown = false;
+			idleTexture = true;
 			index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_A:
 			facing = false;
 			facingLeft = false;
+			idleTexture = true;
 			index.x = 0.0f;
 			break;
 		case SDL_SCANCODE_D:
@@ -1019,13 +1023,27 @@ void Scene1::Update(const float deltaTime) {
 			}
 			index.y = 0.0f;
 		}
+		else if (facingLeft) {
+			index.y = 0.0f;
+			index.x += 1.0f;
+			if (index.x > 7.0f) {
+				index.x = 0.0f;
+			}
+		}
 		else if (movingUp) {
 			index.y = 1.0f; // Update y component for vertical frames
 			index.x += 1.0f;
 			if (index.x > 7.0f) {
 				index.x = 0.0f;
 			}
-		
+	
+		}
+		else if (movingDown) {
+			index.y = 1.0f; // Update y component for vertical frames
+			index.x += 1.0f;
+			if (index.x > 7.0f) {
+				index.x = 0.0f;
+			}
 		}
 		std::cout << index.x << ',' << index.y << ',' << frameCount << std::endl;
 	}
