@@ -402,29 +402,23 @@ bool Scene1::OnCreate() {
 	// DECISION TREE RELATED
 	// Load the decision tree from XML
 // Find the first enemy dynamically
-	Actor* enemy = nullptr;
-	for (const auto& actor : actors) {
-		if (actor->GetComponent<AiComponent>()) {
-			enemy = actor.get();
-			break; // Take the first enemy found
+	Actor* player = character.get(); // The player remains the same
+
+	std::cout << "[LOG]: Building decision trees for all enemies...\n";
+
+	for (auto& pair : enemyHealth) {
+		Actor* enemy = pair.first;
+
+		auto tree = TreeBuilder::buildTree("Scene1.xml", enemy, player);
+		if (!tree) {
+			std::cerr << "[ERROR]: Failed to build decision tree for an enemy\n";
+			continue;
 		}
+		enemyDecisionTrees[enemy] = tree;
 	}
 
-	// Ensure an enemy was found
-	if (!enemy) {
-		std::cerr << "[ERROR]: No enemy found for the decision tree!" << std::endl;
-		return false;
-	}
+	std::cout << "[LOG]: Decision trees built for " << enemyDecisionTrees.size() << " enemies.\n";
 
-	Actor* player = character.get(); // Assuming character is the player
-
-	std::cout << "[LOG]: Building Decision Tree..." << std::endl;
-	decisionTreeRoot = TreeBuilder::buildTree("Scene1.xml", enemy, player);
-	if (!decisionTreeRoot) {
-		std::cerr << "[ERROR]: Failed to build decision tree" << std::endl;
-		return false;
-	}
-	std::cout << "[LOG]: Decision tree successfully built" << std::endl;
 
 
 	// Test decision tree evaluation
@@ -973,21 +967,25 @@ void Scene1::Update(const float deltaTime) {
 	enemy->Update(deltaTime); // THIS DOES NOTHING 
 
 	// Evaluate the decision tree
-	if (decisionTreeRoot) {
-		DecisionTreeNode* result = decisionTreeRoot->makeDecision(deltaTime);
-		if (auto* action = dynamic_cast<Action*>(result)) {
-			action->makeDecision(deltaTime);
+	for (auto& pair : enemyDecisionTrees) {
+		Actor* enemy = pair.first;
+		DecisionTreeNode* tree = pair.second;
 
+		enemy->Update(deltaTime); // This currently does nothing, but still good practice
 
-			if (action->GetActionName() == "Attack Player") {
-				sceneManager->playerHealth -= 0.2;
-				std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
+		if (tree) {
+			DecisionTreeNode* result = tree->makeDecision(deltaTime);
+			if (auto* action = dynamic_cast<Action*>(result)) {
+				action->makeDecision(deltaTime);
+
+				if (action->GetActionName() == "Attack Player") {
+					sceneManager->playerHealth -= 0.2f;
+					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
+				}
 			}
 		}
-		else {
-			std::cerr << "[ERROR]: Decision tree evaluation returned a non-action node.\n";
-		}
 	}
+
 
 	if (sceneManager->playerHealth <= 0) {
 		sceneManager->dead = true;
@@ -1148,43 +1146,55 @@ void Scene1::DrawNormals(const Vec4 color) const {
 }
 
 void Scene1::LoadEnemies() {
-	Ref<MeshComponent> e = assetManager->GetComponent<MeshComponent>("Plane");
+	Ref<MeshComponent> mesh = assetManager->GetComponent<MeshComponent>("Plane");
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("Billboard");
-	Ref<MaterialComponent> enemyTexture = assetManager->GetComponent<MaterialComponent>("Enemy");
-	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
-	// Create an array of 2 enemy actors
-	Ref<Actor> enemies[2]{};
-	
-	// Set up the first enemy
-	// Set up the first enemy
-	enemies[0] = std::make_shared<Actor>(nullptr);
-	enemies[0]->AddComponent<ShaderComponent>(shader);
-	enemies[0]->AddComponent<MaterialComponent>(enemyTexture);
-	enemies[0]->AddComponent<AiComponent>(enemies[0].get());
-	enemies[0]->AddComponent<MeshComponent>(e);
-	enemies[0]->AddComponent(std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f));
-	enemies[0]->AddComponent<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f),
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.15f, 5.15f, 5.15f));
+	Ref<MaterialComponent> material = assetManager->GetComponent<MaterialComponent>("Enemy");
 
-	// Set up the second enemy
-	enemies[1] = std::make_shared<Actor>(nullptr);
-	enemies[1]->AddComponent<ShaderComponent>(shader);
-	enemies[1]->AddComponent<MaterialComponent>(enemyTexture);
-	enemies[1]->AddComponent<AiComponent>(enemies[1].get());
-	enemies[1]->AddComponent<MeshComponent>(e);
-	enemies[1]->AddComponent(std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f));
-	enemies[1]->AddComponent<PhysicsComponent>(nullptr, Vec3(5.0f, 0.0f, 0.05f),
-		QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.75f, 5.75f, 5.75f));
+	// === Enemy 1 ===
+	Ref<Actor> enemy1 = std::make_shared<Actor>(nullptr);
+	enemy1->AddComponent<MeshComponent>(mesh);
+	enemy1->AddComponent<ShaderComponent>(shader);
+	enemy1->AddComponent<MaterialComponent>(material);
+	enemy1->AddComponent<AiComponent>(enemy1.get());
+	enemy1->AddComponent<CollisionComponent>(enemy1.get(), ColliderType::Sphere, 1.0f);
+	enemy1->AddComponent<PhysicsComponent>(
+		enemy1.get(),
+		Vec3(0.0f, 0.0f, -10.0f), // position
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
+		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // rotation
+		Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), // velocity, accel, forces
+		Vec3(5.15f, 5.15f, 5.15f)); // scale
 
+	enemy1->OnCreate();
+	AddActor(enemy1);
+	collisionSystem.AddActor(enemy1);
+	physicsSystem.AddActor(enemy1);
+	transformSystem.AddActor(enemy1);
+	enemyHealth[enemy1.get()] = 100.0f;
 
-	// Add both enemies to the actor list
-	enemyHealth[enemies[0].get()] = 100.0f;
-	enemyHealth[enemies[1].get()] = 100.0f;
-	collisionSystem.AddActor(enemies[0]);
-	collisionSystem.AddActor(enemies[1]);
-	AddActor(enemies[0]);
-	AddActor(enemies[1]);
+	// === Enemy 2 ===
+	Ref<Actor> enemy2 = std::make_shared<Actor>(nullptr);
+	enemy2->AddComponent<MeshComponent>(mesh);
+	enemy2->AddComponent<ShaderComponent>(shader);
+	enemy2->AddComponent<MaterialComponent>(material);
+	enemy2->AddComponent<AiComponent>(enemy2.get());
+	enemy2->AddComponent<CollisionComponent>(enemy2.get(), ColliderType::Sphere, 1.0f);
+	enemy2->AddComponent<PhysicsComponent>(
+		enemy2.get(),
+		Vec3(10.0f, 0.0f, -10.0f), // different position
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
+		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
+		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // same upright rotation
+		Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f),
+		Vec3(0.75f, 0.75f, 0.75f));
+
+	enemy2->OnCreate();
+	AddActor(enemy2);
+	collisionSystem.AddActor(enemy2);
+	physicsSystem.AddActor(enemy2);
+	transformSystem.AddActor(enemy2);
+	enemyHealth[enemy2.get()] = 100.0f;
 }
 
 
