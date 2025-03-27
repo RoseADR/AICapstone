@@ -119,6 +119,7 @@ public:
 	bool facingLeft;
 	bool movingUp;
 	bool movingDown;
+	bool idleTexture;
 	float currentTime;
 	Vec2 index;
 	float frameSpeed = 0.1f;
