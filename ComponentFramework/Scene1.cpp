@@ -556,27 +556,29 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			case SDL_SCANCODE_W: 
 				facing = true;
 				movingUp = true;
-				index.y = 1.0f;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 1.0f, 0.0f));
+				idleTexture = false;
+				//index.y = 1.0f;
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S:
 				facing = true;
 				movingDown = true;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -1.0f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
 				facing = true;
 				facingLeft = true;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-1.0f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
 				facing = true;
 				facingRight = true;
-				index.x = 0.0f;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(1.0f, 0.0f, 0.0f));
+				idleTexture = false;
+				//index.x = 0.0f;
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
@@ -601,30 +603,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 					}*/
 				//}
 
-			case SDL_KEYUP:
-				//if (!hackingMode) {
-					switch (sdlEvent.key.keysym.scancode) {
-					case SDL_SCANCODE_W:
-						facing = false;
-						movingUp = false;
-						index.y = 0.0f;
-						break;
-					case SDL_SCANCODE_S:
-						facing = false;
-						movingDown = false;
-						break;
-					case SDL_SCANCODE_A:
-						facing = false;
-						facingLeft = false;
-						break;
-					case SDL_SCANCODE_D:
-						facing = false;
-						facingRight = false;
-						index.x = 0.0f;
-						break;
-					default:
-						break;
-					}
+			
 				//}
 
 				break;
@@ -647,7 +626,36 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		//break;
 	}
 
-	
+	switch (sdlEvent.type) {
+	case SDL_KEYUP:
+		//if (!hackingMode) {
+		switch (sdlEvent.key.keysym.scancode) {
+		case SDL_SCANCODE_W:
+			facing = false;
+			movingUp = false;
+			idleTexture = true;
+			index.y = 0.0f;
+			break;
+		case SDL_SCANCODE_S:
+			facing = false;
+			movingDown = false;
+			index.y = 0.0f;
+			break;
+		case SDL_SCANCODE_A:
+			facing = false;
+			facingLeft = false;
+			index.x = 0.0f;
+			break;
+		case SDL_SCANCODE_D:
+			facing = false;
+			facingRight = false;
+			idleTexture = true;
+			index.x = 0.0f;
+			break;
+		default:
+			break;
+		}
+	}
 		switch (sdlEvent.type) {
 
 
@@ -777,8 +785,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	}
 
 void Scene1::Update(const float deltaTime) {
+	Timing timing("Scene1::Update");
 	frameCount++;
-	//Timing timing("Scene1::Update");
 	//START OF PREVIOUS SPRINT WORK
 	//Ref<PhysicsComponent> characterTC;
 	//Ref<PhysicsComponent> enemyTC;
@@ -998,26 +1006,29 @@ void Scene1::Update(const float deltaTime) {
 
 	// animation movement
 	if (frameCount % 2 == 0) {
-		if (facingRight) {
-			currentTime += deltaTime; // fix or statement not checking for all conditions
+		if (idleTexture) {
+			index.x = 0.0f;
+			index.y = 0.0f;
+		}
+		else if (facingRight) {
 			// Update x component for horizontal frames
+			index.y = 0.0f;
 			index.x += 1.0f;
 			if (index.x > 7.0f) {
 				index.x = 0.0f;
 			}
-			index.y = 0;
+			index.y = 0.0f;
 		}
 		else if (movingUp) {
-			currentTime += deltaTime;
 			index.y = 1.0f; // Update y component for vertical frames
 			index.x += 1.0f;
 			if (index.x > 7.0f) {
 				index.x = 0.0f;
 			}
+		
 		}
-
-		std::cout << index.x << ',' << index.y << std::endl;
-}
+		std::cout << index.x << ',' << index.y << ',' << frameCount << std::endl;
+	}
 
 	
 	//std::cout << "Checking collision for character at: "
