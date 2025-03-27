@@ -563,7 +563,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				facing = true;
 				movingUp = true;
 				idleTexture = false;
-				index.y = 1.0f;
+				//index.y = 1.0f;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
@@ -583,7 +583,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				facing = true;
 				facingRight = true;
 				idleTexture = false;
-				index.x = 0.0f;
+				//index.x = 0.0f;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
