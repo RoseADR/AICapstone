@@ -636,25 +636,25 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			facing = false;
 			movingUp = false;
 			idleTexture = true;
-			index.y = 0.0f;
+			//index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_S:
 			facing = false;
 			movingDown = false;
 			idleTexture = true;
-			index.y = 0.0f;
+			//index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_A:
 			facing = false;
 			facingLeft = false;
 			idleTexture = true;
-			index.x = 0.0f;
+			//index.x = 0.0f;
 			break;
 		case SDL_SCANCODE_D:
 			facing = false;
 			facingRight = false;
 			idleTexture = true;
-			index.x = 0.0f;
+			//index.x = 0.0f;
 			break;
 		default:
 			break;
