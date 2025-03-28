@@ -558,21 +558,21 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				movingUp = true;
 				idleTexture = false;
 				//index.y = 1.0f;
-				//characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 				break;
 			case SDL_SCANCODE_S:
 				facing = true;
 				movingDown = true;
 				idleTexture = false;
-				//characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 				//if (hackingPlayerPos.y > 0) newY--;
 				break;
 			case SDL_SCANCODE_A:
 				facing = true;
 				facingLeft = true;
 				idleTexture = false;
-				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x > 0) newX--;
 				break;
 			case SDL_SCANCODE_D:
@@ -580,7 +580,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				facingRight = true;
 				idleTexture = false;
 				//index.x = 0.0f;
-				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
 				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 				break;
 			case SDL_SCANCODE_SPACE:
@@ -930,26 +930,26 @@ void Scene1::Update(const float deltaTime) {
 	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 	if (!hackingMode) {
-		if (keystate[SDL_SCANCODE_W]) {
-			movingUp = true;
-			facing = true;
-			horizontalMove.y += 1.0f; // Forward
-		}
-		else if (keystate[SDL_SCANCODE_S]) {
-			movingDown = true;
-			facing = true;
-			horizontalMove.y -= 1.0f; // Backward
-		}
-		else if (keystate[SDL_SCANCODE_A]) {
-			facingLeft = true; // last part for animation
-			facing = true;
-			horizontalMove.x -= 1.0f; // Left
-		}
-		else if (keystate[SDL_SCANCODE_D]) {
-			facingRight = true;
-			facing = true;
-			horizontalMove.x += 1.0f; // Right
-		}
+		//if (keystate[SDL_SCANCODE_W]) {
+		//	movingUp = true;
+		//	facing = true;
+		//	horizontalMove.y += 1.0f; // Forward
+		//}
+		//else if (keystate[SDL_SCANCODE_S]) {
+		//	movingDown = true;
+		//	facing = true;
+		//	horizontalMove.y -= 1.0f; // Backward
+		//}
+		//else if (keystate[SDL_SCANCODE_A]) {
+		//	facingLeft = true; // last part for animation
+		//	facing = true;
+		//	horizontalMove.x -= 1.0f; // Left
+		//}
+		//else if (keystate[SDL_SCANCODE_D]) {
+		//	facingRight = true;
+		//	facing = true;
+		//	horizontalMove.x += 1.0f; // Right
+		//}
 	}
 	// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
