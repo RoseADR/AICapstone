@@ -548,84 +548,84 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		characterTC = character->GetComponent<TransformComponent>();
 		characterPC = character->GetComponent<PhysicsComponent>();
 
-		/*if (hackingMode) {
-			int newX = hackingPlayerPos.x;
-			int newY = hackingPlayerPos.y;*/
+		int newX = hackingPlayerPos.x;
+		int newY = hackingPlayerPos.y;
 
-			switch (sdlEvent.key.keysym.scancode) {
-			case SDL_SCANCODE_W: 
+		switch (sdlEvent.key.keysym.scancode) {
+		case SDL_SCANCODE_W:
+		
+			if (!hackingMode) {
 				facing = true;
 				movingUp = true;
 				idleTexture = false;
-				//index.y = 1.0f;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
-				//if (hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
-				break;
-			case SDL_SCANCODE_S:
+			}
+			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+			break;
+
+		case SDL_SCANCODE_S:
+			
+			if (!hackingMode) {
 				facing = true;
 				movingDown = true;
 				idleTexture = false;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
-				//if (hackingPlayerPos.y > 0) newY--;
-				break;
-			case SDL_SCANCODE_A:
+			}
+			if (hackingMode && hackingPlayerPos.y > 0) newY--;
+			break;
+
+		case SDL_SCANCODE_A:
+			
+			if (!hackingMode) {
 				facing = true;
 				facingLeft = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
-				//if (hackingPlayerPos.x > 0) newX--;
-				break;
-			case SDL_SCANCODE_D:
+			}
+				if (hackingMode && hackingPlayerPos.x > 0) newX--;
+			break;
+
+		case SDL_SCANCODE_D:
+			
+			if (!hackingMode) {
 				facing = true;
 				facingRight = true;
 				idleTexture = false;
-				//index.x = 0.0f;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
-				//if (hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
-				break;
-			case SDL_SCANCODE_SPACE:
-				
-				/*if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
+			}
+				if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+
+			break;
+
+		case SDL_SCANCODE_SPACE:
+			if (hackingMode) {
+				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
 
-					
 					redTilePositions.erase(
 						std::remove(redTilePositions.begin(), redTilePositions.end(),
 							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
 						redTilePositions.end()
 					);
 
-					
 					if (redTilePositions.empty()) {
-						
-						SDL_Delay(2000);
+						SDL_Delay(1000);
 						hackingMode = false;
 						showHackingGrid = false;
 						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
-					}*/
-				//}
-
-			
-				//}
-
-				break;
-
+					}
+				}
 			}
+			break;
+		}
 
-			// Update player position
-		//	if (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y) {
-		//		// Reset the old tile
-		//		hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+		if (hackingMode && (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y)) {
+			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+			hackingPlayerPos = Vec2(newX, newY);
+			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+		}
 
-		//		// Move player
-		//		hackingPlayerPos.x = newX;
-		//		hackingPlayerPos.y = newY;
-
-		//		// Mark new tile as player's position
-		//		hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-		//	}
-		//}
-		//break;
+		break;
 	}
 
 	switch (sdlEvent.type) {
