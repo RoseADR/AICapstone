@@ -344,7 +344,7 @@ bool Scene1::OnCreate() {
 
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-10.0f, 5.0f, -10.0f), mariosQuaternion);
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-10.0f, 5.0f, -10.0f), mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));

@@ -124,7 +124,7 @@ public:
 	bool idleTexture;
 	float currentTime;
 	Vec2 index;
-	float frameSpeed = 0.1f;
+	float frameSpeed = 0.01f;
 
 	uint64_t frameCount = 0;
 };

@@ -110,9 +110,14 @@
     <ClCompile Include="TransformSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="Actor.cpp">
       <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationComponent.cpp">
+      <Filter>Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,7 +283,12 @@
     <ClInclude Include="TransformSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AnimationComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
@@ -327,6 +337,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shaders\BillBoardingVert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\EnemyBillBoardingFrag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\EnemyBillBoardingVert.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

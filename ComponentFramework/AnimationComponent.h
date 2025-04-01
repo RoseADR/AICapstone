@@ -4,6 +4,8 @@
 
 class AnimationComponent : public Component
 {
+	friend class AnimationSystem;
+
 	AnimationComponent(const AnimationComponent&) = delete;
 	AnimationComponent(AnimationComponent&&) = delete;
 	AnimationComponent& operator=(const AnimationComponent&) = delete;
@@ -19,10 +21,7 @@ protected:
 	float animationSpeed;
 	bool isPlaying;
 	bool isLooping;
-	bool movingUp;
-	bool movingDown;
-	bool facingLeft;
-	bool facingRight;
+	Vec2 index;
 
 public:
 	AnimationComponent(Component* parent_);

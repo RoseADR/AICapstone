@@ -150,6 +150,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AiComponent.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="AnimationSystem.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BillBoardedCameraActor.cpp" />
     <ClCompile Include="CameraActor.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AiComponent.h" />
     <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AnimationSystem.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BillBoardedCameraActor.h" />
     <ClInclude Include="CameraActor.h" />
@@ -262,6 +264,8 @@
     <None Include="shaders\drawNormalsFrag.glsl" />
     <None Include="shaders\drawNormalsGeom.glsl" />
     <None Include="shaders\drawNormalsVert.glsl" />
+    <None Include="shaders\EnemyBillBoardingFrag.glsl" />
+    <None Include="shaders\EnemyBillBoardingVert.glsl" />
     <None Include="shaders\shadowDepthFrag.glsl" />
     <None Include="shaders\shadowDepthVert.glsl" />
     <None Include="shaders\textureFrag.glsl" />
