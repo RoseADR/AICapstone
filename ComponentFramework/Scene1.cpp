@@ -555,7 +555,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_SCANCODE_W:
 		
 			if (!hackingMode) {
-				facing = true;
+				//facing = true;
 				movingUp = true;
 				idleTexture = false;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
@@ -566,7 +566,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_SCANCODE_S:
 			
 			if (!hackingMode) {
-				facing = true;
+				//facing = true;
 				movingDown = true;
 				idleTexture = false;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
@@ -577,7 +577,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		case SDL_SCANCODE_A:
 			
 			if (!hackingMode) {
-				facing = true;
+				facing = false;
 				facingLeft = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
@@ -633,25 +633,25 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		//if (!hackingMode) {
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
-			facing = false;
+			//facing = false;
 			movingUp = false;
 			idleTexture = true;
 			//index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_S:
-			facing = false;
+			//facing = false;
 			movingDown = false;
 			idleTexture = true;
 			//index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_A:
-			facing = false;
+			//facing = false;
 			facingLeft = false;
 			idleTexture = true;
 			//index.x = 0.0f;
 			break;
 		case SDL_SCANCODE_D:
-			facing = false;
+			//facing = false;
 			facingRight = false;
 			idleTexture = true;
 			//index.x = 0.0f;
@@ -981,9 +981,12 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the decision tree
 	for (auto& pair : enemyDecisionTrees) {
 		Actor* enemy = pair.first;
-		DecisionTreeNode* tree = pair.second;
 
-		enemy->Update(deltaTime); // This currently does nothing, but still good practice
+		// Skip dead enemies
+		if (enemyHealth.find(enemy) == enemyHealth.end() || enemyHealth[enemy] <= 0.0f) continue;
+
+		DecisionTreeNode* tree = pair.second;
+		enemy->Update(deltaTime);
 
 		if (tree) {
 			DecisionTreeNode* result = tree->makeDecision(deltaTime);
@@ -997,6 +1000,8 @@ void Scene1::Update(const float deltaTime) {
 			}
 		}
 	}
+
+	
 
 
 	if (sceneManager->playerHealth <= 0) {
