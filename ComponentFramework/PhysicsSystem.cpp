@@ -14,9 +14,6 @@ void PhysicsSystem::Update(const float deltaTime) {
         pc->vel += pc->accel * deltaTime;
         pc->UndoForce();
 
-       
-
-
     }
 
 

@@ -15,6 +15,7 @@ private:
 	Ref<Actor> factory;
 	Ref<Actor> bridge;
 	Ref<Actor> character;
+	bool isGrounded = false;
 
 public:
 	/// This function will check the the actor being added is new and has the all proper components 

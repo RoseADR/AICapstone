@@ -45,7 +45,6 @@ protected:
 	TransformComponent* transform;
 	ColliderType colliderType;
 	float radius; /// sphere collision
-	//Plane plane;
 	Vec3 normal;
 	float dist;
 	
@@ -64,15 +63,6 @@ public:
 
 	float GetRadius() const { return radius; }
 	ColliderType GetColliderType() const { return colliderType; }
-	//Vec3 GetNormal() const { return  ; }
-
-	//Plane SetPlane(Vec3 n_, float d_) {
-	//	plane.n = n_;
-	//	plane.d = d_;
-	//}
-
-	//Plane GetPlane() const { return plane; }
-
 
 };
 
