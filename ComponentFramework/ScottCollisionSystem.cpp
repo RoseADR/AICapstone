@@ -71,6 +71,15 @@ void CollisionSystem::Update(const float deltaTime) {
             }
         }
     }
+    if (isGrounded) {
+        pc1->accel.y = 0.0f;  // No gravity when grounded
+        pc1->vel.y = 0.0f;  // Optional: keep vertical velocity zero
+    }
+    else {
+        pc1->accel.y = -9.81f;  // Restore gravity when not grounded
+    }
+    isGrounded = false; // Reset for next frame
+
 }
 
 bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const {
@@ -190,18 +199,18 @@ void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsCompone
         float penetrationDepth = s1.r - dist;
 
         //  Clamp the sphere just outside the plane
-        pc1->pos += p2.n * penetrationDepth;
+      
 
         //  Completely stop velocity into the plane
         float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
         if (velocityAlongNormal < 0.0f) {
             pc1->vel -= p2.n * velocityAlongNormal;
-
+            pc1->pos += p2.n * penetrationDepth;
             //  Bonus: zero-out any residual bounce
             pc1->vel.y = 0.0f;
         }
     }
         ////  Set grounded flag if needed
-        //isGrounded = true;
+        isGrounded = true;
         //std::cout << "Grounded: Clamped to plane | newPos: " << pc1->pos << " | newVel: " << pc1->vel << std::endl;
 }
