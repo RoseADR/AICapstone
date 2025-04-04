@@ -263,7 +263,7 @@ bool Scene1::OnCreate() {
 	 Barrel = std::make_shared<Actor>(factory.get());
 
 //	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0f, 13.0f, 13.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-600.0f, -5.0f, -10.0f), orientationBill, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 
+	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-600.0f, 20.0f, 180.0f), orientationBill, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 
 		Vec3(0.0f, 0.0f, 0.0f), Vec3(13.0f, 13.0f, 13.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f); 
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
@@ -289,7 +289,7 @@ bool Scene1::OnCreate() {
 	
 	auto Scaf = std::make_shared<Actor>(factory.get());
 
-	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 340.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0f, 1.0f, 1.0f));
+	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 250.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0f, 1.0f, 1.0f));
 	Scaf->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Scaffolding"));
 	Scaf->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
 	Scaf->AddComponent<ShaderComponent>(shader);
@@ -343,7 +343,7 @@ bool Scene1::OnCreate() {
 
 
 	UTunnels[2] = std::make_shared<Actor>(factory.get());
-	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-3320.0f, 300.0f, -170.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-3320.0f, 260.0f, -170.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
 	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	UTunnels[2]->AddComponent<ShaderComponent>(shader);
@@ -384,7 +384,7 @@ bool Scene1::OnCreate() {
 		}
 
 		Bridge = std::make_shared<Actor>(nullptr);
-		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-30, 10.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-129.0, 5.66f, -7.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.20, 0.20, 0.20));
 		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
 		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge2"));
 		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
@@ -607,15 +607,22 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
-		
 			if (!hackingMode) {
-				//facing = true;
-				movingUp = true;
-				idleTexture = false;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				if (isGrounded) {
+					// Character jumps only if grounded
+					movingUp = true;
+					idleTexture = false;
+					characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				}
 			}
-			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+			else {
+				// In hacking mode, move up the tile grid
+				if (hackingPlayerPos.y < hackingTiles.size() - 1) {
+					newY++;
+				}
+			}
 			break;
+
 
 		case SDL_SCANCODE_S:
 			
@@ -845,7 +852,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 void Scene1::Update(const float deltaTime) {
 	//Timing timing("Scene1::Update");
 	frameCount++;
-
+	
 	//START OF PREVIOUS SPRINT WORK
 	//Ref<PhysicsComponent> characterTC;
 	//Ref<PhysicsComponent> enemyTC;
@@ -975,7 +982,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += -9.8f * deltaTime;
+		currentVel.y += -9.0f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	
