@@ -42,6 +42,7 @@ private:
 	Ref<Actor> Bridge;
 	Ref<Actor> Barrel;
 	Ref<Actor> house;
+	Ref<Actor> hack;
 	Ref<Actor> bill;
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
@@ -79,6 +80,8 @@ private:
 	bool drawOverlay;
 	bool isGrounded = false;
 	bool isRunning;
+	bool hackUsed = false;
+
 	ISoundEngine* engine;
 
 	float xAxis;

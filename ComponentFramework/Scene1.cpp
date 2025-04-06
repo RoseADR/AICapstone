@@ -274,6 +274,32 @@ bool Scene1::OnCreate() {
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
+
+	hack = std::make_shared<Actor>(nullptr);
+	Quaternion hackRotation = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+	Vec3 hackPosition = Vec3(71.0f, 5.0f, -5.0f);     // Adjust position as needed
+	Vec3 hackVelocity = Vec3(0.0f, 0.0f, 0.0f);         // Initial velocity
+	Vec3 hackScale = Vec3(0.0f, 0.0f, 0.0f);            // Scale of the object
+
+	// Add Physics Component instead of Transform
+	hack->AddComponent<PhysicsComponent>(nullptr, hackPosition, hackRotation, hackVelocity, Vec3(), Vec3(), hackScale);
+
+	// Optional: Add collision
+	hack->AddComponent<CollisionComponent>(nullptr, ColliderType::Sphere, 10.0f);
+
+	// Visuals
+	hack->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+	hack->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+	hack->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+
+	hack->OnCreate();
+	AddActor(hack);
+	collisionSystem.AddActor(hack);
+	physicsSystem.AddActor(hack);
+	transformSystem.AddActor(hack);
+
+
+
 	Ref<Actor> Car = std::make_shared<Actor>(Bridge.get());
 
 	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-130.0f, 13.5f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
@@ -608,31 +634,21 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
 			if (!hackingMode) {
-				if (isGrounded) {
-					// Character jumps only if grounded
-					movingUp = true;
-					idleTexture = false;
-					characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
-				}
+				movingDown = true;
+				idleTexture = false;
+				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 			}
-			else {
-				// In hacking mode, move up the tile grid
-				if (hackingPlayerPos.y < hackingTiles.size() - 1) {
-					newY++;
-				}
-			}
+			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++; 
 			break;
 
-
 		case SDL_SCANCODE_S:
-			
 			if (!hackingMode) {
-				//facing = true;
 				movingDown = true;
 				idleTexture = false;
 				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 			}
 			if (hackingMode && hackingPlayerPos.y > 0) newY--;
+			
 			break;
 
 		case SDL_SCANCODE_A:
@@ -894,6 +910,11 @@ void Scene1::Update(const float deltaTime) {
 	// Evaluate the Decision Tree
 	// Update a single enemy using the decision tree
 
+	// Player-hack collision detection
+	
+
+
+
 	for (size_t i = 0; i < projectiles.size();) {
 		auto projectile = projectiles[i];
 		auto projTransform = projectile->GetComponent<TransformComponent>();
@@ -956,6 +977,26 @@ void Scene1::Update(const float deltaTime) {
 	Ref<PhysicsComponent> playerPhysics = character->GetComponent<PhysicsComponent>();
 	Vec3 playerPos = playerPhysics->GetPosition();
 
+	// --- After projectile vs enemy logic ---
+
+	Ref<CollisionComponent> playerCollision = character->GetComponent<CollisionComponent>();
+	Ref<PhysicsComponent> hackPhysics = hack->GetComponent<PhysicsComponent>();
+	Ref<CollisionComponent> hackCollision = hack->GetComponent<CollisionComponent>();
+
+	if (!hackUsed && playerPhysics && playerCollision && hackPhysics && hackCollision) {
+		Sphere playerSphere{ playerPhysics->GetPosition(), playerCollision->GetRadius() };
+		Sphere hackSphere{ hackPhysics->GetPosition(), hackCollision->GetRadius() };
+
+		if (collisionSystem.SphereSphereCollisionDetection(playerSphere, hackSphere)) {
+			hackUsed = true;
+			hackingMode = true;
+			showHackingGrid = true;
+			createHackingGrid(); // if not already done
+			std::cout << "Player touched the hack object — Hacking mode ON\n";
+		}
+	}
+
+
 	// Get the camera's transform
 	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();
 	Vec3 cameraPos = cameraTransform->GetPosition();
@@ -982,7 +1023,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += -9.0f * deltaTime;
+		currentVel.y += -0.0f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	
