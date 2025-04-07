@@ -41,7 +41,7 @@ public:
 
 	bool SphereSphereCollisionDetection(const Sphere& s1, const Sphere& s2) const;
 	bool AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const;
-	bool SphereAABBCollisionDetection(const Sphere& s1, const Sphere& s2) const;
+	bool SphereAABBCollisionDetection(const Sphere& s, const AABB& box) const;
 	void SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Sphere s2, Ref<PhysicsComponent> pc2);
 	void AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2);
 	void SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2);

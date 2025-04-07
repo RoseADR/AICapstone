@@ -10,6 +10,7 @@ using namespace MATHEX;
 enum class ColliderType {
 	Sphere,
 	PLANE,
+	AABB
 };
 
 /// Definition of a Sphere and Plane are in the Math library
@@ -18,22 +19,26 @@ enum class ColliderType {
 /// My favorite way, the easiest to understand way, is this way.
 /// Pick the center location of the box, then specify the radius from that center in 
 /// the x, y,and z dimensions.
+
 struct AABB {
 	Vec3 center;
 	float rx, ry, rz;
 };
 
-/*** Other definitions might be:
-struct AABB {
-	Vec3 min; /// Bottom, left, front
-	Vec3 max; /// Top, right, back
-};
+//// other definitions might be:
+//struct AABB {
+//	Vec3 min; /// Bottom, left, front
+//	Vec3 max; /// Top, right, back
+//	Vec3 size;       // Dimensions for AABB/OBB
+//	Vec3 offset;     // Offset from parent center
+//	
+//};
 
-struct AABB {
-	Vec3 min; /// Bottom, left, front
-	float dx,dy,dz;
-};
-***/
+//struct AABB {
+//	Vec3 min; /// Bottom, left, front
+//	float dx,dy,dz;
+//};
+
 
 class CollisionComponent : public Component {
 	friend class CollisionSystem;
@@ -47,6 +52,7 @@ protected:
 	float radius; /// sphere collision
 	Vec3 normal;
 	float dist;
+	AABB aabb;
 	
 
 
@@ -60,9 +66,18 @@ public:
 	void OnDestroy() {}
 	void Update(const float deltaTime_) {}
 	void Render()const {}
-
+	
+	
 	float GetRadius() const { return radius; }
 	ColliderType GetColliderType() const { return colliderType; }
 
+	void SetAABB(const Vec3& center, float rx, float ry, float rz) {
+		aabb = { center, rx, ry, rz };
+	}
+	AABB GetAABB() const { return aabb; }
+
+	void SetRadiusFromScale(const Vec3& scale) {
+		radius = std::max({ scale.x, scale.y, scale.z }) * 0.5f;
+	}
 };
 

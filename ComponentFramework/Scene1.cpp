@@ -121,42 +121,61 @@ bool Scene1::OnCreate() {
 	//	}
 	//}
 
-	//Creating tiles for collisions
-	int tileCount = 10;
-	float tileSpacing = 10.0f;
+	////Creating tiles for collisions
+	//int tileCount = 10;
+	//float tileSpacing = 10.0f;
 
-	for (int i = 0; i < tileCount; ++i) {
-		// leave a gap at tile 5
-		if (i == 5) continue;
+	//for (int i = 0; i < tileCount; ++i) {
+	//	// leave a gap at tile 5
+	//	if (i == 5) continue;
 
-		Vec3 tilePos(i * tileSpacing, 0.0f, 0.0f); // flat line along X axis
-		Quaternion tileRot = QMath::angleAxisRotation(-90.0f, Vec3(1, 0, 0)); 
-		Vec3 normal = Vec3(0.0f, 1.0f, 0.0f); // Upward plane
+	//	Vec3 tilePos(i * tileSpacing, 0.0f, 0.0f); // flat line along X axis
+	//	Quaternion tileRot = QMath::angleAxisRotation(-90.0f, Vec3(1, 0, 0)); 
+	//	Vec3 normal = Vec3(0.0f, 1.0f, 0.0f); // Upward plane
 
-		auto tile = std::make_shared<Actor>(nullptr);
-		auto tc = std::make_shared<TransformComponent>(tile.get(), tilePos, tileRot);
-		auto cc = std::make_shared<CollisionComponent>(
-			tile.get(),
-			ColliderType::PLANE,
-			0.0f,
-			normal,
-			VMath::dot(normal, tilePos)
-		);
+	//	auto tile = std::make_shared<Actor>(nullptr);
+	//	auto tc = std::make_shared<TransformComponent>(tile.get(), tilePos, tileRot);
+	//	auto cc = std::make_shared<CollisionComponent>(
+	//		tile.get(),
+	//		ColliderType::PLANE,
+	//		0.0f,
+	//		normal,
+	//		VMath::dot(normal, tilePos)
+	//	);
 
-		tile->AddComponent(tc);
-		tile->AddComponent(cc);
+	//	tile->AddComponent(tc);
+	//	tile->AddComponent(cc);
 
-		//for visualizing
-		tile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-		tile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-		tile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	//	//for visualizing
+	//	tile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	//	tile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	//	tile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 
-		tile->OnCreate();
-		AddActor(tile);
-		collisionSystem.AddActor(tile);
-	}
+	//	tile->OnCreate();
+	//	AddActor(tile);
+	//	collisionSystem.AddActor(tile);
+	//}
 
-	
+	aabbBox = std::make_shared<Actor>(nullptr);
+	Vec3 boxPos = Vec3(0.0f, 1.5f, -10.0f); // location
+	Vec3 boxScale = Vec3(1.0f, 1.0f, 1.0f); // cube size
+	Quaternion boxRot = QMath::angleAxisRotation(90.0f, Vec3(1, 0, 0));
+
+	tc = std::make_shared<TransformComponent>(aabbBox.get(), boxPos, boxRot, boxScale);
+	cc = std::make_shared<CollisionComponent>(aabbBox.get(), ColliderType::AABB);
+	cc->SetAABB(boxPos, boxScale.x / 2, boxScale.y / 2, boxScale.z / 2); // set AABB
+	//cc->SetRadiusFromScale(pc->scale);
+
+	aabbBox->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+	aabbBox->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	aabbBox->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	aabbBox->AddComponent(tc);
+	aabbBox->AddComponent(cc);
+
+	aabbBox->OnCreate();
+	AddActor(aabbBox);
+	collisionSystem.AddActor(aabbBox);
+	transformSystem.AddActor(aabbBox);
 
 	for (int i = 0; i < 3; i++) {
 		float x = 0.0f - (i * 90.0f);
@@ -190,7 +209,7 @@ bool Scene1::OnCreate() {
 	factory = std::make_shared<Actor>(nullptr);
 
 	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f), 2.0f);
+	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f), -1.0f);
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -429,6 +448,7 @@ bool Scene1::OnCreate() {
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
 	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -10.0f), mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
+	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
@@ -452,7 +472,7 @@ bool Scene1::OnCreate() {
 	
 	collisionSystem.AddActor(character);
 	collisionSystem.AddActor(Barrel);
-   // collisionSystem.AddActor(factory);
+    collisionSystem.AddActor(factory);
 
 	physicsSystem.AddActor(Barrel);
 	transformSystem.AddActor(factory);
@@ -1055,7 +1075,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += -0.0f * deltaTime;
+		currentVel.y += -9.8f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	

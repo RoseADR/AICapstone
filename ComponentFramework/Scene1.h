@@ -48,6 +48,7 @@ private:
 	Ref<Actor> TestCube;
 	Ref<Actor> enemies;
 	//Ref<Actor> tile;
+	Ref<Actor> aabbBox;
 	
 
 	LocationManager locationManager;

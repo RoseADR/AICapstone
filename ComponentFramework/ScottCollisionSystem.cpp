@@ -2,7 +2,9 @@
 #include <PMath.h>
 #include <MMath.h>
 
+
 using namespace MATH;
+using namespace std;
 
 void CollisionSystem::Update(const float deltaTime) {
 
@@ -35,6 +37,8 @@ void CollisionSystem::Update(const float deltaTime) {
 
         Vec3 obj2Pos = pc2 ? pc2->pos : tc2->GetPosition();
 
+      
+
         // Factory Bounds
         bool withinFactoryBounds = !( obj1Pos.x < factoryX - factoryThreshold || obj1Pos.x > factoryX + factoryThreshold ||
             obj2Pos.x < factoryX - factoryThreshold || obj2Pos.x > factoryX + factoryThreshold);
@@ -51,7 +55,7 @@ void CollisionSystem::Update(const float deltaTime) {
 
             if (SphereSphereCollisionDetection(s1, s2)) {
                 SphereSphereCollisionResponse(s1, pc1, s2, pc2);
-                std::cout << "Collision detected with shpere actor: " << i << std::endl;
+                std::cout << "Collision detected with sphere actor: " << i << std::endl;
             }
         }
         else if (cc2->GetColliderType() == ColliderType::PLANE) {
@@ -64,10 +68,22 @@ void CollisionSystem::Update(const float deltaTime) {
             //std::cout << "factory: " << withinFactoryBounds << std::endl;
 
             if (SpherePlaneCollisionDetection(s1, p)) {
+              /*  SpherePlaneCollisionResponse(s1, pc1, p);
+                std::cout << "Collision with plane actor: " << i << std::endl;*/
                 if (withinFactoryBounds || withinBridgeBounds) {
                     SpherePlaneCollisionResponse(s1, pc1, p);
                     std::cout << "Collision with plane actor: " << i << std::endl;
                 }
+            }
+        }
+        else if (cc2->GetColliderType() == ColliderType::AABB) {
+            AABB bb1 = cc2->GetAABB();
+            bb1.center = pc2 ? pc2->pos : tc2->GetPosition();
+            //AABB bb2 = cc2->GetAABB();
+
+            if (SphereAABBCollisionDetection(s1, bb1)) {
+                SphereAABBCollisionResponse(s1, pc1, bb1, pc2);
+                std::cout << "AABB Collision with actor: " << i << std::endl;
             }
         }
     }
@@ -91,16 +107,48 @@ bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sph
     return false;
 }
 
-bool CollisionSystem::AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const {
-    if (abs(bb1.center.x - bb2.center.x) > bb1.rx + bb2.rx) return false;
-    if (abs(bb1.center.y - bb2.center.y) > bb1.ry + bb2.ry) return false;
-    if (abs(bb1.center.z - bb2.center.z) > bb1.rz + bb2.rz) return false;
-    return true;
+//bool CollisionSystem::AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const {
+//    if (abs(bb1.center.x - bb2.center.x) > bb1.rx + bb2.rx) return false;
+//    if (abs(bb1.center.y - bb2.center.y) > bb1.ry + bb2.ry) return false;
+//    if (abs(bb1.center.z - bb2.center.z) > bb1.rz + bb2.rz) return false;
+//    return true;
+//}
+
+bool CollisionSystem::AABBAABBCollisionDetection(const AABB & bb1, const AABB & bb2) const {
+   if (fabs(bb1.center.x - bb2.center.x) <= (bb1.rx + bb2.rx)) return false;
+   if (fabs(bb1.center.y - bb2.center.y) <= (bb1.ry + bb2.ry)) return false;
+   if (fabs(bb1.center.z - bb2.center.z) <= (bb1.rz + bb2.rz)) return false;
+   return true;
 }
 
-bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s1, const Sphere& s2) const
-{
-    return true;
+
+bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s, const AABB& box) const {
+ 
+
+    // Step 1: Clamp each axis
+    float x = std::max(box.center.x - box.rx, std::min(s.center.x, box.center.x + box.rx));
+    float y = std::max(box.center.y - box.ry, std::min(s.center.y, box.center.y + box.ry));
+    float z = std::max(box.center.z - box.rz, std::min(s.center.z, box.center.z + box.rz));
+    Vec3 closestPoint(x, y, z);
+
+    // Step 2: Compute vector from closest point to sphere center
+    Vec3 d = s.center - closestPoint;
+    float distSquared = d.x * d.x + d.y * d.y + d.z * d.z;
+
+    // DEBUG OUTPUT
+    std::cout << "-------- Sphere vs AABB Debug --------" << std::endl;
+    std::cout << "Sphere Center: " << s.center << " Radius: " << s.r << std::endl;
+    std::cout << "AABB Center: " << box.center
+        << " Half Extents: (" << box.rx << ", " << box.ry << ", " << box.rz << ")" << std::endl;
+    std::cout << "Closest Point on AABB: " << closestPoint << std::endl;
+    std::cout << "Distance Squared: " << distSquared
+        << " vs Radius^2: " << s.r * s.r << std::endl;
+    std::cout << "Colliding? " << (distSquared < (s.r * s.r) ? "YES" : "NO") << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
+
+    if (distSquared <= (s.r * s.r)) {
+        return true;
+    }
 }
 
 /// Not yet tested but the math is lifted from my earlier working code - SSF
@@ -151,13 +199,71 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
 
 }
 
+void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2) {
+    Vec3 diff = bb1.center - bb2.center;
+    Vec3 overlap;
 
-void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2)
-{
+    overlap.x = (bb1.rx + bb2.rx) - fabs(diff.x);
+    overlap.y = (bb1.ry + bb2.ry) - fabs(diff.y);
+    overlap.z = (bb1.rz + bb2.rz) - fabs(diff.z);
+
+    if (overlap.x < overlap.y && overlap.x < overlap.z) {
+        pc1->pos.x += (diff.x > 0 ? 1 : -1) * overlap.x;
+        pc1->vel.x = 0;
+    }
+    else if (overlap.y < overlap.z) {
+        pc1->pos.y += (diff.y > 0 ? 1 : -1) * overlap.y;
+        pc1->vel.y = 0;
+    }
+    else {
+        pc1->pos.z += (diff.z > 0 ? 1 : -1) * overlap.z;
+        pc1->vel.z = 0;
+    }
 }
 
-void CollisionSystem::SphereAABBCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2)
+void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent> pc, AABB box, Ref<PhysicsComponent> boxPC) 
 {
+    // Step 1: Find the closest point on the AABB to the sphere center
+    Vec3 closestPoint;
+    closestPoint.x = std::max(box.center.x - box.rx, std::min(s.center.x, box.center.x + box.rx));
+    closestPoint.y = std::max(box.center.y - box.ry, std::min(s.center.y, box.center.y + box.ry));
+    closestPoint.z = std::max(box.center.z - box.rz, std::min(s.center.z, box.center.z + box.rz));
+
+    // Step 2: Compute vector from closest point to sphere center
+    Vec3 penetrationVec = s.center - closestPoint;
+
+    // Step 3: Manually compute squared magnitude to avoid math lib ambiguity
+    float penetrationVecMagSq = penetrationVec.x * penetrationVec.x +
+        penetrationVec.y * penetrationVec.y +
+        penetrationVec.z * penetrationVec.z;
+
+    // Avoid zero-length normals or invalid sqrt
+    if (penetrationVecMagSq < VERY_SMALL) return;
+
+    float penetrationVecMag = sqrt(penetrationVecMagSq);
+    float penetrationDepth = s.r - penetrationVecMag;
+
+    if (penetrationDepth <= 0.0f) return;
+
+    // Step 4: Normalize the penetration vector
+    Vec3 n = penetrationVec / penetrationVecMag;
+
+    // Step 5: Move sphere out of the box (MTV resolution)
+    pc->pos += n * penetrationDepth;
+
+    // Step 6: Remove velocity along the collision normal
+    float velocityIntoBox = VMath::dot(pc->vel, n);
+    if (velocityIntoBox < 0.0f) {
+        pc->vel -= n * velocityIntoBox;
+    }
+
+    // Optional: treat vertical collisions as grounding
+    if (fabs(n.y) > 0.5f) {
+        pc->vel.y = 0.0f;
+        isGrounded = true;
+    }
+
+    std::cout << "SphereAABB Collision resolved: MTV = " << (n * penetrationDepth) << ", NewPos = " << pc->pos << std::endl;
 }
 
 
