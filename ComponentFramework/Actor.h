@@ -17,7 +17,14 @@ class Actor: public Component {
 private:
 	std::vector< Ref<Component> > components; // creates a list of components attached to this Actor
 	Matrix4 modelMatrix; // Transformation matrix to represent the Actor's position and rotation
+	std::string name; // for giving names
 public:
+
+	//setting name
+	void SetName(const std::string& n) { name = n; }
+	std::string GetName() const { return name; }
+
+
 	// Constructor: Initializes an Actor with a parent (usually another Actor or component)
 	Actor(Component* parent_);
 	// Destructor: Cleans up the Actor when it is destroyed
@@ -99,5 +106,6 @@ public:
 	void ListComponents() const;
 	// Method to retrieve the Actor's model transformation matrix
 	Matrix4 GetModelMatrix();
+
 };
 

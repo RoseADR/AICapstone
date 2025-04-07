@@ -29,37 +29,21 @@ using namespace MATH;
 using namespace MATHEX;
 
 
-Scene1::Scene1(SceneManager* manager) : sceneManager(manager), engine(nullptr), drawNormals(false), drawOverlay(false) {
+Scene1::Scene1(SceneManager* manager) : sceneManager(manager), engine(nullptr), drawNormals(false), drawOverlay(false), 
+tileHeight(0.0f), tileWidth(0.0f), xAxis(0.0f), yAxis(0.0f)  {
 	Debug::Info("Created Scene1: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 }
 
 
 bool Scene1::OnCreate() {
-	//// testing new math stuff
-	//Vec3 pos(-1, 0.5, 0); // This would be the position of your character. I've given an example
-
-	//// Fill in the corners of the platform in the quad constructor
-	//// Wind the quad anti-clockwise
-	//// Here's an example of a strange looking quad
-	//MATHEX::Quad quad = MATHEX::Quad(
-	//	Vec3(0, 0, 0),
-	//	Vec3(1, 0, 0),
-	//	Vec3(0.5, 1, 0),
-	//	Vec3(0, 1, 0)
-	//);
-
-	//// Find the closest point between the character's centre position and the quad
-	//// In this example it should return the vector (0, 0.5, 0) I think
-	//Vec3 closestPoint = MATHEX::QuadMath::closestPointOnQuad(pos, quad);
 	//Timing timing("Scene1::OnCreate");
-
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
 	assetManager = std::make_shared<AssetManager>();
-	orientationCam = QMath::angleAxisRotation(5.0f, Vec3(1.0f, 0.0f, 0.0f));
+	orientationCam = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 	camera = std::make_shared<CameraActor>(nullptr);
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -7.0f, -13.0f), orientationCam);
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), orientationCam);
 	camera->OnCreate();
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
 	camera->GetViewMatrix().print("ViewMatrix");
@@ -67,59 +51,10 @@ bool Scene1::OnCreate() {
 	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(1.0f, 0.0f, 0.0f),Vec4(0.9f,0.9f,0.9f,0.0f));
 	light->OnCreate();
 
-
-
-
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
 	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
 	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
 	Ref<TransformComponent> tc = std::make_shared<TransformComponent>(nullptr, Vec3(-10.0f, -10.0f, 0.0f), orientationBoard);
-
-
-	////Creating tiles for collisions
-	//int gridSize = 5;
-	//float tileSpacing = 15.0f;
-	//for (int x = 0; x < gridSize; ++x) {
-	//	for (int z = 0; z < gridSize; ++z) {
-
-	//		// example gap
-	//		//if (x == 2 && z == 2) continue;
-
-	//		// Position of the tile
-	//		Vec3 tilePos(x * tileSpacing, 0.0f, z * tileSpacing);
-
-	//		// Orientation (tilt every other tile slightly)
-	//		Quaternion tileRot = (x + z) % 2 == 0 ?
-	//			QMath::angleAxisRotation(-90.0f, Vec3(1, 0, 0)) :
-	//			QMath::angleAxisRotation(-90.0f, Vec3(0, 0, 0));
-
-	//		// Rotate the normal
-	//		Vec3 normal = QMath::rotate(Vec3(0.0f, 1.0f, 0.0f), tileRot);
-
-	//		// Create Actor
-	//		auto tile = std::make_shared<Actor>(nullptr);
-	//		auto tc = std::make_shared<TransformComponent>(tile.get(), tilePos, tileRot);
-	//		auto cc = std::make_shared<CollisionComponent>(
-	//			tile.get(),
-	//			ColliderType::PLANE,
-	//			0.0f,
-	//			normal,
-	//			VMath::dot(normal, tilePos) // <-- dist calculated from position
-	//		);
-
-	//		tile->AddComponent(tc);
-	//		tile->AddComponent(cc);
-
-	//		// Optional: mesh for visualizing tiles
-	//		tile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	//		tile->AddComponent<ShaderComponent>(shader);
-	//		tile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-
-	//		tile->OnCreate();
-	//		AddActor(tile);
-	//		collisionSystem.AddActor(tile);
-	//	}
-	//}
 
 	////Creating tiles for collisions
 	//int tileCount = 10;
@@ -156,26 +91,30 @@ bool Scene1::OnCreate() {
 	//	collisionSystem.AddActor(tile);
 	//}
 
-	aabbBox = std::make_shared<Actor>(nullptr);
-	Vec3 boxPos = Vec3(0.0f, 1.5f, -10.0f); // location
-	Vec3 boxScale = Vec3(1.0f, 1.0f, 1.0f); // cube size
-	Quaternion boxRot = QMath::angleAxisRotation(90.0f, Vec3(1, 0, 0));
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////// WILL NEED THIS EVENTUALLY + USE FOR REFFERANCE ///////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//aabbBox = std::make_shared<Actor>(nullptr);
+	//Vec3 boxPos = Vec3(0.0f, 1.5f, -10.0f); // location
+	//Vec3 boxScale = Vec3(1.0f, 1.0f, 1.0f); // cube size
+	//Quaternion boxRot = QMath::angleAxisRotation(90.0f, Vec3(1, 0, 0));
 
-	tc = std::make_shared<TransformComponent>(aabbBox.get(), boxPos, boxRot, boxScale);
-	cc = std::make_shared<CollisionComponent>(aabbBox.get(), ColliderType::AABB);
-	cc->SetAABB(boxPos, boxScale.x / 2, boxScale.y / 2, boxScale.z / 2); // set AABB
-	//cc->SetRadiusFromScale(pc->scale);
+	//tc = std::make_shared<TransformComponent>(aabbBox.get(), boxPos, boxRot, boxScale);
+	//cc = std::make_shared<CollisionComponent>(aabbBox.get(), ColliderType::AABB);
+	//cc->SetAABB(boxPos, boxScale.x / 2, boxScale.y / 2, boxScale.z / 2); // set AABB
 
-	aabbBox->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
-	aabbBox->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	aabbBox->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	aabbBox->AddComponent(tc);
-	aabbBox->AddComponent(cc);
+	//aabbBox->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+	//aabbBox->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	//aabbBox->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	//aabbBox->AddComponent(tc);
+	//aabbBox->AddComponent(cc);
 
-	aabbBox->OnCreate();
-	AddActor(aabbBox);
-	collisionSystem.AddActor(aabbBox);
-	transformSystem.AddActor(aabbBox);
+	//aabbBox->OnCreate();
+	//AddActor(aabbBox);
+	//collisionSystem.AddActor(aabbBox);
+	//transformSystem.AddActor(aabbBox);
+
 
 	for (int i = 0; i < 3; i++) {
 		float x = 0.0f - (i * 90.0f);
@@ -187,35 +126,40 @@ bool Scene1::OnCreate() {
 		bg->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("city"));
 		AddActor(bg);
 	}
-	//gameboard = std::make_shared<Actor>(nullptr);
-
-	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	//tc = std::make_shared<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	//cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
- //  // gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	//gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	//gameboard->AddComponent<ShaderComponent>(shader);
-	//gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	//gameboard->AddComponent(cc);
-	//gameboard->AddComponent(tc);
-	//// <CollisionComponent>(nullptr,
-	////	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
-	////	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-	//// 
-	//gameboard->OnCreate();
-	//AddActor(gameboard);
+	
+	deathFloor = std::make_shared<Actor>(nullptr);
+	//orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
+	tc = std::make_shared<TransformComponent>(deathFloor.get(), Vec3(0.0f, -40.0f, -8.0f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)));
+	cc = std::make_shared<CollisionComponent>(deathFloor.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f), -20.0f);
+	deathFloor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	deathFloor->AddComponent<ShaderComponent>(shader);
+	deathFloor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
+	deathFloor->AddComponent(cc);
+	deathFloor->AddComponent(tc);
+	deathFloor->SetName("DeathFloor");
+	deathFloor->OnCreate();
+	AddActor(deathFloor);
 
 
 	factory = std::make_shared<Actor>(nullptr);
+	factoryCollisionBox = std::make_shared<Actor>(factory.get());
+
+	Vec3 boxPosF = Vec3(0.0f, 1.5f, -10.0f); // location
+	Vec3 boxScaleF = Vec3(30.0f, 1.0f, 15.0f); // cube size
+	Quaternion boxRotF = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
+	tc = std::make_shared<TransformComponent>(factory.get(), boxPosF, boxRotF, boxScaleF);
+	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::AABB);
+	cc->SetAABB(boxPosF, boxScaleF.x / 2, boxScaleF.y / 2, boxScaleF.z / 2); // set AABB
+	factoryCollisionBox->AddComponent(tc);
+	factoryCollisionBox->AddComponent(cc);
+	factoryCollisionBox->SetName("FactoryCollisionBox");
 
 	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f), -1.0f);
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	factory->AddComponent(cc);
 	factory->AddComponent(tc);
-	collisionSystem.SetFactory(factory);
+	factory->SetName("Factory");
 	factory->OnCreate();
 	AddActor(factory);
 
@@ -227,8 +171,6 @@ bool Scene1::OnCreate() {
 		road->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
 		road->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
 		road->AddComponent<ShaderComponent>(shader);
-		//road->AddComponent(cc);
-
 		road->OnCreate();
 		AddActor(road);
 	}
@@ -268,28 +210,51 @@ bool Scene1::OnCreate() {
 		/*<< boardPos.x << ", "
 		<< boardPos.y << ", "
 		<< boardPos.z << ")\n"*/;
-		for (int i = 0; i < 2; i++) {
-			float x = -360.0f - (i * -90.0f);
-			TestCube = std::make_shared<Actor>(factory.get());
-			TestCube->AddComponent<TransformComponent>(nullptr, Vec3(x, 30.0f, 15.0f), orientationBill, Vec3(20.0, 20.0, 20.0));
-			TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
-			TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
-			TestCube->AddComponent<ShaderComponent>(shader);
-			//TestCube->AddComponent(cc);
-			TestCube->OnCreate();
-			AddActor(TestCube);
-		}
-	 Barrel = std::make_shared<Actor>(factory.get());
 
-//	Barrel->AddComponent<TransformComponent>(nullptr, Vec3(-600.0f, 20.0f, 200.0f), orientationBill, Vec3(13.0f, 13.0f, 13.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-600.0f, 20.0f, 180.0f), orientationBill, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 
-		Vec3(0.0f, 0.0f, 0.0f), Vec3(13.0f, 13.0f, 13.0f));
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f); 
+		// box over lava 1
+		TestCube = std::make_shared<Actor>(nullptr);
+		Vec3 boxPos1 = Vec3(4.0f, 1.5f, -8.0f); // location
+		Vec3 boxScale1 = Vec3(1.0f, 1.0f, 1.0f); // cube size
+		Quaternion boxRot1 = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+		tc = std::make_shared<TransformComponent>(TestCube.get(), boxPos1, boxRot1, boxScale1);
+		cc = std::make_shared<CollisionComponent>(TestCube.get(), ColliderType::AABB);
+		cc->SetAABB(boxPos1, boxScale1.x / 2, boxScale1.y / 2, boxScale1.z / 2); // set AABB
+
+		TestCube->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+		TestCube->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+		TestCube->AddComponent<ShaderComponent>(shader);
+
+		TestCube->AddComponent(tc);
+		TestCube->AddComponent(cc);
+		TestCube->SetName("Box1");
+		TestCube->OnCreate();
+		AddActor(TestCube);
+
+		// box over lava 2
+		TestCube1 = std::make_shared<Actor>(nullptr);
+		Vec3 boxPos2 = Vec3(8.0f, 1.5f, -8.0f); // location
+		Vec3 boxScale2 = Vec3(1.0f, 1.0f, 1.0f); // cube size
+		Quaternion boxRot2 = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+		tc = std::make_shared<TransformComponent>(TestCube.get(), boxPos2, boxRot2, boxScale2);
+		cc = std::make_shared<CollisionComponent>(TestCube.get(), ColliderType::AABB);
+		cc->SetAABB(boxPos1, boxScale2.x / 2, boxScale2.y / 2, boxScale2.z / 2); // set AABB
+
+		TestCube1->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
+		TestCube1->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+		TestCube1->AddComponent<ShaderComponent>(shader);
+
+		TestCube1->AddComponent(tc);
+		TestCube1->AddComponent(cc);
+		TestCube1->SetName("Box2");
+		TestCube1->OnCreate();
+		AddActor(TestCube1);
+
+	Barrel = std::make_shared<Actor>(nullptr);
+	tc = std::make_shared<TransformComponent>(Barrel.get(), Vec3(0.0f, 20.0f, 15), orientationBill);
 	Barrel->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Barrel"));
 	Barrel->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BarrelDif"));
 	Barrel->AddComponent<ShaderComponent>(shader);
-	Barrel->AddComponent(pc);
-	Barrel->AddComponent(cc);
+	Barrel->AddComponent(tc);
 	Barrel->OnCreate();
 	AddActor(Barrel);
 
@@ -429,31 +394,45 @@ bool Scene1::OnCreate() {
 		}
 
 		Bridge = std::make_shared<Actor>(nullptr);
-		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-129.0, 5.66f, -7.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.20, 0.20, 0.20));
-		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::PLANE, 0.0f, Vec3(0.0f, 1.0f, 0.0f));
+		BridgeCollisionBox = std::make_shared<Actor>(Bridge.get());
+
+		Bridge->AddComponent<TransformComponent>(Bridge.get(), Vec3(-129.0, 5.66f, -8.0f),
+			QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.20, 0.20, 0.20));
+
+		Vec3 boxPosB = Vec3(-129.0f, 8.0f, -8.0f); // location
+		Vec3 boxScaleB = Vec3(1.0f, 1.0f, 1.0f); // cube size
+		Quaternion boxRotB = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
+		tc = std::make_shared<TransformComponent>(Bridge.get(), boxPosB, boxRotB, boxScaleB);
+		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::AABB);
+		cc->SetAABB(boxPosB, boxScaleB.x / 2, boxScaleB.y / 2, boxScaleB.z / 2); // set AABB
+		BridgeCollisionBox->AddComponent(tc);
+		BridgeCollisionBox->AddComponent(cc);
+		BridgeCollisionBox->SetName("BridgeCollisionBox");
+
+
+		
 		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge2"));
 		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 		Bridge->AddComponent<ShaderComponent>(shader);
 		Bridge->AddComponent(cc);
 		Bridge->AddComponent(tc);
+		Bridge->SetName("Bridge");
 		Bridge->OnCreate();
 		AddActor(Bridge);
-
-		collisionSystem.SetBridge(Bridge);
-		collisionSystem.AddActor(Bridge);
-		transformSystem.AddActor(Bridge);
 		
 		
-
 	character = std::make_shared<Actor>(nullptr);
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -10.0f), mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
+	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) 
+		* QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -8.0f),
+		mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
 	character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
 	character->AddComponent(cc);
 	character->AddComponent(pc);
+	character->SetName("Player");
 	
 	character->OnCreate();
 	AddActor(character);
@@ -469,18 +448,27 @@ bool Scene1::OnCreate() {
 	SpawnAmmoAt(Vec3(6.0f, 1.0f, -6.0f));
 	SpawnAmmoAt(Vec3(-47.0f, 15.0f, -5.0f));
 	SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
+
+	physicsSystem.AddActor(character);
 	
 	collisionSystem.AddActor(character);
-	collisionSystem.AddActor(Barrel);
-    collisionSystem.AddActor(factory);
+    collisionSystem.AddActor(factoryCollisionBox);
+	collisionSystem.AddActor(BridgeCollisionBox);
+	//collisionSystem.AddActor(TestCube);
+	//collisionSystem.AddActor(TestCube1);
+	collisionSystem.AddActor(deathFloor);
+	//collisionSystem.AddActor(Bridge);
 
-	physicsSystem.AddActor(Barrel);
-	transformSystem.AddActor(factory);
-	physicsSystem.AddActor(character);
+	transformSystem.AddActor(factoryCollisionBox);
+	transformSystem.AddActor(BridgeCollisionBox);
+	transformSystem.AddActor(TestCube);
+	transformSystem.AddActor(TestCube1);
+	transformSystem.AddActor(deathFloor);
+	//transformSystem.AddActor(Bridge);
+
 
 
 	//PATHFINDING REALTED 
-	
 	// Create the grid and graph for pathfinding
 	createTiles();
 	calculateConnectionWeights();
@@ -520,8 +508,6 @@ bool Scene1::OnCreate() {
 	}
 
 	std::cout << "[LOG]: Decision trees built for " << enemyDecisionTrees.size() << " enemies.\n";
-
-
 
 	// Test decision tree evaluation
 	/*if (decisionTreeRoot) {
@@ -643,7 +629,6 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 	/// Handle Camera movement 
 
-
 	switch (sdlEvent.type) {
 	case SDL_KEYDOWN:
 
@@ -658,7 +643,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			if (!hackingMode) {
 				movingDown = true;
 				idleTexture = false;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 			}
 			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++; 
 			break;
@@ -667,7 +652,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			if (!hackingMode) {
 				movingDown = true;
 				idleTexture = false;
-				characterPC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 			}
 			if (hackingMode && hackingPlayerPos.y > 0) newY--;
 			
@@ -697,7 +682,26 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_SPACE:
-			if (hackingMode) {
+			std::cout << "SPACEBAR PRESSED!\n";
+			if (!hackingMode && isGrounded && !isJumping) {
+				std::cout << "JUMP TRIGGERED!\n";
+
+				// Set vertical velocity
+				Vec3 vel = characterPC->getVel();
+				vel.y = jumpVelocity; // Apply upward velocity
+				characterPC->SetVelocity(vel);
+
+				// Optional horizontal nudge
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
+
+				// Set jump state
+				isJumping = true;
+				isGrounded = false;
+
+				std::cout << "Jump initiated! Velocity: " << vel << std::endl;
+			}
+			else if (hackingMode) {
+
 				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
 					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
 
@@ -714,6 +718,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
 					}
 				}
+
+
 			}
 			break;
 		}
@@ -800,7 +806,6 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
 				camera->UpdateViewMatrix();
 				break;
-
 
 			}
 
@@ -1055,7 +1060,7 @@ void Scene1::Update(const float deltaTime) {
 
 	// Invert the X-axis movement
 	cameraPos.x = -playerPos.x; // Invert player's X position for the camera
-	cameraPos.y = -playerPos.y;
+	cameraPos.y = -playerPos.y - 5.0f;
 
 	// Apply the new position to the camera (Y and Z remain constant)
 	cameraTransform->SetTransform(cameraPos, cameraTransform->GetQuaternion());
@@ -1081,16 +1086,14 @@ void Scene1::Update(const float deltaTime) {
 	
 	//isGrounded = false;
 
-	// Run all collisions
-	collisionSystem.Update(deltaTime);
-	physicsSystem.Update(deltaTime);
-
-	//  Stop vertical velocity if grounded
 	if (isGrounded) {
 		Vec3 vel = playerPhysics->getVel();
-		vel.y = 0.0f;
-		playerPhysics->SetVelocity(vel);
-		std::cout << " Stopping Y velocity due to grounding\n";
+		if (isJumping) {
+			vel.y = 0.0f;
+			playerPhysics->SetVelocity(vel);
+			isJumping = false;
+			std::cout << "Landing. Jump ended.\n";
+		}
 	}
 
 
@@ -1225,6 +1228,10 @@ void Scene1::Update(const float deltaTime) {
 
 	// Update the gameboard transform
 //	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
+
+	// Run all collisions
+	collisionSystem.Update(deltaTime);
+	physicsSystem.Update(deltaTime);
 }
 
 

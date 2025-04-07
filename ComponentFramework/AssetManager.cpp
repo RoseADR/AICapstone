@@ -36,15 +36,6 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("UTunnel", nullptr, "meshes/UTunnel.obj");
 	AddComponent<MeshComponent>("StreetWall", nullptr, "meshes/streetWalls.obj");
 
-	AddComponent<MeshComponent>("CheckerBoard", nullptr,"meshes/Plane8x8.obj");
-
-	AddComponent<MeshComponent>("CheckerPiece", nullptr,"meshes/CheckerPiece.obj");
-	AddComponent<MeshComponent>("Pawn", nullptr,"meshes/Pawn.obj");
-	AddComponent<MeshComponent>("Rook", nullptr,"meshes/Rook.obj");
-	AddComponent<MeshComponent>("Bishop", nullptr,"meshes/Bishop.obj");
-	AddComponent<MeshComponent>("Knight", nullptr,"meshes/Knight.obj");
-	AddComponent<MeshComponent>("Queen", nullptr, "meshes/Queen.obj");
-	AddComponent<MeshComponent>("King", nullptr, "meshes/King.obj");
 	
 	AddComponent<ShaderComponent>("DefaultShader",nullptr,"shaders/defaultVert.glsl", "shaders/defaultFrag.glsl");
 	AddComponent<ShaderComponent>("ColorPickingShader",nullptr,"shaders/colorPickingVert.glsl", "shaders/colorPickingFrag.glsl");
@@ -53,16 +44,8 @@ AssetManager::AssetManager() {
 	AddComponent<ShaderComponent>("DrawNormalsShader",nullptr,"shaders/drawNormalsVert.glsl", "shaders/drawNormalsFrag.glsl","shaders/drawNormalsGeom.glsl");
 	AddComponent<ShaderComponent>("WireFrameShader",nullptr,"shaders/wireFrameVert.glsl", "shaders/wireFrameFrag.glsl","shaders/wireFrameGeom.glsl");
 	AddComponent<ShaderComponent>("Billboard", nullptr, "shaders/BillBoardingVert.glsl", "shaders/BillBoardingFrag.glsl");
-
-	AddComponent<MaterialComponent>("MarioMain",nullptr, "textures/mario_main.png");
 	
-	AddComponent<MaterialComponent>("ChessBoard",nullptr, "textures/8x8_checkered_board.png");
-	AddComponent<MaterialComponent>("CheckerBoard",nullptr, "textures/8x8_checkered_board2.png");
-	AddComponent<MaterialComponent>("BlackChessTexture", nullptr,"textures/Black Chess Base Colour.png");
-	AddComponent<MaterialComponent>("WhiteChessTexture", nullptr,"textures/White Chess Base Colour.png");
-	AddComponent<MaterialComponent>("RedCheckerTexture", nullptr,"textures/redCheckerPiece.png");
-	AddComponent<MaterialComponent>("BlackCheckerTexture", nullptr, "textures/blackCheckerPiece.png");
-	AddComponent<MaterialComponent>("WhiteCheckerTexture", nullptr, "textures/whiteCheckerPiece.png");
+	
 	AddComponent<MaterialComponent>("WalkSpriteSheet", nullptr, "textures/robot.png");
 	AddComponent<MaterialComponent>("houseText", nullptr, "textures/BAKE_dach_SPC.jpg");
 	AddComponent<MaterialComponent>("houseTextNor", nullptr, "textures/BAKE_dach_NOR.jpg");
@@ -86,10 +69,8 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("AmmoDif", nullptr, "textures/AmmoDif.png");
 	//AddComponent<MaterialComponent>("RobotTexture", nullptr, "textures/robo.png");
 
-
-
 	OnCreate();
-	ListAllComponents();
+	//ListAllComponents();
 }
 
 AssetManager::~AssetManager() {

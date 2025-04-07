@@ -35,7 +35,7 @@ private:
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
-	//Ref<Actor> gameboard;
+	Ref<Actor> deathFloor;
 	Ref<Actor> factory;
 	Ref<Actor> bg;
 	Ref<Actor> projectile;
@@ -46,9 +46,12 @@ private:
 	Ref<Actor> bill;
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
+	Ref<Actor> TestCube1;
 	Ref<Actor> enemies;
 	//Ref<Actor> tile;
 	Ref<Actor> aabbBox;
+	Ref<Actor> factoryCollisionBox;
+	Ref<Actor> BridgeCollisionBox;
 	
 
 	LocationManager locationManager;
@@ -86,6 +89,8 @@ private:
 	bool isGrounded = false;
 	bool isRunning;
 	bool hackUsed = false;
+	bool isJumping = false;
+	float jumpVelocity = 7.5f;
 
 	ISoundEngine* engine;
 

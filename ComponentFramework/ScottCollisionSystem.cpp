@@ -19,35 +19,15 @@ void CollisionSystem::Update(const float deltaTime) {
 
     Vec3 obj1Pos = pc1 ? pc1->pos : tc1->GetPosition();
 
-    // Factory bounds
-    Vec3 factoryPos = factory->GetComponent<TransformComponent>()->GetPosition();
-    float factoryX = factoryPos.x;
-    float factoryThreshold = 30.0f;
-
-    // Bridge bounds 
-    Vec3 bridgePos = bridge->GetComponent<TransformComponent>()->GetPosition();
-    float bridgeX = bridgePos.x;
-    float bridgeThreshold = 10.0f;
-
     for (size_t i = 0; i < collidingActors.size(); ++i) {
         Ref<PhysicsComponent> pc2 = collidingActors[i]->GetComponent<PhysicsComponent>();
         Ref<TransformComponent> tc2 = collidingActors[i]->GetComponent<TransformComponent>();
         Ref<CollisionComponent> cc2 = collidingActors[i]->GetComponent<CollisionComponent>();
+
         if (!cc2 || (!pc2 && !tc2)) continue;
 
         Vec3 obj2Pos = pc2 ? pc2->pos : tc2->GetPosition();
 
-      
-
-        // Factory Bounds
-        bool withinFactoryBounds = !( obj1Pos.x < factoryX - factoryThreshold || obj1Pos.x > factoryX + factoryThreshold ||
-            obj2Pos.x < factoryX - factoryThreshold || obj2Pos.x > factoryX + factoryThreshold);
-
-        // Bridge Bounds
-        bool withinBridgeBounds = !(obj1Pos.x < bridgeX - bridgeThreshold || obj1Pos.x > bridgeX + bridgeThreshold ||
-            obj2Pos.x < bridgeX - bridgeThreshold || obj2Pos.x > bridgeX + bridgeThreshold);
-        
-       
         if (cc2->GetColliderType() == ColliderType::Sphere) {
             Sphere s2;
             s2.r = cc2->radius;
@@ -55,38 +35,42 @@ void CollisionSystem::Update(const float deltaTime) {
 
             if (SphereSphereCollisionDetection(s1, s2)) {
                 SphereSphereCollisionResponse(s1, pc1, s2, pc2);
-                std::cout << "Collision detected with sphere actor: " << i << std::endl;
+                Actor* parentActor = static_cast<Actor*>(cc2->parent);
+                if (parentActor) {
+                    std::cout << "Collision with actor " << i
+                        << ": " << parentActor->GetName() << std::endl;
+                }
             }
         }
         else if (cc2->GetColliderType() == ColliderType::PLANE) {
             Plane p;
             p.n = cc2->normal;
             p.d = cc2->dist; 
-            //p.d = VMath::dot(p.d, tc2->GetPosition());
-
-            //std::cout << "Bridge: " << withinBridgeBounds << std::endl;
-            //std::cout << "factory: " << withinFactoryBounds << std::endl;
-
+        
             if (SpherePlaneCollisionDetection(s1, p)) {
-              /*  SpherePlaneCollisionResponse(s1, pc1, p);
-                std::cout << "Collision with plane actor: " << i << std::endl;*/
-                if (withinFactoryBounds || withinBridgeBounds) {
-                    SpherePlaneCollisionResponse(s1, pc1, p);
-                    std::cout << "Collision with plane actor: " << i << std::endl;
+                SpherePlaneCollisionResponse(s1, pc1, p);
+                Actor* parentActor = static_cast<Actor*>(cc2->parent);
+                if (parentActor) {
+                    std::cout << "Collision with actor " << i
+                        << ": " << parentActor->GetName() << std::endl;
                 }
             }
         }
         else if (cc2->GetColliderType() == ColliderType::AABB) {
             AABB bb1 = cc2->GetAABB();
             bb1.center = pc2 ? pc2->pos : tc2->GetPosition();
-            //AABB bb2 = cc2->GetAABB();
-
+           
             if (SphereAABBCollisionDetection(s1, bb1)) {
-                SphereAABBCollisionResponse(s1, pc1, bb1, pc2);
-                std::cout << "AABB Collision with actor: " << i << std::endl;
+                SphereAABBCollisionResponse(s1, pc1, bb1);
+                Actor* parentActor = static_cast<Actor*>(cc2->parent);
+                if (parentActor) {
+                    std::cout << "Collision with actor " << i
+                        << ": " << parentActor->GetName() << std::endl;
+                }
             }
         }
     }
+  
     if (isGrounded) {
         pc1->accel.y = 0.0f;  // No gravity when grounded
         pc1->vel.y = 0.0f;  // Optional: keep vertical velocity zero
@@ -107,36 +91,27 @@ bool CollisionSystem::SphereSphereCollisionDetection(const Sphere& s1, const Sph
     return false;
 }
 
-//bool CollisionSystem::AABBAABBCollisionDetection(const AABB& bb1, const AABB& bb2) const {
-//    if (abs(bb1.center.x - bb2.center.x) > bb1.rx + bb2.rx) return false;
-//    if (abs(bb1.center.y - bb2.center.y) > bb1.ry + bb2.ry) return false;
-//    if (abs(bb1.center.z - bb2.center.z) > bb1.rz + bb2.rz) return false;
-//    return true;
-//}
 
-bool CollisionSystem::AABBAABBCollisionDetection(const AABB & bb1, const AABB & bb2) const {
-   if (fabs(bb1.center.x - bb2.center.x) <= (bb1.rx + bb2.rx)) return false;
-   if (fabs(bb1.center.y - bb2.center.y) <= (bb1.ry + bb2.ry)) return false;
-   if (fabs(bb1.center.z - bb2.center.z) <= (bb1.rz + bb2.rz)) return false;
-   return true;
-}
+//bool CollisionSystem::AABBAABBCollisionDetection(const AABB & bb1, const AABB & bb2) const {
+//   if (fabs(bb1.center.x - bb2.center.x) <= (bb1.rx + bb2.rx)) return false;
+//   if (fabs(bb1.center.y - bb2.center.y) <= (bb1.ry + bb2.ry)) return false;
+//   if (fabs(bb1.center.z - bb2.center.z) <= (bb1.rz + bb2.rz)) return false;
+//   return true;
+//}
 
 
 bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s, const AABB& box) const {
- 
-
-    // Step 1: Clamp each axis
     float x = std::max(box.center.x - box.rx, std::min(s.center.x, box.center.x + box.rx));
     float y = std::max(box.center.y - box.ry, std::min(s.center.y, box.center.y + box.ry));
     float z = std::max(box.center.z - box.rz, std::min(s.center.z, box.center.z + box.rz));
     Vec3 closestPoint(x, y, z);
 
-    // Step 2: Compute vector from closest point to sphere center
+    // Compute vector from closest point to sphere center
     Vec3 d = s.center - closestPoint;
     float distSquared = d.x * d.x + d.y * d.y + d.z * d.z;
 
     // DEBUG OUTPUT
-    std::cout << "-------- Sphere vs AABB Debug --------" << std::endl;
+   /* std::cout << "-------- Sphere vs AABB Debug --------" << std::endl;
     std::cout << "Sphere Center: " << s.center << " Radius: " << s.r << std::endl;
     std::cout << "AABB Center: " << box.center
         << " Half Extents: (" << box.rx << ", " << box.ry << ", " << box.rz << ")" << std::endl;
@@ -144,7 +119,7 @@ bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s, const AABB& 
     std::cout << "Distance Squared: " << distSquared
         << " vs Radius^2: " << s.r * s.r << std::endl;
     std::cout << "Colliding? " << (distSquared < (s.r * s.r) ? "YES" : "NO") << std::endl;
-    std::cout << "--------------------------------------" << std::endl;
+    std::cout << "--------------------------------------" << std::endl;*/
 
     if (distSquared <= (s.r * s.r)) {
         return true;
@@ -199,40 +174,39 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
 
 }
 
-void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2) {
-    Vec3 diff = bb1.center - bb2.center;
-    Vec3 overlap;
+//void CollisionSystem::AABBAABBCollisionResponse(AABB bb1, Ref<PhysicsComponent> pc1, AABB bb2, Ref<PhysicsComponent> pc2) {
+//    Vec3 diff = bb1.center - bb2.center;
+//    Vec3 overlap;
+//
+//    overlap.x = (bb1.rx + bb2.rx) - fabs(diff.x);
+//    overlap.y = (bb1.ry + bb2.ry) - fabs(diff.y);
+//    overlap.z = (bb1.rz + bb2.rz) - fabs(diff.z);
+//
+//    if (overlap.x < overlap.y && overlap.x < overlap.z) {
+//        pc1->pos.x += (diff.x > 0 ? 1 : -1) * overlap.x;
+//        pc1->vel.x = 0;
+//    }
+//    else if (overlap.y < overlap.z) {
+//        pc1->pos.y += (diff.y > 0 ? 1 : -1) * overlap.y;
+//        pc1->vel.y = 0;
+//    }
+//    else {
+//        pc1->pos.z += (diff.z > 0 ? 1 : -1) * overlap.z;
+//        pc1->vel.z = 0;
+//    }
+//}
 
-    overlap.x = (bb1.rx + bb2.rx) - fabs(diff.x);
-    overlap.y = (bb1.ry + bb2.ry) - fabs(diff.y);
-    overlap.z = (bb1.rz + bb2.rz) - fabs(diff.z);
-
-    if (overlap.x < overlap.y && overlap.x < overlap.z) {
-        pc1->pos.x += (diff.x > 0 ? 1 : -1) * overlap.x;
-        pc1->vel.x = 0;
-    }
-    else if (overlap.y < overlap.z) {
-        pc1->pos.y += (diff.y > 0 ? 1 : -1) * overlap.y;
-        pc1->vel.y = 0;
-    }
-    else {
-        pc1->pos.z += (diff.z > 0 ? 1 : -1) * overlap.z;
-        pc1->vel.z = 0;
-    }
-}
-
-void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent> pc, AABB box, Ref<PhysicsComponent> boxPC) 
+void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent> pc, AABB box) 
 {
-    // Step 1: Find the closest point on the AABB to the sphere center
+    // findclosest point on the AABB to the sphere center
     Vec3 closestPoint;
     closestPoint.x = std::max(box.center.x - box.rx, std::min(s.center.x, box.center.x + box.rx));
     closestPoint.y = std::max(box.center.y - box.ry, std::min(s.center.y, box.center.y + box.ry));
     closestPoint.z = std::max(box.center.z - box.rz, std::min(s.center.z, box.center.z + box.rz));
 
-    // Step 2: Compute vector from closest point to sphere center
+    // compute vector from closest point to sphere center
     Vec3 penetrationVec = s.center - closestPoint;
 
-    // Step 3: Manually compute squared magnitude to avoid math lib ambiguity
     float penetrationVecMagSq = penetrationVec.x * penetrationVec.x +
         penetrationVec.y * penetrationVec.y +
         penetrationVec.z * penetrationVec.z;
@@ -244,20 +218,18 @@ void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent
     float penetrationDepth = s.r - penetrationVecMag;
 
     if (penetrationDepth <= 0.0f) return;
-
-    // Step 4: Normalize the penetration vector
     Vec3 n = penetrationVec / penetrationVecMag;
 
-    // Step 5: Move sphere out of the box (MTV resolution)
+    // move sphere out of the box (MTV resolution)
     pc->pos += n * penetrationDepth;
 
-    // Step 6: Remove velocity along the collision normal
+    // remove velocity along the collision normal
     float velocityIntoBox = VMath::dot(pc->vel, n);
     if (velocityIntoBox < 0.0f) {
         pc->vel -= n * velocityIntoBox;
     }
 
-    // Optional: treat vertical collisions as grounding
+    // treat vertical collisions as grounding
     if (fabs(n.y) > 0.5f) {
         pc->vel.y = 0.0f;
         isGrounded = true;
@@ -278,45 +250,22 @@ bool CollisionSystem::SpherePlaneCollisionDetection(const Sphere& s1, const Plan
   
 }
 
-void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2/*, Ref<PhysicsComponent> tc2*/)
+void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsComponent> pc1, Plane p2)
 {
-   
     float dist = VMath::dot(s1.center, p2.n) - p2.d;
-
-    //// If the sphere is penetrating the plane, apply MTV
-    //if (dist < s1.r) {
-    //    float penetrationDepth = s1.r - dist;  // Overlap amount
-
-    //    // Move the sphere completely out of the plane
-    //    pc1->pos += p2.n * penetrationDepth;
-
-    //    // Stop downward movement
-    //    float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
-    //    if (velocityAlongNormal < 0.0f) {
-    //        pc1->vel -= p2.n * velocityAlongNormal;  // Remove movement in the plane normal direction
-    //    }
-    //}
-  /*  std::cout << "Sphere-Plane collision: dist=" << dist
-        << " | penetration=" << s1.r - dist
-        << " | pos=" << pc1->pos
-        << " | vel=" << pc1->vel << std::endl;*/
 
     if (dist < s1.r) {
         float penetrationDepth = s1.r - dist;
 
-        //  Clamp the sphere just outside the plane
-      
-
-        //  Completely stop velocity into the plane
+        //  stop velocity into the plane
         float velocityAlongNormal = VMath::dot(pc1->vel, p2.n);
         if (velocityAlongNormal < 0.0f) {
             pc1->vel -= p2.n * velocityAlongNormal;
             pc1->pos += p2.n * penetrationDepth;
-            //  Bonus: zero-out any residual bounce
+            //  zero-out any residual bounce
             pc1->vel.y = 0.0f;
         }
     }
-        ////  Set grounded flag if needed
+        //  Set grounded flag if needed
         isGrounded = true;
-        //std::cout << "Grounded: Clamped to plane | newPos: " << pc1->pos << " | newVel: " << pc1->vel << std::endl;
 }

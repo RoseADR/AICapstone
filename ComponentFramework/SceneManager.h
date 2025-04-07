@@ -13,8 +13,8 @@ public:
 	float playerHealth = 100.0f; // Current health
 	float maxHealth = 100.0f;    
 	int totalAmmo = 15;  
-	int clipAmmo = 5;     // Bullets currently in clip
-	int clipSize = 5;     
+	int clipAmmo = 15;     // Bullets currently in clip
+	int clipSize = totalAmmo;     
 	static SceneManager* GetInstance();
 	bool dead = false;
 private:
