@@ -70,6 +70,10 @@ private:
 	//Vec3 gridOffset;  // Offset to position the grid on the chessboard
 	// Initializes tiles and calculates weights between nodes
 	void createTiles();
+	void SpawnAmmoAt(const Vec3& position);
+	std::vector<Ref<Actor>> ammoPickups;
+
+
 	void calculateConnectionWeights();
 	std::vector<std::vector<Tile*>> hackingTiles;
 	bool showHackingGrid = false;

@@ -337,8 +337,8 @@ bool Scene1::OnCreate() {
 	}
 	auto Tunnels = std::make_shared<Actor>(factory.get());
 
-	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 50.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
-	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Tunnels"));
+	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-310.0f, 1170.0f, -540.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f))* QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
 	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	Tunnels->AddComponent<ShaderComponent>(shader);
 	//Tunnels->AddComponent(cc);
@@ -446,7 +446,9 @@ bool Scene1::OnCreate() {
 
 
 	LoadEnemies();
-
+	SpawnAmmoAt(Vec3(6.0f, 1.0f, -6.0f));
+	SpawnAmmoAt(Vec3(-47.0f, 15.0f, -5.0f));
+	SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
 	
 	collisionSystem.AddActor(character);
 	collisionSystem.AddActor(Barrel);
@@ -996,6 +998,36 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
+	for (size_t i = 0; i < ammoPickups.size();) {
+		auto& ammo = ammoPickups[i];
+		auto ammoPhysics = ammo->GetComponent<PhysicsComponent>();
+		auto ammoCollision = ammo->GetComponent<CollisionComponent>();
+
+		if (!ammoPhysics || !ammoCollision || !playerPhysics || !playerCollision) {
+			++i;
+			continue;
+		}
+
+		Sphere playerSphere{ playerPhysics->GetPosition(), playerCollision->GetRadius() };
+		Sphere ammoSphere{ ammoPhysics->GetPosition(), ammoCollision->GetRadius() };
+
+		if (collisionSystem.SphereSphereCollisionDetection(playerSphere, ammoSphere)) {
+			std::cout << "[INFO]: Ammo collected! +5 bullets.\n";
+			sceneManager->totalAmmo += 5;
+
+			ammo->OnDestroy();
+
+			// Remove from actors and ammo list
+			actors.erase(std::remove_if(actors.begin(), actors.end(),
+				[&](const Ref<Actor>& a) { return a == ammo; }), actors.end());
+
+			ammoPickups.erase(ammoPickups.begin() + i);
+		}
+		else {
+			++i;
+		}
+	}
+
 
 	// Get the camera's transform
 	Ref<TransformComponent> cameraTransform = camera->GetComponent<TransformComponent>();
@@ -1292,6 +1324,29 @@ void Scene1::DrawNormals(const Vec4 color) const {
 	}
 	glUseProgram(0);
 }
+
+void Scene1::SpawnAmmoAt(const Vec3& position) {
+	auto ammo = std::make_shared<Actor>(nullptr);
+
+	Quaternion rotation = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+	Vec3 velocity = Vec3(0.0f, 0.0f, 0.0f);
+	Vec3 scale = Vec3(1.0f, 1.0f, 1.0f);
+
+	ammo->AddComponent<PhysicsComponent>(nullptr, position, rotation, velocity, Vec3(), Vec3(), scale);
+	ammo->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Ammo"));
+	ammo->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("AmmoDif"));
+	ammo->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	ammo->AddComponent<CollisionComponent>(ammo.get(), ColliderType::Sphere, 8.0f);
+
+	ammo->OnCreate();
+	AddActor(ammo);
+	collisionSystem.AddActor(ammo);
+	physicsSystem.AddActor(ammo);
+	ammoPickups.push_back(ammo);
+
+}
+
+
 
 void Scene1::LoadEnemies() {
 	Ref<MeshComponent> mesh = assetManager->GetComponent<MeshComponent>("Plane");
