@@ -37,84 +37,35 @@ Scene3::Scene3() :engine(nullptr), drawNormals(false), drawOverlay(false) {
 
 bool Scene3::OnCreate() {
 
-	
-
-	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
+	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
+	///The create the asset manager
 	assetManager = std::make_shared<AssetManager>();
-	orientationCam = QMath::angleAxisRotation(5.0f, Vec3(1.0f, 0.0f, 0.0f));
+
+
 	camera = std::make_shared<CameraActor>(nullptr);
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, -7.0f, -13.0f), orientationCam);
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), Quaternion());
 	camera->OnCreate();
 	camera->GetProjectionMatrix().print("ProjectionMatrix");
-	camera->GetViewMatrix().print("ViewMatrix");
 
-	light = std::make_shared<LightActor>(nullptr, LightStyle::DirectionLight, Vec3(1.0f, 0.0f, 0.0f), Vec4(0.9f, 0.9f, 0.9f, 0.0f));
+
+	light = std::make_shared<LightActor>(camera.get(), LightStyle::DirectionLight, Vec3(-10.0f, 0.0f, 0.0f), Vec4(1.0f, 1.0f, 1.0f, 0.0f));
 	light->OnCreate();
 
 
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("TextureShader");
-	Ref<CollisionComponent> cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 1.0f);
-	Ref<PhysicsComponent> pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, 0.0f, 4.1f), orientationBoard);
+	Ref<Actor> someObject = std::make_shared<Actor>(nullptr);
+	Quaternion orientation = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f));
+	someObject->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), orientation);
 
+	backGround = std::make_shared<Actor>(nullptr);
+
+	backGround->AddComponent<TransformComponent>(nullptr, Vec3(0.02f, 0.08f, -25.1f), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(5.12f, 3.0f, 1.0f));
+	backGround->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	backGround->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	backGround->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboMainMenu"));
+	AddActor(backGround);
+
+	return true;
 	
-	gameboard = std::make_shared<Actor>(nullptr);
-
-	orientationBoard = QMath::angleAxisRotation(276.0f, Vec3(1.0f, 0.0f, 0.0f));
-	pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(0.0f, -10.0f, -10.0f), orientationBoard);
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::PLANE, 0.0f, Vec3(0.0f, -1.0f, 0.0f));
-	//gameboard->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.1f, -10.0f), orientationBoard, Vec3(1.0, 1.0, 1.0));
-	gameboard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	gameboard->AddComponent<ShaderComponent>(shader);
-	gameboard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-	gameboard->AddComponent(cc);
-	gameboard->AddComponent(pc);
-	// <CollisionComponent>(nullptr,
-	//	ColliderType::Sphere, Vec3(9.0f, 2.0f, 22.5f), // Width, height, depth
-	//	0.0f, Vec3(-5.0f, 0.0f, 0.0f)); // Offset
-	// 
-	gameboard->OnCreate();
-	AddActor(gameboard);
-
-
-
-
-	
-
-	
-
-
-		character = std::make_shared<Actor>(nullptr);
-		Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
-		pc = std::make_shared<PhysicsComponent>(nullptr, Vec3(-15.0f, 10.0f, -10.0f), mariosQuaternion);
-		character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-		character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
-		character->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("Billboard"));
-		character->AddComponent(cc);
-		character->AddComponent(pc);
-		// <CollisionComponent>(nullptr, 
-		//	ColliderType::Sphere, /*Vec3(1.0f, 1.0f, 2.0f), */
-		//	0.0f/*, Vec3(0.0f, 0.5f, 0.0f))*/);
-		character->OnCreate();
-		AddActor(character);
-
-		/*projectile = std::make_shared<Actor>(character.get());
-		projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
-		projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
-		projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));*/
-
-
-		LoadEnemies();
-
-		collisionSystem.AddActor(gameboard);
-		collisionSystem.AddActor(character);
-		
-
-		physicsSystem.AddActor(character);
-		physicsSystem.AddActor(gameboard);
-
-
-	
-		return true;
 }
 
 Scene3::~Scene3() {

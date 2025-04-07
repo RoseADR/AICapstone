@@ -69,7 +69,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE1);
+	BuildNewScene(SCENE_NUMBER::SCENE2);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -96,7 +96,7 @@ void SceneManager::Run() {
 		
 
 		if (dead) {
-			BuildNewScene(SCENE_NUMBER::SCENE0);
+			BuildNewScene(SCENE_NUMBER::SCENE2);
 			dead = false;
 			
 		}
@@ -111,7 +111,44 @@ void SceneManager::Run() {
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
-		
+		if (dynamic_cast<Scene2*>(currentScene)) {
+			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Always);
+
+			ImGui::Begin("##InvisibleWindow", nullptr,
+				ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+			ImVec2 windowSize = ImGui::GetWindowSize();
+			ImVec2 buttonSize = ImVec2(300, 100);
+
+			// Lower the buttons vertically
+			ImVec2 buttonRowPos = ImVec2((windowSize.x - (buttonSize.x * 2 + 20)) * 0.5f,  // horizontally centered across two buttons + spacing
+				(windowSize.y * 0.78f));  // Lowered vertically (adjust 0.65 to taste)
+
+			ImGui::SetCursorPos(buttonRowPos);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 20));
+			ImGui::SetWindowFontScale(3);
+
+			// Retry Button
+			if (ImGui::Button("Retry", buttonSize)) {
+				BuildNewScene(SCENE_NUMBER::SCENE1);
+			}
+
+			ImGui::SameLine(); // Makes the next widget appear on the same row
+
+			// Main Menu Button
+			if (ImGui::Button("Main Menu", buttonSize)) {
+				BuildNewScene(SCENE_NUMBER::SCENE0);
+			}
+
+			ImGui::PopStyleVar();
+			ImGui::End();
+		}
+
+
 		// Health bar rendering
 		if (dynamic_cast<Scene1*>(currentScene)) {
 			

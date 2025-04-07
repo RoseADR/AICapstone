@@ -33,7 +33,7 @@ private:
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
 	Ref<Actor> character;
-
+	Ref<Actor> backGround;
 
 	LocationManager locationManager;
 

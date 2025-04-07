@@ -19,7 +19,7 @@ private:
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
 	Ref<Actor> gameboard;
-	
+	Ref<Actor> backGround;
 	bool drawNormals;
 	bool drawOverlay;
 public:
