@@ -14,8 +14,10 @@
 #include "TreeBuilder.h"
 #include "ScottCollisionSystem.h"
 #include "PhysicsSystem.h"
+#include "TransformSystem.h"
 #include <irrKlang.h>
-
+#include "SceneManager.h"
+#include <unordered_map>
 using namespace MATH;
 using namespace irrklang;
 /// let me change
@@ -28,20 +30,43 @@ class Actor;
 class Scene3 : public Scene {
 private:
 
+	SceneManager* sceneManager;
+
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
 	Ref<LightActor> light;
-	Ref<Actor> gameboard;
+	Ref<Actor> deathFloor;
+	Ref<Actor> factory;
+
+	Ref<Actor> bg;
+	Ref<Actor> projectile;
+	Ref<Actor> Bridge;
+	Ref<Actor> Barrel;
+	Ref<Actor> house;
+	Ref<Actor> hack;
+	Ref<Actor> bill;
 	Ref<Actor> character;
-	Ref<Actor> backGround;
+	Ref<Actor> TestCube;
+	Ref<Actor> TestCube1;
+	Ref<Actor> enemies;
+	//Ref<Actor> tile;
+	Ref<Actor> aabbBox;
+	Ref<Actor> factoryCollisionBox;
+	Ref<Actor> BridgeCollisionBox;
+	Ref<Actor> sceneChangeTrigger;
+
 
 	LocationManager locationManager;
 
 	CollisionSystem collisionSystem;
 	PhysicsSystem physicsSystem;
+	TransformSystem transformSystem;
 
 	Quaternion orientationBoard;
+	Quaternion orientationBg;
 	Quaternion orientationCam;
+	Quaternion orientationHouse;
+	Quaternion orientationBill;//needed for the orientation of the tiles to match the board (evetually ground)
 
 	//FOR PATHFINDING
 	class Graph* graph;
@@ -50,7 +75,15 @@ private:
 	std::vector< std::vector<Tile*> > tiles;
 	//Vec3 gridOffset;  // Offset to position the grid on the chessboard
 	// Initializes tiles and calculates weights between nodes
+	void createTiles();
+	void SpawnAmmoAt(const Vec3& position);
+	std::vector<Ref<Actor>> ammoPickups;
+	Ref<Actor> tutorialTrigger;
+	bool tutorialShown = false;
 	
+
+
+	void calculateConnectionWeights();
 	std::vector<std::vector<Tile*>> hackingTiles;
 	bool showHackingGrid = false;
 	//FOR DECISIONTREE
@@ -60,19 +93,26 @@ private:
 	bool drawOverlay;
 	bool isGrounded = false;
 	bool isRunning;
+	bool hackUsed = false;
+	bool isJumping = false;
+	float jumpVelocity = 7.5f;
+
 	ISoundEngine* engine;
 
 	float xAxis;
 	float yAxis;
 	Tile* currentlyHoveredTile = nullptr;
-
+	std::vector<std::pair<int, int>> redTilePositions;
 
 public:
+	std::unordered_map<Actor*, DecisionTreeNode*> enemyDecisionTrees;
+
+	std::unordered_map<Actor*, float> enemyHealth;
 	Vec2 hackingPlayerPos = Vec2(0, 0);
 	bool showTiles = false;
 	bool hackingMode = false;
 	bool facing = true;
-	explicit Scene3();
+	explicit Scene3(SceneManager* manager);
 	virtual ~Scene3();
 	std::vector<std::shared_ptr<Actor>> projectiles;
 
@@ -80,10 +120,12 @@ public:
 	virtual void OnDestroy();
 
 	void FireProjectile();
-
+	void Reload();
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
 	virtual void HandleEvents(const SDL_Event& sdlEvent);
+
+
 
 	int Pick(int x, int y);
 	/// The w component holds the scale of the normal
@@ -91,19 +133,19 @@ public:
 	void DrawMeshOverlay(const Vec4 color) const;
 	void LoadEnemies();
 
-	
-	/// The w component holds the scale of the normal
-	
-
-
 	//void FireProjectile(const Vec3& startPos, const Vec3& direction, float speed);
 
 	// for sprite sheet animations
 	bool facingRight;
 	bool facingLeft;
+	bool movingUp;
+	bool movingDown;
+	bool idleTexture;
 	float currentTime;
-	int index = 0;
-	float frameSpeed = 0.1f;
+	Vec2 index;
+	float frameSpeed = 0.01f;
+
+	uint64_t frameCount = 0;
 };
 
 

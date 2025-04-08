@@ -69,7 +69,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE1);
+	BuildNewScene(SCENE_NUMBER::SCENE3);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -100,6 +100,11 @@ void SceneManager::Run() {
 			dead = false;
 			
 		}
+		if (triggerScene1) {
+			BuildNewScene(SCENE_NUMBER::SCENE1);
+			triggerScene1 = false; // reset the flag
+		}
+
 
 		currentScene->Update(timer->GetDeltaTime());
 
@@ -150,7 +155,8 @@ void SceneManager::Run() {
 
 
 		// Health bar rendering
-		if (dynamic_cast<Scene1*>(currentScene)) {
+		if (dynamic_cast<Scene1*>(currentScene) || dynamic_cast<Scene3*>(currentScene))
+		{
 			
 			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always); 
 			ImGui::SetNextWindowSize(ImVec2(300, 50), ImGuiCond_Always);
@@ -163,7 +169,8 @@ void SceneManager::Run() {
 			ImGui::End();
 		}
 
-		if (dynamic_cast<Scene1*>(currentScene)) {
+	if (dynamic_cast<Scene1*>(currentScene) || dynamic_cast<Scene3*>(currentScene))
+	{
 			ImGui::SetNextWindowPos(ImVec2(10, 70), ImGuiCond_Always);
 			ImGui::SetNextWindowSize(ImVec2(250, 50), ImGuiCond_Always);
 
@@ -298,7 +305,7 @@ void SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 		break;
 
 	case SCENE_NUMBER::SCENE3:
-		currentScene = new Scene3();
+		currentScene = new Scene3(this);
 		status = currentScene->OnCreate();
 		break;
 

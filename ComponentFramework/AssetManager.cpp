@@ -18,7 +18,7 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Cube", nullptr, "meshes/Cube.obj");
 	AddComponent<MeshComponent>("Plane", nullptr, "meshes/Plane.obj");
 	AddComponent<MeshComponent>("Square", nullptr, "meshes/Square.obj");
-	AddComponent<MeshComponent>("House", nullptr, "meshes/house1.obj");
+	AddComponent<MeshComponent>("House", nullptr, "meshes/cartoonHouse.obj");
 	AddComponent<MeshComponent>("Board", nullptr, "meshes/billboard.obj");
 	AddComponent<MeshComponent>("Bridge", nullptr, "meshes/bridge.obj");
 	AddComponent<MeshComponent>("StreetLight", nullptr, "meshes/streetLight.obj");
@@ -29,12 +29,25 @@ AssetManager::AssetManager() {
 	//AddComponent<MeshComponent>("Robot", nullptr, "meshes/robot.obj");
 	AddComponent<MeshComponent>("Bridge2", nullptr, "meshes/bridge2.obj");
 	AddComponent<MeshComponent>("Ammo", nullptr, "meshes/AmmoBox.obj");
+	AddComponent<MeshComponent>("Bus", nullptr, "meshes/Bus.obj");
+
+
+
+
+	AddComponent<MeshComponent>("Tree", nullptr, "meshes/tallTree.obj");
+	AddComponent<MeshComponent>("Tree2", nullptr, "meshes/roundTree.obj");
+	AddComponent<MeshComponent>("Tree3", nullptr, "meshes/tallTree2.obj");
+	AddComponent<MeshComponent>("Tree4", nullptr, "meshes/roundTree2.obj");
+
+
 
 	AddComponent<MeshComponent>("Box", nullptr, "meshes/box_wooden.obj");
 	AddComponent<MeshComponent>("Barrel", nullptr, "meshes/barrel.obj");
 	AddComponent<MeshComponent>("Tunnels", nullptr, "meshes/Tunnels.obj");
 	AddComponent<MeshComponent>("UTunnel", nullptr, "meshes/UTunnel.obj");
 	AddComponent<MeshComponent>("StreetWall", nullptr, "meshes/streetWalls.obj");
+
+	AddComponent<MeshComponent>("Fences", nullptr, "meshes/Fences.obj");
 
 	
 	AddComponent<ShaderComponent>("DefaultShader",nullptr,"shaders/defaultVert.glsl", "shaders/defaultFrag.glsl");
@@ -47,9 +60,8 @@ AssetManager::AssetManager() {
 	
 	
 	AddComponent<MaterialComponent>("WalkSpriteSheet", nullptr, "textures/robot.png");
-	AddComponent<MaterialComponent>("houseText", nullptr, "textures/BAKE_dach_SPC.jpg");
-	AddComponent<MaterialComponent>("houseTextNor", nullptr, "textures/BAKE_dach_NOR.jpg");
-	AddComponent<MaterialComponent>("houseText2", nullptr, "textures/BAKE_st_beton_SPC.jpg");
+	AddComponent<MaterialComponent>("houseText", nullptr, "textures/cartoonHouseDef.png");
+	
 	AddComponent<MaterialComponent>("road", nullptr, "textures/road1.jpg");
 	AddComponent<MaterialComponent>("billAds", nullptr, "textures/billBoardAds.png");
 	AddComponent<MaterialComponent>("bg", nullptr, "textures/landscape.png");
@@ -67,6 +79,11 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("Enemy", nullptr, "textures/RobotEnemy.png");
 	AddComponent<MaterialComponent>("GameOver", nullptr, "textures/GameOver.png");
 	AddComponent<MaterialComponent>("AmmoDif", nullptr, "textures/AmmoDif.png");
+	AddComponent<MaterialComponent>("grass", nullptr, "textures/grass.jpg");
+	AddComponent<MaterialComponent>("tallTree", nullptr, "textures/treeTall.png");
+	AddComponent<MaterialComponent>("roundTree", nullptr, "textures/treeRound.png");
+	AddComponent<MaterialComponent>("BusDif", nullptr, "textures/busDif.png");
+
 	//AddComponent<MaterialComponent>("RobotTexture", nullptr, "textures/robo.png");
 
 	OnCreate();

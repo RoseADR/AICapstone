@@ -17,6 +17,8 @@ public:
 	int clipSize = totalAmmo;     
 	static SceneManager* GetInstance();
 	bool dead = false;
+	bool triggerScene1 = false;
+
 private:
 	enum class SCENE_NUMBER {
 		SCENE0 = 0,
