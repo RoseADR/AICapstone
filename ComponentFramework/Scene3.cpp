@@ -451,7 +451,7 @@ bool Scene3::OnCreate() {
 		transformSystem.AddActor(deathFloor);
 		//transformSystem.AddActor(Bridge);
 
-
+		//SpawnLoadingScreen();
 
 		//PATHFINDING REALTED 
 		// Create the grid and graph for pathfinding
@@ -1059,14 +1059,40 @@ void Scene3::Update(const float deltaTime) {
 	auto sctriggerPhysics = sceneChangeTrigger->GetComponent<PhysicsComponent>();
 	auto sctriggerCollision = sceneChangeTrigger->GetComponent<CollisionComponent>();
 
-	if (playerPhysics && playerCollision && sctriggerPhysics && sctriggerCollision) {
+	if (!loadingStarted && playerPhysics && playerCollision && sctriggerPhysics && sctriggerCollision) {
 		Sphere playerSphere{ playerPhysics->GetPosition(), playerCollision->GetRadius() };
 		Sphere triggerSphere{ sctriggerPhysics->GetPosition(), sctriggerCollision->GetRadius() };
 
 		if (collisionSystem.SphereSphereCollisionDetection(playerSphere, triggerSphere)) {
-			sceneManager->triggerScene1 = true; // Set the flag in SceneManager
+			SpawnLoadingScreen();
+			loadingStarted = true;
+			loadingTimer = 0.0f;
+
+			// Make the camera match the loading screen's rotation
+			if (camera && loadingScreenActor) {
+				auto camTransform = camera->GetComponent<TransformComponent>();
+				if (camTransform) {
+					// Manually input the same rotation used in SpawnLoadingScreen()
+					Quaternion screenRot = QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) *
+						QMath::angleAxisRotation(-1.0f, Vec3(0.0f, 0.0f, 1.0f));
+
+					Vec3 currentCamPos = camTransform->GetPosition();
+					camTransform->SetTransform(currentCamPos, screenRot);
+					camera->UpdateViewMatrix();
+				}
+			}
 		}
 	}
+
+	if (loadingStarted) {
+		loadingTimer += deltaTime;
+
+		if (loadingTimer >= 2.0f) {
+			sceneManager->triggerScene1 = true; //  only set the flag here
+		}
+		return; //  prevent the rest of Update() from running
+	}
+
 
 
 	// Get the camera's transform
@@ -1375,6 +1401,25 @@ void Scene3::Render() const {
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Scene3::SpawnLoadingScreen() {
+	loadingScreenActor = std::make_shared<Actor>(nullptr);
+
+	// Set position and rotation
+	Vec3 screenPos = Vec3(20.02f, 13.28f, 9.1f);
+
+	// Rotate plane to face along +X (normal = +X)
+	Quaternion screenRotation = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
+
+	loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(4.5f, 4.53f, 4.53f));
+	loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("Loading"));
+	loadingScreenActor->SetName("LoadingScreen");
+	loadingScreenActor->OnCreate();
+	AddActor(loadingScreenActor);
+}
+
 
 
 
