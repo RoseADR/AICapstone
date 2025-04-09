@@ -60,7 +60,7 @@ AssetManager::AssetManager() {
 	AddComponent<ShaderComponent>("DrawNormalsShader",nullptr,"shaders/drawNormalsVert.glsl", "shaders/drawNormalsFrag.glsl","shaders/drawNormalsGeom.glsl");
 	AddComponent<ShaderComponent>("WireFrameShader",nullptr,"shaders/wireFrameVert.glsl", "shaders/wireFrameFrag.glsl","shaders/wireFrameGeom.glsl");
 	AddComponent<ShaderComponent>("Billboard", nullptr, "shaders/BillBoardingVert.glsl", "shaders/BillBoardingFrag.glsl");
-	
+	AddComponent<ShaderComponent>("EnemyBillboard", nullptr, "shaders/EnemyBillBoardingVert.glsl", "shaders/EnemyBillBoardingFrag.glsl");
 	
 	AddComponent<MaterialComponent>("WalkSpriteSheet", nullptr, "textures/robot.png");
 	AddComponent<MaterialComponent>("houseText", nullptr, "textures/cartoonHouseDef.png");

@@ -266,9 +266,9 @@ void SceneManager::Run() {
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 20));
 
 			if (ImGui::Button("Start Game", buttonSize)) {
-				BuildNewScene(SCENE_NUMBER::SCENE1);
-				engine->play2D("./Audio/SciButtonSound.mp3");
-				engine->setSoundVolume(0.1);
+				BuildNewScene(SCENE_NUMBER::SCENE3);
+				/*engine->play2D("./Audio/SciButtonSound.mp3");
+				engine->setSoundVolume(0.1);*/
 				
 			}
 
