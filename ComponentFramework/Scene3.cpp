@@ -203,22 +203,6 @@ bool Scene3::OnCreate() {
 	fences->OnCreate();
 	AddActor(fences);
 
-	// === Tree Actor ===
-	//Ref<Actor> tree = std::make_shared<Actor>(nullptr);
-
-	//Vec3 treePos = Vec3(0.0f, 0.0f, 0.0f); // Adjust position as needed
-	//Quaternion treeRot = QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)); // Default upright
-	//Vec3 treeScale = Vec3(0.01f, 0.01f, 0.01f); // Adjust scale based on your mesh
-
-	//Ref<TransformComponent> treeTC = std::make_shared<TransformComponent>(tree.get(), treePos, treeRot, treeScale);
-	//tree->AddComponent(treeTC);
-	//tree->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Tree")); // Replace with your tree mesh name
-	//tree->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	//tree->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("tallTree")); // Replace with your tree material
-
-	//tree->SetName("Tree");
-	//tree->OnCreate();
-	//AddActor(tree);
 
 	int rows = 5;
 	int cols = 14;
@@ -335,73 +319,12 @@ bool Scene3::OnCreate() {
 		physicsSystem.AddActor(character);
 		collisionSystem.AddActor(character);
 
-
-		LoadEnemies();
 		SpawnAmmoAt(Vec3(15.0f, -3.1f, -8.0f));
 		SpawnAmmoAt(Vec3(10.0f, -3.1f, -8.0f));
 		//SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
 	
 
-
-		//PATHFINDING REALTED 
-		// Create the grid and graph for pathfinding
-		createTiles();
-		calculateConnectionWeights();
-
-		// Sample pathfinding: Start at (0,0) and go to (7,7) - change as needed
-		std::vector<Node*> path = graph->findPath(sceneNodes[10], sceneNodes[63]);
-		//FOR DEBUGGING - SHOWS PATH TAKEN FOR ABOVE
-		//std::cout << "Calculated Path:\n";
-		for (Node* node : path) {
-			int j, i;
-			i = node->getLabel() / tiles[0].size(); // divide by the number of coloumns
-			j = node->getLabel() % tiles.size();    // get the reminder by the number of rows
-			//std::cout << "Path Node: " << node->getLabel() << " | " << " Tile Index: (" << i << ", " << j << ") " << " | "
-			//<< "Position: (" << tiles[i][j]->getPosition().x << ", " << tiles[i][j]->getPosition().y << ")\n";
-			tiles[i][j]->setPathTile(true);
-		}
-
-		//END DEBUGGING FOR PATH TAKEN
-		// Placeholder: Need to hook up path to AI
-
-		// DECISION TREE RELATED
-		// Load the decision tree from XML
-	// Find the first enemy dynamically
-		Actor* player = character.get(); // The player remains the same
-
-		std::cout << "[LOG]: Building decision trees for all enemies...\n";
-
-		for (auto& pair : enemyHealth) {
-			Actor* enemy = pair.first;
-
-			auto tree = TreeBuilder::buildTree("Scene1.xml", enemy, player);
-			if (!tree) {
-				std::cerr << "[ERROR]: Failed to build decision tree for an enemy\n";
-				continue;
-			}
-			enemyDecisionTrees[enemy] = tree;
-		}
-
-		std::cout << "[LOG]: Decision trees built for " << enemyDecisionTrees.size() << " enemies.\n";
-
-		// Test decision tree evaluation
-		/*if (decisionTreeRoot) {
-			DecisionTreeNode* result = decisionTreeRoot->makeDecision(deltaTime);
-			if (auto* action = dynamic_cast<Action*>(result)) {
-				std::cout << "[LOG]: Decision Tree Result: " << action->GetActionName() << std::endl;
-			}
-			else {
-				std::cerr << "[ERROR]: Root node evaluation failed" << std::endl;
-			}
-		}*/
-
-		/*char c;
-		engine = createIrrKlangDevice();
-		engine->play2D("./Audio/BackgroundSound.wav");
-		engine->setSoundVolume(0.1);
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-		std::cout << "hi" << std::endl;*/
-
+		
 		engine = createIrrKlangDevice();
 		//engine->play2D("./Audio/SciFiBG.mp3");
 		engine->setSoundVolume(0.1);
@@ -516,55 +439,48 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 		characterTC = character->GetComponent<TransformComponent>();
 		characterPC = character->GetComponent<PhysicsComponent>();
 
-		int newX = hackingPlayerPos.x;
-		int newY = hackingPlayerPos.y;
-
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
-			if (!hackingMode) {
+	
 				movingDown = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
-			}
-			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+			
 			break;
 
 		case SDL_SCANCODE_S:
-			if (!hackingMode) {
+			
 				movingDown = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
-			}
-			if (hackingMode && hackingPlayerPos.y > 0) newY--;
+		
 
 			break;
 
 		case SDL_SCANCODE_A:
 
-			if (!hackingMode) {
+		
 				facing = false;
 				facingLeft = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
-			}
-			if (hackingMode && hackingPlayerPos.x > 0) newX--;
+		
 			break;
 
 		case SDL_SCANCODE_D:
 
-			if (!hackingMode) {
+			
 				facing = true;
 				facingRight = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
-			}
-			if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+		
 
 			break;
 
 		case SDL_SCANCODE_SPACE:
 			std::cout << "SPACEBAR PRESSED!\n";
-			if (!hackingMode && isGrounded && !isJumping) {
+		
 				std::cout << "JUMP TRIGGERED!\n";
 
 				// Set vertical velocity
@@ -580,36 +496,12 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 				isGrounded = false;
 
 				std::cout << "Jump initiated! Velocity: " << vel << std::endl;
-			}
-			else if (hackingMode) {
-
-				if (hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->getIsBlocked()) {
-					hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->getNode()->setIsBlocked(false);
-
-					redTilePositions.erase(
-						std::remove(redTilePositions.begin(), redTilePositions.end(),
-							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
-						redTilePositions.end()
-					);
-
-					if (redTilePositions.empty()) {
-						SDL_Delay(1000);
-						hackingMode = false;
-						showHackingGrid = false;
-						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
-					}
-				}
 
 
-			}
 			break;
 		}
 
-		if (hackingMode && (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y)) {
-			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
-			hackingPlayerPos = Vec2(newX, newY);
-			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
-		}
+		
 
 		break;
 	}
@@ -730,13 +622,7 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 		}
 						   break;
 
-		case SDL_SCANCODE_L:
-			showHackingGrid = !showHackingGrid;
-			hackingMode = showHackingGrid; // Toggle hacking mode
-			if (showHackingGrid && hackingTiles.empty()) {
-				createHackingGrid();
-			}
-			break;
+		
 
 
 
@@ -784,47 +670,6 @@ void Scene3::Update(const float deltaTime) {
 	//Timing timing("Scene1::Update");
 	frameCount++;
 
-	//START OF PREVIOUS SPRINT WORK
-	//Ref<PhysicsComponent> characterTC;
-	//Ref<PhysicsComponent> enemyTC;
-	//Ref<PhysicsComponent> enemyTC2;
-
-	//Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
-	//Vec3 mariosVel = character->GetComponent<PhysicsComponent>()->getVel();
-
-	//// Update the gameboard transform
-	//gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
-
-	//// Get Mario's position (character's position)
-	//locationManager.mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
-
-	//// --- Enemy 1 (actors[2]) Flee ---
-	//Vec3 enemy1Pos = actors[2]->GetComponent<PhysicsComponent>()->GetPosition();
-	//Vec3 enemy1Move = actors[2]->GetComponent<AiComponent>()->Flee(enemy1Pos, locationManager.mariosPos);
-
-	//// Update Enemy 1's position
-	//enemyTC = actors[2]->GetComponent<PhysicsComponent>();
-	//enemyTC->SetTransform(enemyTC->GetPosition() + enemy1Move * deltaTime, enemyTC->GetQuaternion());
-
-	//// --- Enemy 2 (actors[3]) Follow ---
-	//Vec3 enemy2Vel = actors[3]->GetComponent<PhysicsComponent>()->getVel();
-	//Vec3 enemy2Pos = actors[3]->GetComponent<PhysicsComponent>()->GetPosition();
-	////Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Pursuit(enemy2Pos, mariosPos, enemy2Vel);
-	//Vec3 enemy2Move = actors[3]->GetComponent<AiComponent>()->Arrive(enemy2Pos, mariosPos);
-
-	//// Update Enemy 2's position
-	//enemyTC2= actors[3]->GetComponent<PhysicsComponent>();
-	//enemyTC2->SetTransform(enemyTC2->GetPosition() + enemy2Move * deltaTime, enemyTC2->GetQuaternion());
-
-	// Debug or print Mario's position if needed
-	// locationManager.mariosPos.print();
-	// END OF PREVIOUS SPRINT WORK 
-
-	//START OF SPRINT 3 WORK
-	//DECISION TREE RELATED
-	// Evaluate the Decision Tree
-	// Update a single enemy using the decision tree
-
 	// Player-hack collision detection
 	if (footstepTimer > 0.0f) {
 		footstepTimer -= deltaTime;
@@ -870,70 +715,13 @@ void Scene3::Update(const float deltaTime) {
 		projPhysics->SetVelocity(newVel);
 		projTransform->SetPosition(projTransform->GetPosition() + newVel * deltaTime);
 
-		// Check for collision with enemies
-		bool hitEnemy = false;
-		for (auto& pair : enemyHealth) {
-			Actor* enemy = pair.first;
-			auto enemyTransform = enemy->GetComponent<TransformComponent>();
-			auto enemyCollision = enemy->GetComponent<CollisionComponent>();
-			if (!enemyTransform || !enemyCollision) continue;
-
-			Sphere s1{ projTransform->GetPosition(), projCollision->GetRadius() };
-			Sphere s2{ enemyTransform->GetPosition(), enemyCollision->GetRadius() };
-
-			if (collisionSystem.SphereSphereCollisionDetection(s1, s2)) {
-				enemyHealth[enemy] -= 50.0f; // Damage
-				std::cout << "Enemy hit! Remaining health: " << enemyHealth[enemy] << std::endl;
-				engine->play2D("./Audio/boom.wav");
-				if (enemyHealth[enemy] <= 0.0f) {
-					std::cout << "Enemy destroyed!" << std::endl;
-					enemy->OnDestroy();
-					enemyHealth.erase(enemy);
-					actors.erase(std::remove_if(actors.begin(), actors.end(),
-						[enemy](const Ref<Actor>& a) { return a.get() == enemy; }),
-						actors.end());
-
-				}
-				projectile->OnDestroy();
-				actors.erase(std::remove_if(actors.begin(), actors.end(),
-					[&](const Ref<Actor>& a) { return a == projectile; }),
-					actors.end());
-				projectiles.erase(projectiles.begin() + i);
-				hitEnemy = true;
-				break;
-			}
-		}
-
-		if (!hitEnemy && projTransform->GetPosition().y > -50.0f) {
-			++i;
-		}
-		else if (!hitEnemy) {
-			projectiles.erase(projectiles.begin() + i);
-		}
 	}
-
+		
 
 
 	Vec3 playerPos = playerPhysics->GetPosition();
 
-	// --- After projectile vs enemy logic ---
 
-	
-	//Ref<PhysicsComponent> hackPhysics = hack->GetComponent<PhysicsComponent>();
-	//Ref<CollisionComponent> hackCollision = hack->GetComponent<CollisionComponent>();
-
-	//if (!hackUsed && playerPhysics && playerCollision && hackPhysics && hackCollision) {
-	//	Sphere playerSphere{ playerPhysics->GetPosition(), playerCollision->GetRadius() };
-	//	Sphere hackSphere{ hackPhysics->GetPosition(), hackCollision->GetRadius() };
-
-	//	if (collisionSystem.SphereSphereCollisionDetection(playerSphere, hackSphere)) {
-	//		hackUsed = true;
-	//		hackingMode = true;
-	//		showHackingGrid = true;
-	//		createHackingGrid(); // if not already done
-	//		std::cout << "Player touched the hack object — Hacking mode ON\n";
-	//	}
-	//}
 
 	for (size_t i = 0; i < ammoPickups.size();) {
 		auto& ammo = ammoPickups[i];
@@ -1059,26 +847,7 @@ void Scene3::Update(const float deltaTime) {
 			}
 		}
 	}
-		//if (keystate[SDL_SCANCODE_W]) {
-		//	movingUp = true;
-		//	facing = true;
-		//	horizontalMove.y += 1.0f; // Forward
-		//}
-		//else if (keystate[SDL_SCANCODE_S]) {
-		//	movingDown = true;
-		//	facing = true;
-		//	horizontalMove.y -= 1.0f; // Backward
-		//}
-		//else if (keystate[SDL_SCANCODE_A]) {
-		//	facingLeft = true; // last part for animation
-		//	facing = true;
-		//	horizontalMove.x -= 1.0f; // Left
-		//}
-		//else if (keystate[SDL_SCANCODE_D]) {
-		//	facingRight = true;
-		//	facing = true;
-		//	horizontalMove.x += 1.0f; // Right
-		//}
+	
 	
 	// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
@@ -1096,48 +865,7 @@ void Scene3::Update(const float deltaTime) {
 	Ref<PhysicsComponent>characterTC = character->GetComponent<PhysicsComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
-
-	// Get Mario's position (character's position)
-	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
-	locationManager.mariosPos = mariosPos;
-
-	// Enemy 1 (actors[2]) Decision Tree Logic 
-	auto& enemy = actors[2];
-
-	// Update Enemy 1's state
-	enemy->Update(deltaTime); // THIS DOES NOTHING 
-
-	// Evaluate the decision tree
-	for (auto& pair : enemyDecisionTrees) {
-		Actor* enemy = pair.first;
-
-		// Skip dead enemies
-		if (enemyHealth.find(enemy) == enemyHealth.end() || enemyHealth[enemy] <= 0.0f) continue;
-
-		DecisionTreeNode* tree = pair.second;
-		enemy->Update(deltaTime);
-
-		if (tree) {
-			DecisionTreeNode* result = tree->makeDecision(deltaTime);
-			if (auto* action = dynamic_cast<Action*>(result)) {
-				action->makeDecision(deltaTime);
-
-				if (action->GetActionName() == "Attack Player") {
-					sceneManager->playerHealth -= 0.2f;
-					engine->play2D("./Audio/enemyAttack.wav");
-					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
-				}
-			}
-		}
-	}
-
-	if (sceneManager->playerHealth <= 0) {
-		sceneManager->dead = true;
-	}
-
 	character->Update(deltaTime);
-	//collisionSystem.Update(deltaTime);
-//	physicsSystem.Update(deltaTime);
 	transformSystem.Update(deltaTime);
 
 	// animation movement
@@ -1179,13 +907,6 @@ void Scene3::Update(const float deltaTime) {
 		}
 		std::cout << index.x << ',' << index.y << ',' << frameCount << std::endl;
 	}
-
-
-	//std::cout << "Checking collision for character at: "
-		//<< character->GetComponent<PhysicsComponent>()->GetPosition() << std::endl;
-
-	// Update the gameboard transform
-//	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
 	// Run all collisions
 	collisionSystem.Update(deltaTime);
@@ -1277,23 +998,6 @@ void Scene3::Render() const {
 	glUseProgram(0);  // Ensure fixed-function pipeline for tiles
 
 
-
-	if (showHackingGrid) {
-
-		for (const auto& row : hackingTiles) {
-			for (Tile* tile : row) {
-				tile->render();
-			}
-		}
-	}
-
-	if (showTiles) {
-		for (const auto& row : tiles) {
-			for (Tile* tile : row) {
-				tile->render();
-			}
-		}
-	}
 
 	// ** Render Overlays **
 	if (drawOverlay) {
@@ -1389,247 +1093,6 @@ void Scene3::SpawnAmmoAt(const Vec3& position) {
 }
 
 
-
-void Scene3::LoadEnemies() {
-	Ref<MeshComponent> mesh = assetManager->GetComponent<MeshComponent>("Plane");
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("Billboard");
-	Ref<MaterialComponent> material = assetManager->GetComponent<MaterialComponent>("Enemy");
-
-	// === Enemy 1 ===
-	Ref<Actor> enemy1 = std::make_shared<Actor>(nullptr);
-	enemy1->AddComponent<MeshComponent>(mesh);
-	enemy1->AddComponent<ShaderComponent>(shader);
-	enemy1->AddComponent<MaterialComponent>(material);
-	enemy1->AddComponent<AiComponent>(enemy1.get());
-	enemy1->AddComponent<CollisionComponent>(enemy1.get(), ColliderType::Sphere, 1.0f);
-	enemy1->AddComponent<PhysicsComponent>(
-		enemy1.get(),
-		Vec3(0.0f, 0.0f, -10.0f), // position
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // rotation
-		Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), // velocity, accel, forces
-		Vec3(5.15f, 5.15f, 5.15f)); // scale
-
-	enemy1->OnCreate();
-	AddActor(enemy1);
-	collisionSystem.AddActor(enemy1);
-	physicsSystem.AddActor(enemy1);
-	transformSystem.AddActor(enemy1);
-	enemyHealth[enemy1.get()] = 100.0f;
-
-	// === Enemy 2 ===
-	Ref<Actor> enemy2 = std::make_shared<Actor>(nullptr);
-	enemy2->AddComponent<MeshComponent>(mesh);
-	enemy2->AddComponent<ShaderComponent>(shader);
-	enemy2->AddComponent<MaterialComponent>(material);
-	enemy2->AddComponent<AiComponent>(enemy2.get());
-	enemy2->AddComponent<CollisionComponent>(enemy2.get(), ColliderType::Sphere, 1.0f);
-	enemy2->AddComponent<PhysicsComponent>(
-		enemy2.get(),
-		Vec3(10.0f, 0.0f, -10.0f), // different position
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // same upright rotation
-		Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f),
-		Vec3(0.75f, 0.75f, 0.75f));
-
-	enemy2->OnCreate();
-	AddActor(enemy2);
-	collisionSystem.AddActor(enemy2);
-	physicsSystem.AddActor(enemy2);
-	transformSystem.AddActor(enemy2);
-	enemyHealth[enemy2.get()] = 100.0f;
-}
-
-
-// Creates an 8x8 grid of tiles and initializes nodes
-void Scene3::createTiles() {
-	int gridSize = 8;
-
-	//changed amounts to make fit with the rotation. 
-	float tileWidth = 0.50f;
-	float tileHeight = 0.28f;
-
-	// Calculate aspect ratio as a float
-	float aspectRatio = 1280.0f / 720.0f;
-
-	if (aspectRatio > 1.0f) {
-		tileHeight *= aspectRatio;
-	}
-	else {
-		tileWidth /= aspectRatio;
-	}
-
-	// Center offset for the grid, accounting for adjusted tile dimensions. Changed for tile rotation
-	float gridCenterX = (gridSize * tileWidth) / 2.0f;
-	float gridCenterY = (gridSize * tileHeight) / 2.8f;
-	float gridCenterZ = -5.0f; // Starting z-position 
-
-	graph = new Graph();
-	tiles.resize(gridSize, std::vector<Tile*>(gridSize));
-	sceneNodes.resize(gridSize * gridSize);
-
-	std::vector<std::pair<int, int>> blockedPositions = {
-		{2, 3}, {4, 5}, {1, 1}, {3, 2}, {6, 4}, {6, 5}, {6, 6}, {6, 7}
-	};
-
-	int label = 0;
-
-	// Create a rotation matrix for -45 degrees on the x-axis
-	Matrix4 rotationMatrix = MMath::rotate(-45.0f, 1.0f, 0.0f, 0.0f);
-	Matrix4 projectionMatrix = camera->GetProjectionMatrix();
-
-	for (int i = 0; i < gridSize; ++i) {
-		for (int j = 0; j < gridSize; ++j) {
-			Node* node = new Node(label);
-			sceneNodes[label] = node;
-
-
-			Vec3 tilePos = Vec3((j * tileWidth) - gridCenterX, (i * tileHeight) - gridCenterY, gridCenterZ);
-
-			// Additional offset based on row index `i`
-			// Adjust this factor as needed to minimize gaps due to rotation
-			float rowOffsetx = -0.2f * i; //not needed as its rotating along the x axis
-			float rowOffsetY = -0.30f * tileHeight * i;
-			float rowOffsetz = -0.68f * tileWidth * i;
-
-			Matrix4 OffsetMatrix = MMath::translate(0.0f, rowOffsetY, rowOffsetz);
-
-			Matrix4 translationMatrix = MMath::translate(tilePos);
-
-			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
-			tile->modelMatrix = projectionMatrix * translationMatrix * OffsetMatrix * rotationMatrix;
-
-			tiles[i][j] = tile;
-
-			if (std::find(blockedPositions.begin(), blockedPositions.end(), std::make_pair(i, j)) != blockedPositions.end()) {
-				node->setIsBlocked(true);
-			}
-
-			label++;
-		}
-	}
-
-	tiles[gridSize - 1][gridSize - 1]->setDestinationTile(true);
-
-	if (!graph->OnCreate(sceneNodes)) {
-		std::cerr << "Failed to initialize graph." << std::endl;
-	}
-}
-
-
-
-
-// Sets up connections (left, right, up, down) between adjacent nodes
-void Scene3::calculateConnectionWeights() {
-	int gridSize = 8;
-
-	for (int i = 0; i < gridSize; ++i) {
-		for (int j = 0; j < gridSize; ++j) {
-			Node* from = tiles[i][j]->getNode();
-
-			// Connect left
-			if (j > 0) {
-				Node* to = tiles[i][j - 1]->getNode();
-				graph->addWeightedConnection(from, to, 1.0f);
-			}
-
-			// Connect right
-			if (j < gridSize - 1) {
-				Node* to = tiles[i][j + 1]->getNode();
-				graph->addWeightedConnection(from, to, 1.0f);
-			}
-
-			// Connect up
-			if (i > 0) {
-				Node* to = tiles[i - 1][j]->getNode();
-				graph->addWeightedConnection(from, to, 1.0f);
-			}
-
-			// Connect down
-			if (i < gridSize - 1) {
-				Node* to = tiles[i + 1][j]->getNode();
-				graph->addWeightedConnection(from, to, 1.0f);
-			}
-		}
-	}
-}
-
-
-
-void Scene3::createHackingGrid() {
-	int gridSize = 6; // Grid size
-	float tileWidth = 0.50f;
-	float tileHeight = 0.28f;
-
-	// Adjust for aspect ratio
-	float aspectRatio = 1280.0f / 720.0f;
-	if (aspectRatio > 1.0f) {
-		tileHeight *= aspectRatio;
-	}
-	else {
-		tileWidth /= aspectRatio;
-	}
-
-	// Center offset for positioning
-	float gridCenterX = (gridSize * tileWidth) / 2.0f;
-	float gridCenterY = (gridSize * tileHeight) / 2.8f;
-	float gridCenterZ = -5.0f;
-
-	// Rotation and Projection
-	Matrix4 rotationMatrix = MMath::rotate(0.0f, 1.0f, 0.0f, 0.0f);
-	Matrix4 projectionMatrix = camera->GetProjectionMatrix();
-
-	hackingTiles.clear();
-	hackingTiles.resize(gridSize, std::vector<Tile*>(gridSize));
-
-
-	int numRedTiles = (gridSize * gridSize) / 2; // 25% of tiles will be red
-	srand(time(nullptr)); // Seed for randomness
-
-	// Randomly select red tile positions
-	while (redTilePositions.size() < numRedTiles) {
-		int x = rand() % gridSize;
-		int y = rand() % gridSize;
-		if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(x, y)) == redTilePositions.end()) {
-			redTilePositions.push_back({ x, y });
-		}
-	}
-
-	int label = 0;
-	for (int i = 0; i < gridSize; ++i) {
-		for (int j = 0; j < gridSize; ++j) {
-			Node* node = new Node(label);
-			sceneNodes[label] = node;
-
-			Vec3 tilePos = Vec3(
-				(j * tileWidth) - gridCenterX,
-				(i * tileHeight) - gridCenterY,
-				gridCenterZ
-			);
-
-			Matrix4 translationMatrix = MMath::translate(tilePos);
-			Matrix4 modelMatrix = projectionMatrix * translationMatrix * rotationMatrix;
-
-			Tile* tile = new Tile(node, tilePos, tileWidth, tileHeight, this);
-			tile->modelMatrix = modelMatrix;
-
-			// Set red tiles as "blocked"
-			if (std::find(redTilePositions.begin(), redTilePositions.end(), std::make_pair(i, j)) != redTilePositions.end()) {
-				node->setIsBlocked(true);
-			}
-
-
-			hackingTiles[i][j] = tile;
-			label++;
-		}
-	}
-
-	// Place the player cube at the starting position (Top Left: 0,0)
-	hackingPlayerPos = Vec2(0, 0);
-	hackingTiles[0][0]->setPathTile(true); // Highlight the starting tile
-}
 
 
 int Scene3::Pick(int x, int y) {

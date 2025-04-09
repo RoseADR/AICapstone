@@ -56,8 +56,6 @@ bool Scene1::OnCreate() {
 	Ref<TransformComponent> tc = std::make_shared<TransformComponent>(nullptr, Vec3(-10.0f, -10.0f, 0.0f), orientationBoard);
 
 
-	
-
 	for (int i = 0; i < 3; i++) {
 		float x = 0.0f - (i * 90.0f);
 		bg = std::make_shared<Actor>(nullptr);
@@ -81,7 +79,8 @@ bool Scene1::OnCreate() {
 	deathFloor->SetName("DeathFloor");
 	deathFloor->OnCreate();
 	AddActor(deathFloor);
-
+	collisionSystem.AddActor(deathFloor);
+	transformSystem.AddActor(deathFloor);
 
 	factory = std::make_shared<Actor>(nullptr);
 	factory->AddComponent<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
@@ -113,26 +112,6 @@ bool Scene1::OnCreate() {
 	topFloor->OnCreate();
 	AddActor(topFloor);
 
-
-	factoryCollisionBox = std::make_shared<Actor>(nullptr);
-	Vec3 boxPosF = Vec3(0.0f, -5.0f, -10.0f); // location
-	Vec3 boxScaleF = Vec3(30.0f, 1.0f, 15.0f); // cube size
-	Quaternion boxRotF = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
-	tc = std::make_shared<TransformComponent>(factoryCollisionBox.get(), boxPosF, boxRotF, boxScaleF);
-	cc = std::make_shared<CollisionComponent>(factoryCollisionBox.get(), ColliderType::AABB);
-	cc->SetAABB(boxPosF, boxRotF, boxScaleF.x / 2, boxScaleF.y / 2, boxScaleF.z / 2); // set AABB
-
-	factoryCollisionBox->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
-	factoryCollisionBox->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	factoryCollisionBox->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("road"));
-
-	factoryCollisionBox->AddComponent(tc);
-	factoryCollisionBox->AddComponent(cc);
-	factoryCollisionBox->SetName("FactoryCollisionBox");
-	factoryCollisionBox->OnCreate();
-	
-	AddActor(factoryCollisionBox);
-
 	for (int i = 0; i < 8; i++) {
 		float x = -70.0f - (i * 17.0f);
 		auto road = std::make_shared<Actor>(Bridge.get());
@@ -145,51 +124,7 @@ bool Scene1::OnCreate() {
 		AddActor(road);
 	}
 	
-	/*Ref <Actor> Lava[2];
-
-	Lava[0] = std::make_shared<Actor>(factory.get());
-
-	Vec3 lavaPos = Vec3(-360.0f, 0.0f, 40.0f); 
-	Quaternion lavaRot = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
-	Vec3 lavaScale = Vec3(10.0f, 1.0f, 4.0f);
-
-	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-360.0f, 0.0f, 40.0f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f))
-		* QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(30.0, 30.0, 30.0));
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::AABB);
-	cc->SetAABB(lavaPos, lavaRot, lavaScale.x / 2, lavaScale.y / 2, lavaScale.z / 2);
-	Lava[0]->AddComponent(cc);
-	Lava[0]->AddComponent(tc);
-	Lava[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	Lava[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
-	Lava[0]->AddComponent<ShaderComponent>(shader);
-
-	Lava[0]->SetName("LAVA[0]");
-	Lava[0]->OnCreate();
-	AddActor(Lava[0]);
-	collisionSystem.AddActor(Lava[0]);
-	transformSystem.AddActor(Lava[0]);
-
-
-	Vec3 lavaPos2 = Vec3(360.0f, 65.0f, 40.0f);
-	Quaternion lavaRot2 = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
-	Vec3 lavaScale2 = Vec3(10.0f, 1.0f, 4.0f);
-
-	tc = std::make_shared<TransformComponent>(nullptr, Vec3(360.0f, 65.0f, 40.0f), QMath::angleAxisRotation(270.0f, Vec3(1.0f, 0.0f, 0.0f))
-		* QMath::angleAxisRotation(90.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(30.0, 30.0, 30.0));
-	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::AABB);
-	cc->SetAABB(lavaPos2, lavaRot2, lavaScale2.x / 2, lavaScale2.y / 2, lavaScale2.z / 2);
-	Lava[1]->AddComponent(cc);
-	Lava[1]->AddComponent(tc);
-	Lava[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	Lava[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("lavaTexture"));
-	Lava[1]->AddComponent<ShaderComponent>(shader);
-
-	Lava[1]->SetName("LAVA[1]");
-	Lava[1]->OnCreate();
-	AddActor(Lava[1]);
-	collisionSystem.AddActor(Lava[1]);
-	transformSystem.AddActor(Lava[1]);*/
-
+	
 	Ref <Actor> Lava[2];
 
 	Lava[0] = std::make_shared<Actor>(factory.get());
@@ -211,20 +146,8 @@ bool Scene1::OnCreate() {
 
 	Lava[1]->OnCreate();
 	AddActor(Lava[1]);
-
-	/*bill = std::make_shared<Actor>(Bridge.get());
-	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
-	bill->AddComponent<TransformComponent>(nullptr, Vec3(-182.0f, 11.0f, -15.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
-	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
-	bill->AddComponent<ShaderComponent>(shader);
-	bill->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("billAds"));
-	AddActor(bill);*/
 	
-	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
-	//std::cout << "GameBoard Position: ("
-		/*<< boardPos.x << ", "
-		<< boardPos.y << ", "
-		<< boardPos.z << ")\n"*/;
+	//Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 
 		// box over lava 1
 		TestCube = std::make_shared<Actor>(nullptr);
@@ -285,14 +208,14 @@ bool Scene1::OnCreate() {
 
 	hack = std::make_shared<Actor>(nullptr);
 	Quaternion hackRotation = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
-	Vec3 hackPosition = Vec3(71.0f, 5.0f, -5.0f);     // Adjust position as needed
-	Vec3 hackVelocity = Vec3(0.0f, 0.0f, 0.0f);         // Initial velocity
-	Vec3 hackScale = Vec3(0.0f, 0.0f, 0.0f);            // Scale of the object
+	Vec3 hackPosition = Vec3(71.0f, 5.0f, -5.0f);    
+	Vec3 hackVelocity = Vec3(0.0f, 0.0f, 0.0f);         
+	Vec3 hackScale = Vec3(0.0f, 0.0f, 0.0f);            
 
 	// Add Physics Component instead of Transform
 	hack->AddComponent<PhysicsComponent>(nullptr, hackPosition, hackRotation, hackVelocity, Vec3(), Vec3(), hackScale);
 
-	// Optional: Add collision
+	// Add collision
 	hack->AddComponent<CollisionComponent>(nullptr, ColliderType::Sphere, 8.0f);
 
 	// Visuals
@@ -497,35 +420,11 @@ bool Scene1::OnCreate() {
 	collisionSystem.SetCharacter(character);
 	collisionSystem.AddActor(character);
 	physicsSystem.AddActor(character);
-	
-	/*projectile = std::make_shared<Actor>(character.get());
-	projectile->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Cube"));
-	projectile->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BulletSkin"));
-	projectile->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));*/
-
 
 	LoadEnemies();
 	SpawnAmmoAt(Vec3(6.0f, 1.0f, -6.0f));
 	SpawnAmmoAt(Vec3(-47.0f, 15.0f, -5.0f));
 	SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
-
-
-//	collisionSystem.AddActor(factory);
-   // collisionSystem.AddActor(factoryCollisionBox);
-	//collisionSystem.AddActor(BridgeCollisionBox);
-	
-	collisionSystem.AddActor(deathFloor);
-	//collisionSystem.AddActor(Bridge);
-
-//	transformSystem.AddActor(factory);
-
-	//transformSystem.AddActor(factoryCollisionBox);
-	//transformSystem.AddActor(BridgeCollisionBox);
-	
-	transformSystem.AddActor(deathFloor);
-	//transformSystem.AddActor(Bridge);
-
-
 
 	//PATHFINDING REALTED 
 	// Create the grid and graph for pathfinding
@@ -847,64 +746,37 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 	case SDL_KEYDOWN:
 		cameraTC = camera->GetComponent<TransformComponent>();
 		characterTC = character->GetComponent<PhysicsComponent>();
-		//gameBoardTC = gameboard->GetComponent<TransformComponent>();
-
-
-		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_LEFT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case  SDL_SCANCODE_RIGHT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_UP:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_DOWN:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		}
-
-
 
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_E:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+			
 			break;
 
 		case SDL_SCANCODE_Q:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+		
 			break;
 
 		case SDL_SCANCODE_Z:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+		
 			break;
 
 		case SDL_SCANCODE_X:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+		
 			break;
 
 
-		case SDL_SCANCODE_B: {
-			showTiles = !showTiles; // Toggle the visibility flag
-		}
-						   break;
+		//case SDL_SCANCODE_B: {
+		//	showTiles = !showTiles; // Toggle the visibility flag
+		//}
+		//				   break;
 
 		case SDL_SCANCODE_L:
 			showHackingGrid = !showHackingGrid;
@@ -917,34 +789,18 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 
 
 		case SDL_SCANCODE_R:
-
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
-			//orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-			//	QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-			//characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-			Reload();
-
+				Reload();
 			break;
 
-		case SDL_SCANCODE_T:
+		//case SDL_SCANCODE_N:
+		//	if (drawNormals == false) drawNormals = true;
+		//	else drawNormals = false;
+		//	break;
 
-			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
-			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-			characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-
-			break;
-
-
-		case SDL_SCANCODE_N:
-			if (drawNormals == false) drawNormals = true;
-			else drawNormals = false;
-			break;
-
-		case SDL_SCANCODE_O:
-			if (drawOverlay == false) drawOverlay = true;
-			else drawOverlay = false;
-			break;
+		//case SDL_SCANCODE_O:
+		//	if (drawOverlay == false) drawOverlay = true;
+		//	else drawOverlay = false;
+		//	break;
 
 		default:
 			break;

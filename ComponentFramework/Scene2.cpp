@@ -122,52 +122,7 @@ void Scene2::HandleEvents(const SDL_Event& sdlEvent) {
 
 		}
 
-		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_E:
-		{
-			if (objID < 0) break;
-			Ref<TransformComponent> pickedObjTransform = actors[objID]->GetComponent<TransformComponent>();
-			//Quaternion q = pickedObjTransform->GetQuaternion();
-			pickedObjTransform->SetTransform(pickedObjTransform->GetPosition(), pickedObjTransform->GetQuaternion() *
-				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-		}
-		break;
 
-		case SDL_SCANCODE_Q:
-		{
-			if (objID < 0) break;
-			Ref<TransformComponent> pickedObjTransform = actors[objID]->GetComponent<TransformComponent>();
-			//Quaternion q = pickedObjTransform->GetQuaternion();
-			pickedObjTransform->SetTransform(pickedObjTransform->GetPosition(), pickedObjTransform->GetQuaternion() *
-				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-		}
-		break;
-
-		case SDL_SCANCODE_W:
-			break;
-
-		case SDL_SCANCODE_A:
-			break;
-
-		case SDL_SCANCODE_S:
-			break;
-
-		case SDL_SCANCODE_D:
-			break;
-
-		case SDL_SCANCODE_N:
-			if (drawNormals == false) drawNormals = true;
-			else drawNormals = false;
-			break;
-
-		case SDL_SCANCODE_O:
-			if (drawOverlay == false) drawOverlay = true;
-			else drawOverlay = false;
-			break;
-
-		default:
-			break;
-		}
 		break;
 
 	case SDL_MOUSEMOTION:
