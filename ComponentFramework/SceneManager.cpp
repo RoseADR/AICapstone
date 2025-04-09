@@ -70,7 +70,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE1);
+	BuildNewScene(SCENE_NUMBER::SCENE0);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -267,8 +267,8 @@ void SceneManager::Run() {
 
 			if (ImGui::Button("Start Game", buttonSize)) {
 				BuildNewScene(SCENE_NUMBER::SCENE1);
-				engine->play2D("./Audio/SciButtonSound.mp3");
-				engine->setSoundVolume(0.1);
+				/*engine->play2D("./Audio/SciButtonSound.mp3");
+				engine->setSoundVolume(0.1);*/
 				
 			}
 
