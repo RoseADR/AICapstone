@@ -37,6 +37,8 @@ private:
 	Ref<LightActor> light;
 	Ref<Actor> deathFloor;
 	Ref<Actor> factory;
+	Ref<Actor> stairs;
+	Ref<Actor> topFloor;
 	Ref<Actor> bg;
 	Ref<Actor> projectile;
 	Ref<Actor> Bridge;

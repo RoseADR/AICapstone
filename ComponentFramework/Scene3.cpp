@@ -85,18 +85,22 @@ bool Scene3::OnCreate() {
 	physicsSystem.AddActor(tutorialTrigger);
 	transformSystem.AddActor(tutorialTrigger);
 
-	// Customize position, rotation, and scale as needed
-	Vec3 busPos = Vec3(40.0f, 2.4f, -7.0f); // Position in the world
-	Quaternion busRot = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(45.0f, Vec3(0, 0, 1));
-	Vec3 busScale = Vec3(0.2f, 0.2f, 0.2f); // Size of the bus
 
-	Ref<CollisionOnlyActor> bus = std::make_shared<CollisionOnlyActor>(nullptr, busPos, busRot, busScale);
+	Ref<Actor> bus = std::make_shared<Actor>(nullptr);
 
-	//AddAABBCollisionBox(busCollisionBox, busPos, busRot, busScale);
-	//bus->AddComponent(std::make_shared<TransformComponent>(bus.get(), busPos, busRot, busScale));
-	bus->AddComponent(assetManager->GetComponent<MeshComponent>("Bus"));              // Your bus mesh
-	bus->AddComponent<ShaderComponent>(shader);  // Standard shader
-	bus->AddComponent(assetManager->GetComponent<MaterialComponent>("BusDif"));  // Your bus texture
+	Vec3 busPos = Vec3(40.0f, 2.4f, -7.0f);
+	Quaternion busRot = QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f));
+	Vec3 busScale = Vec3(4.0f, 3.0f, 4.0f); 
+
+	tc = std::make_shared<TransformComponent>(bus.get(), Vec3(40.0f, 2.4f, -7.0f), QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(45.0f, Vec3(0, 0, 1)), Vec3(0.2f, 0.2f, 0.2f));
+	cc = std::make_shared<CollisionComponent>(bus.get(), ColliderType::AABB);
+
+	cc->SetAABB(busPos, busRot, busScale.x / 2, busScale.y / 2, busScale.z / 2);
+	bus->AddComponent(cc);
+	bus->AddComponent(tc);
+	bus->AddComponent(assetManager->GetComponent<MeshComponent>("Bus"));             
+	bus->AddComponent<ShaderComponent>(shader);
+	bus->AddComponent(assetManager->GetComponent<MaterialComponent>("BusDif")); 
 	bus->SetName("Bus");
 	bus->OnCreate();
 	AddActor(bus);
@@ -104,18 +108,16 @@ bool Scene3::OnCreate() {
 	transformSystem.AddActor(bus);
 
 
-
 	// === Car Actor (AABB) ===
 	Ref<Actor> car = std::make_shared<Actor>(nullptr);
 
 	Vec3 carPos = Vec3(21.7f, -2.0f, -7.0f);
-	Quaternion carRot = QMath::angleAxisRotation(180.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(-26.0f, Vec3(0, 0, 1));
+	Quaternion carRot = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
 	Vec3 carScale = Vec3(7.0f, 7.0f, 7.0f);
 	Vec3 collisionScale = Vec3(4.0f, 1.0f, 2.0f);
 
-	tc = std::make_shared<TransformComponent>(car.get(), carPos, carRot, carScale);
+	tc = std::make_shared<TransformComponent>(car.get(), carPos, QMath::angleAxisRotation(180.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(-26.0f, Vec3(0, 0, 1)), carScale);
 	cc = std::make_shared<CollisionComponent>(car.get(), ColliderType::AABB);
-	//cc->AddAABBCollisionBox(car.get(), carPos, carRot, carScale);
 	cc->SetAABB(carPos, carRot, collisionScale.x / 2, collisionScale.y / 2, collisionScale.z / 2);
 	car->AddComponent(cc);
 	car->AddComponent(tc);
@@ -276,25 +278,21 @@ bool Scene3::OnCreate() {
 		physicsSystem.AddActor(sceneChangeTrigger);
 		transformSystem.AddActor(sceneChangeTrigger);
 
-
+		//// === Bridge Actor (AABB) ===
 		Bridge = std::make_shared<Actor>(nullptr);
-		//BridgeCollisionBox = std::make_shared<Actor>(Bridge.get());
-
-		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(52.0, -2.66f, -8.0f),
-			QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.30, 0.30, 0.30));
 
 		Vec3 boxPosB = Vec3(-129.0f, 8.0f, -8.0f); // location
 		Vec3 boxScaleB = Vec3(1.0f, 1.0f, 1.0f); // cube size
 		Quaternion boxRotB = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
 		Vec3 cs = Vec3(1.0f, 1.0f, 1.0f);
 
-		//tc = std::make_shared<TransformComponent>(Bridge.get(), boxPosB, boxRotB, boxScaleB);
+		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(52.0, -2.66f, -8.0f),
+			QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.30, 0.30, 0.30));
 		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::AABB);
 		cc->SetAABB(boxPosB, boxRotB, boxScaleB.x / 2, boxScaleB.y / 2, boxScaleB.z / 2); // set AABB
 		Bridge->AddComponent(tc);
 		Bridge->AddComponent(cc);
-		//BridgeCollisionBox->SetName("BridgeCollisionBox");
-
+	
 		Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge2"));
 		Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
 		Bridge->AddComponent<ShaderComponent>(shader);
@@ -305,55 +303,6 @@ bool Scene3::OnCreate() {
 		transformSystem.AddActor(Bridge);
 
 
-		//// === Bridge Actor (AABB) ===
-		//Ref<Actor> bridge = std::make_shared<Actor>(nullptr);
-
-		//Vec3 bridgePos = Vec3(52.0f, -2.66f, -8.0f);
-		//Quaternion bridgeRot = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f));
-		//Vec3 bridgeScale = Vec3(0.30f, 0.30f, 0.30f);
-		//Vec3 cs = Vec3(1.0f, 1.0f, 1.0f);
-
-		//tc = std::make_shared<TransformComponent>(bridge.get(), bridgePos, bridgeRot, bridgeScale);
-		//cc = std::make_shared<CollisionComponent>(bridge.get(), ColliderType::AABB);
-		//cc->SetAABB(bridgePos, bridgeRot, cs.x / 2, cs.y / 2, cs.z / 2);
-		//bridge->AddComponent(cc);
-		//bridge->AddComponent(cc);
-		//bridge->AddComponent(assetManager->GetComponent<MeshComponent>("Bridge2"));
-		//bridge->AddComponent<ShaderComponent>(shader);
-		//bridge->AddComponent(assetManager->GetComponent<MaterialComponent>("stone"));
-		//bridge->SetName("Bridge");
-		//bridge->OnCreate();
-		//AddActor(bridge);
-		//collisionSystem.AddActor(bridge);
-		//transformSystem.AddActor(bridge);
-	
-
-		//Bridge = std::make_shared<Actor>(nullptr);
-		//BridgeCollisionBox = std::make_shared<Actor>(Bridge.get());
-
-		//Bridge->AddComponent<TransformComponent>(Bridge.get(), Vec3(52.0, -2.66f, -8.0f),
-		//	QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.30, 0.30, 0.30));
-
-		//Vec3 boxPosB = Vec3(-129.0f, 8.0f, -8.0f); // location
-		//Vec3 boxScaleB = Vec3(1.0f, 1.0f, 1.0f); // cube size
-		//Quaternion boxRotB = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
-		//tc = std::make_shared<TransformComponent>(Bridge.get(), boxPosB, boxRotB, boxScaleB);
-		//cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::AABB);
-		//cc->SetAABB(boxPosB, boxRotB, boxScaleB.x / 2, boxScaleB.y / 2, boxScaleB.z / 2); // set AABB
-		//BridgeCollisionBox->AddComponent(tc);
-		//BridgeCollisionBox->AddComponent(cc);
-		//BridgeCollisionBox->SetName("BridgeCollisionBox");
-
-
-
-		//Bridge->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Bridge2"));
-		//Bridge->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("stone"));
-		//Bridge->AddComponent<ShaderComponent>(shader);
-		//Bridge->AddComponent(cc);
-		//Bridge->AddComponent(tc);
-		//Bridge->SetName("Bridge");
-		//Bridge->OnCreate();
-		//AddActor(Bridge);
 
 		for (int i = 0; i < 8; i++) {
 			float x = 180.0f - (i * 37.0f);

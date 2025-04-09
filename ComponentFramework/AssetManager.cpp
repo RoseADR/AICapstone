@@ -22,7 +22,10 @@ AssetManager::AssetManager() {
 	AddComponent<MeshComponent>("Board", nullptr, "meshes/billboard.obj");
 	AddComponent<MeshComponent>("Bridge", nullptr, "meshes/bridge.obj");
 	AddComponent<MeshComponent>("StreetLight", nullptr, "meshes/streetLight.obj");
+	AddComponent<MeshComponent>("Stairs", nullptr, "meshes/stair.obj");
 	AddComponent<MeshComponent>("Factory", nullptr, "meshes/Factory.obj");
+	AddComponent<MeshComponent>("MainFactory", nullptr, "meshes/MainFacy.obj");
+	AddComponent<MeshComponent>("TopFloor", nullptr, "meshes/topFloor.obj");
 	AddComponent<MeshComponent>("Car", nullptr, "meshes/Car.obj");
 	AddComponent<MeshComponent>("Scaffolding", nullptr, "meshes/Scaffolding.obj");
 	AddComponent<MeshComponent>("Blocker", nullptr, "meshes/blocker.obj");

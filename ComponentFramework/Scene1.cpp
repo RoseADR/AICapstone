@@ -84,16 +84,35 @@ bool Scene1::OnCreate() {
 
 
 	factory = std::make_shared<Actor>(nullptr);
-	/*AddAABBCollisionBox(factory, Vec3(30.0f, 0.0f, -10.0f),
-		QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));*/
 	factory->AddComponent<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Factory"));
+	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("MainFactory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
 	//factory->AddComponent(tc);
 	factory->SetName("Factory");
 	factory->OnCreate();
 	AddActor(factory);
+
+	stairs = std::make_shared<Actor>(nullptr);
+	stairs->AddComponent<TransformComponent>(stairs.get(), Vec3(30.0f, 0.0f, -22.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
+	stairs->AddComponent<ShaderComponent>(shader);
+	stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//factory->AddComponent(tc);
+	stairs->SetName("Stairs");
+	stairs->OnCreate();
+	AddActor(stairs);
+
+	topFloor = std::make_shared<Actor>(nullptr);
+	topFloor->AddComponent<TransformComponent>(topFloor.get(), Vec3(30.0f, 0.0f, -30.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	topFloor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("TopFloor"));
+	topFloor->AddComponent<ShaderComponent>(shader);
+	topFloor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//factory->AddComponent(tc);
+	topFloor->SetName("TopFloor");
+	topFloor->OnCreate();
+	AddActor(topFloor);
+
 
 	factoryCollisionBox = std::make_shared<Actor>(nullptr);
 	Vec3 boxPosF = Vec3(0.0f, -5.0f, -10.0f); // location
@@ -113,13 +132,6 @@ bool Scene1::OnCreate() {
 	factoryCollisionBox->OnCreate();
 	
 	AddActor(factoryCollisionBox);
-
-
-	/*AddAABBCollisionBox(factory, Vec3(30.0f, 0.0f, -10.0f),
-		QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));*/
-	//tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
-
-
 
 	for (int i = 0; i < 8; i++) {
 		float x = -70.0f - (i * 17.0f);
@@ -200,13 +212,13 @@ bool Scene1::OnCreate() {
 	Lava[1]->OnCreate();
 	AddActor(Lava[1]);
 
-	bill = std::make_shared<Actor>(Bridge.get());
+	/*bill = std::make_shared<Actor>(Bridge.get());
 	orientationBill = QMath::angleAxisRotation(1800.0f, Vec3(0.0f, 1.0f, 0.0f));
 	bill->AddComponent<TransformComponent>(nullptr, Vec3(-182.0f, 11.0f, -15.0f), orientationBill, Vec3(0.3, 0.3, 0.3));
 	bill->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Board"));
 	bill->AddComponent<ShaderComponent>(shader);
 	bill->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("billAds"));
-	AddActor(bill);
+	AddActor(bill);*/
 	
 	Vec3 boardPos =  actors[0]->GetComponent<TransformComponent>()->GetPosition();
 	//std::cout << "GameBoard Position: ("
@@ -296,11 +308,11 @@ bool Scene1::OnCreate() {
 
 	Ref<Actor> car = std::make_shared<Actor>(Bridge.get());
 
-	Vec3 carPos = Vec3(21.7f, -2.0f, -7.0f);
+	Vec3 carPos = Vec3(21.7f, -2.0f, -8.0f);
 	Quaternion carRot = orientationBill;
-	Vec3 collisionScale = Vec3(4.0f, 1.0f, 2.0f);
+	Vec3 collisionScale = Vec3(4.0f, 0.0f, 2.0f);
 
-	tc = std::make_shared<TransformComponent>(car.get(), Vec3(-130.0f, 13.5f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
+	tc = std::make_shared<TransformComponent>(car.get(), Vec3(-130.0f, 13.5f, -8.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
 	cc = std::make_shared<CollisionComponent>(car.get(), ColliderType::AABB);
 	cc->SetAABB(carPos, carRot, collisionScale.x / 2, collisionScale.y / 2, collisionScale.z / 2);
 	car->AddComponent(cc);
@@ -315,32 +327,27 @@ bool Scene1::OnCreate() {
 	transformSystem.AddActor(car);
 
 
+	/*auto scaff = std::make_shared<Actor>(factory.get());
 
-	//Ref<Actor> Car = std::make_shared<Actor>(Bridge.get());
+	Vec3 scaffPos = Vec3(21.7f, -2.0f, -8.0f);
+	Quaternion scaffRot = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+	Vec3 scaffScale = Vec3(4.0f, 0.0f, 2.0f);
 
-	//tc = std::make_shared<TransformComponent>(nullptr, Vec3(-130.0f, 13.5f, -5.0f), orientationBill, Vec3(7.0f, 7.0f, 7.0f));
-	////cc = std::make_shared<CollisionComponent>(Car.get(), ColliderType::Sphere, 2.0f);
-	////Car->AddComponent(cc);
-	//Car->AddComponent(tc);
-	////Car->AddComponent<TransformComponent>(nullptr, Vec3(-130.0f, 18.7f, -5.0f), orientationBill, Vec3(7.0, 7.0, 7.0));
-	//Car->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Car"));
-	//Car->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("CarText"));
-	//Car->AddComponent<ShaderComponent>(shader);
-	//Car->OnCreate();
-	//AddActor(Car);
-	//
+	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-3000.0f, 250.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0f, 1.0f, 1.0f));
+	cc->SetAABB(scaffPos, scaffRot, scaffScale.x / 2, scaffScale.y / 2, scaffScale.z / 2);
+	scaff->AddComponent(cc);
+	scaff->AddComponent(tc);
+	scaff->AddComponent(assetManager->GetComponent<MeshComponent>("Scaffolding"));
+	scaff->AddComponent<ShaderComponent>(shader);
+	scaff->AddComponent(assetManager->GetComponent<MaterialComponent>("WoodBox"));
+	scaff->SetName("Scaffolding");
+	scaff->OnCreate();
+	AddActor(scaff);
+	collisionSystem.AddActor(scaff);
+	transformSystem.AddActor(scaff);*/
 
-	auto Scaf = std::make_shared<Actor>(factory.get());
 
-	Scaf->AddComponent<TransformComponent>(nullptr, Vec3(-3000.0f, 250.0f, -60.0f), QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(1.0f, 1.0f, 1.0f));
-	Scaf->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Scaffolding"));
-	Scaf->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("WoodBox"));
-	Scaf->AddComponent<ShaderComponent>(shader);
-	//Scaf->AddComponent(cc);
-	Scaf->OnCreate();
-	AddActor(Scaf);
-
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 2; i++) {
 		float z = -4.5f - (i * 2.0f);
 		auto Blocker = std::make_shared<Actor>(Bridge.get());
 
@@ -352,48 +359,72 @@ bool Scene1::OnCreate() {
 		Blocker->OnCreate();
 		AddActor(Blocker);
 	}
-	auto Tunnels = std::make_shared<Actor>(factory.get());
 
-	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-310.0f, 1170.0f, -540.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f))* QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
-	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	Tunnels->AddComponent<ShaderComponent>(shader);
-	//Tunnels->AddComponent(cc);
-	Tunnels->OnCreate();
-	AddActor(Tunnels);
+	auto Blocker1 = std::make_shared<Actor>(Bridge.get());
 
-	Ref <Actor> UTunnels[3];
-		
-	UTunnels[0] = std::make_shared<Actor>(factory.get());
-	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 90.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
-	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	UTunnels[0]->AddComponent<ShaderComponent>(shader);
-	//UTunnels[0]->AddComponent(cc);
-	
-	UTunnels[0]->OnCreate();
-	AddActor(UTunnels[0]);
+	Vec3 blockerPos = Vec3(21.7f, -2.0f, -8.0f);
+	Quaternion blockerRot = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+	Vec3 blockerScale = Vec3(0.0f, 0.0f, -8.0f);
 
-	UTunnels[1] = std::make_shared<Actor>(factory.get());
-	UTunnels[1]->AddComponent<TransformComponent>(nullptr, Vec3(-1060.0f, 140.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
-	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	UTunnels[1]->AddComponent<ShaderComponent>(shader);
-//	UTunnels[1]->AddComponent(cc);
+	tc = std::make_shared<TransformComponent>(nullptr, Vec3(-145.0f, 12.2f, -8.5), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f))
+		* QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.02f, 0.02f, 0.02f));
+	cc->SetAABB(blockerPos, blockerRot, blockerScale.x / 2, blockerScale.y / 2, blockerScale.z / 2);
+	Blocker1->AddComponent(cc);
+	Blocker1->AddComponent(tc);
 
-	UTunnels[1]->OnCreate();
-	AddActor(UTunnels[1]);
+	Blocker1->AddComponent<TransformComponent>(nullptr, Vec3(-145.0f, 12.2f, -8.5), QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f)) * QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.02f, 0.02f, 0.02f));
+	Blocker1->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Blocker"));
+	Blocker1->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("BlockerText"));
+	Blocker1->AddComponent<ShaderComponent>(shader);
+
+	Blocker1->OnCreate();
+	AddActor(Blocker1);
+	collisionSystem.AddActor(Blocker1);
+	transformSystem.AddActor(Blocker1);
 
 
-	UTunnels[2] = std::make_shared<Actor>(factory.get());
-	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-3320.0f, 260.0f, -170.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
-	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	UTunnels[2]->AddComponent<ShaderComponent>(shader);
-	//UTunnels[2]->AddComponent(cc);
+	//auto Tunnels = std::make_shared<Actor>(factory.get());
 
-	UTunnels[2]->OnCreate();
-	AddActor(UTunnels[2]);
+	//Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-310.0f, 1170.0f, -540.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f))* QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+	//Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	//Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	//Tunnels->AddComponent<ShaderComponent>(shader);
+	////Tunnels->AddComponent(cc);
+	//Tunnels->OnCreate();
+	//AddActor(Tunnels);
+
+//	Ref <Actor> UTunnels[3];
+//		
+//	UTunnels[0] = std::make_shared<Actor>(nullptr);
+//	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-129.0, 5.66f, -8.5f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+//	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+//	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+//	UTunnels[0]->AddComponent<ShaderComponent>(shader);
+//	//UTunnels[0]->AddComponent(cc);
+//	
+//	UTunnels[0]->OnCreate();
+//	AddActor(UTunnels[0]);
+//
+//	UTunnels[1] = std::make_shared<Actor>(factory.get());
+//	UTunnels[1]->AddComponent<TransformComponent>(nullptr, Vec3(-80.0f, 12.0f, -8.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+//	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+//	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+//	UTunnels[1]->AddComponent<ShaderComponent>(shader);
+////	UTunnels[1]->AddComponent(cc);
+//
+//	UTunnels[1]->OnCreate();
+//	AddActor(UTunnels[1]);
+//
+//
+//	UTunnels[2] = std::make_shared<Actor>(nullptr);
+//	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-90.0f, 12.0f, -8.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
+//	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+//	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+//	UTunnels[2]->AddComponent<ShaderComponent>(shader);
+//	//UTunnels[2]->AddComponent(cc);
+//
+//	UTunnels[2]->OnCreate();
+//	AddActor(UTunnels[2]);
 
 	/*for (int i = 0; i < 8; i++) {
 		float x = -70.0f - (i * 17.0f);
@@ -433,7 +464,7 @@ bool Scene1::OnCreate() {
 		Vec3 boxScaleB = Vec3(125.0f, 10.0f, 4.0f); 
 		Quaternion boxRotB = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
 
-		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-129.0, 5.66f, -8.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.20, 0.20, 0.20));
+		tc = std::make_shared<TransformComponent>(Bridge.get(), Vec3(-129.0, 5.66f, -8.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.20, 0.20, 0.20));
 		cc = std::make_shared<CollisionComponent>(Bridge.get(), ColliderType::AABB);
 		cc->SetAABB(boxPosB, boxRotB, boxScaleB.x / 2, boxScaleB.y / 2, boxScaleB.z / 2); 
 		Bridge->AddComponent(tc);
@@ -451,7 +482,7 @@ bool Scene1::OnCreate() {
 		
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion playersQuaternion;
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -8.0f),
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0, 0.0f, -8.0f),
 		playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
@@ -480,7 +511,7 @@ bool Scene1::OnCreate() {
 
 
 //	collisionSystem.AddActor(factory);
-    collisionSystem.AddActor(factoryCollisionBox);
+   // collisionSystem.AddActor(factoryCollisionBox);
 	//collisionSystem.AddActor(BridgeCollisionBox);
 	
 	collisionSystem.AddActor(deathFloor);
@@ -488,7 +519,7 @@ bool Scene1::OnCreate() {
 
 //	transformSystem.AddActor(factory);
 
-	transformSystem.AddActor(factoryCollisionBox);
+	//transformSystem.AddActor(factoryCollisionBox);
 	//transformSystem.AddActor(BridgeCollisionBox);
 	
 	transformSystem.AddActor(deathFloor);
@@ -685,22 +716,22 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
 			}
 			if (hackingMode && hackingPlayerPos.y > 0) newY--;
-			
+
 			break;
 
 		case SDL_SCANCODE_A:
-			
+
 			if (!hackingMode) {
 				facing = false;
 				facingLeft = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
 			}
-				if (hackingMode && hackingPlayerPos.x > 0) newX--;
+			if (hackingMode && hackingPlayerPos.x > 0) newX--;
 			break;
 
 		case SDL_SCANCODE_D:
-			
+
 			if (!hackingMode) {
 				facing = true;
 				facingRight = true;
@@ -708,19 +739,24 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
 			}
-				if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+			if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
 
 			break;
 
 		case SDL_SCANCODE_SPACE:
-			
+
 			if (!hackingMode) {
-				
 
 				// Set vertical velocity
 				movingDown = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				if (facingRight = true) {
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.5f, 0.0f, 0.0f));
+				}
+				if (facingLeft = true) {
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.5f, 0.0f, 0.0f));
+				}
 			}
 			else if (hackingMode) {
 
@@ -730,7 +766,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 					redTilePositions.erase(
 						std::remove(redTilePositions.begin(), redTilePositions.end(),
 							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
-						
+
 						redTilePositions.end()
 					);
 					engine->play2D("./Audio/beep.wav");
@@ -739,11 +775,11 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 						hackingMode = false;
 						showHackingGrid = false;
 						sceneManager->Victory = true;
-						
+
 
 						engine->play2D("./Audio/victory.wav");
 						//SDL_Delay(1000);
-						
+
 					}
 				}
 
@@ -793,132 +829,132 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			break;
 		}
 	}
-		switch (sdlEvent.type) {
+	switch (sdlEvent.type) {
 
 
-		case SDL_MOUSEBUTTONDOWN:
-			if (!hackingMode) {
-				if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-					if (sceneManager->clipAmmo > 0) {
-						FireProjectile(), sceneManager->clipAmmo -= 1;
-					}
+	case SDL_MOUSEBUTTONDOWN:
+		if (!hackingMode) {
+			if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
+				if (sceneManager->clipAmmo > 0) {
+					FireProjectile(), sceneManager->clipAmmo -= 1;
 				}
 			}
+		}
+		break;
+
+
+
+	case SDL_KEYDOWN:
+		cameraTC = camera->GetComponent<TransformComponent>();
+		characterTC = character->GetComponent<PhysicsComponent>();
+		//gameBoardTC = gameboard->GetComponent<TransformComponent>();
+
+
+		switch (sdlEvent.key.keysym.scancode) {
+		case SDL_SCANCODE_LEFT:
+			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
+			camera->UpdateViewMatrix();
 			break;
 
+		case  SDL_SCANCODE_RIGHT:
+			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
+			camera->UpdateViewMatrix();
+			break;
 
+		case SDL_SCANCODE_UP:
+			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
+			camera->UpdateViewMatrix();
+			break;
 
-		case SDL_KEYDOWN:
-			cameraTC = camera->GetComponent<TransformComponent>();
-			characterTC = character->GetComponent<PhysicsComponent>();
-			//gameBoardTC = gameboard->GetComponent<TransformComponent>();
-
-
-			switch (sdlEvent.key.keysym.scancode) {
-			case SDL_SCANCODE_LEFT:
-				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-				camera->UpdateViewMatrix();
-				break;
-
-			case  SDL_SCANCODE_RIGHT:
-				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-				camera->UpdateViewMatrix();
-				break;
-
-			case SDL_SCANCODE_UP:
-				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
-				camera->UpdateViewMatrix();
-				break;
-
-			case SDL_SCANCODE_DOWN:
-				cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
-				camera->UpdateViewMatrix();
-				break;
-
-			}
-
-
-
-			switch (sdlEvent.key.keysym.scancode) {
-			case SDL_SCANCODE_E:
-				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-					QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-				//camera->UpdateViewMatrix();
-				break;
-
-			case SDL_SCANCODE_Q:
-				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-					QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-				//camera->UpdateViewMatrix();
-				break;
-
-			case SDL_SCANCODE_Z:
-				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-					QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-				//camera->UpdateViewMatrix();
-				break;
-
-			case SDL_SCANCODE_X:
-				cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
-					QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-				//camera->UpdateViewMatrix();
-				break;
-
-
-			case SDL_SCANCODE_B: {
-				showTiles = !showTiles; // Toggle the visibility flag
-			}
-							   break;
-
-			case SDL_SCANCODE_L:
-				showHackingGrid = !showHackingGrid;
-				hackingMode = showHackingGrid; // Toggle hacking mode
-				if (showHackingGrid && hackingTiles.empty()) {
-					createHackingGrid();
-				}
-				break;
-			
-
-
-			case SDL_SCANCODE_R:
-
-				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
-				//orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-				//	QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-				//characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-				Reload();
-
-				break;
-
-			case SDL_SCANCODE_T:
-
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
-				orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-					QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-				characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
-
-				break;
-
-
-			case SDL_SCANCODE_N:
-				if (drawNormals == false) drawNormals = true;
-				else drawNormals = false;
-				break;
-
-			case SDL_SCANCODE_O:
-				if (drawOverlay == false) drawOverlay = true;
-				else drawOverlay = false;
-				break;
-
-			default:
-				break;
-			}
+		case SDL_SCANCODE_DOWN:
+			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
+			camera->UpdateViewMatrix();
 			break;
 
 		}
 
 
+
+		switch (sdlEvent.key.keysym.scancode) {
+		case SDL_SCANCODE_E:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
+
+		case SDL_SCANCODE_Q:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
+
+		case SDL_SCANCODE_Z:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
+
+		case SDL_SCANCODE_X:
+			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
+				QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
+			//camera->UpdateViewMatrix();
+			break;
+
+
+		case SDL_SCANCODE_B: {
+			showTiles = !showTiles; // Toggle the visibility flag
+		}
+						   break;
+
+		case SDL_SCANCODE_L:
+			showHackingGrid = !showHackingGrid;
+			hackingMode = showHackingGrid; // Toggle hacking mode
+			if (showHackingGrid && hackingTiles.empty()) {
+				createHackingGrid();
+			}
+			break;
+
+
+
+		case SDL_SCANCODE_R:
+
+			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
+			//orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+			//	QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			//characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+			Reload();
+
+			break;
+
+		case SDL_SCANCODE_T:
+
+			characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f));
+			orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
+				QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
+			characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
+
+			break;
+
+
+		case SDL_SCANCODE_N:
+			if (drawNormals == false) drawNormals = true;
+			else drawNormals = false;
+			break;
+
+		case SDL_SCANCODE_O:
+			if (drawOverlay == false) drawOverlay = true;
+			else drawOverlay = false;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	}
+
+	
+}
 
 void Scene1::Update(const float deltaTime) {
 	//Timing timing("Scene1::Update");
@@ -1110,7 +1146,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += 1.0f * deltaTime;
+		currentVel.y += 0.0f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	

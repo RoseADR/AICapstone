@@ -8,7 +8,7 @@ void PhysicsSystem::Update(const float deltaTime) {
         if (pc->useGravity == true) {
             Vec3 gravityForce(0.0f, gravity * pc->mass, 0.0f);
             pc->accel += Vec3(0.0f, gravity, 0.0f);
-            pc->ApplyForce(gravityForce);
+           // pc->ApplyForce(gravityForce);
         }
 
       //  pc->accel = pc->force / pc->mass;

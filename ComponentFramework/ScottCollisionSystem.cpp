@@ -201,7 +201,7 @@ void CollisionSystem::Update(const float deltaTime) {
         pc1->vel.y = 0.0f;  // Optional: keep vertical velocity zero
     }
     else {
-        pc1->accel.y = -9.81f;  // Restore gravity when not grounded
+        //pc1->accel.y = -9.81f;  // Restore gravity when not grounded
     }
     isGrounded = false; // Reset for next frame
 
