@@ -435,7 +435,7 @@ auto Tunnels = std::make_shared<Actor>(factory.get());
 		
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion playersQuaternion;
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0, 5.0f, -8.0f),
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-180.0f, 15.0f, -8.0f),
 		playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
