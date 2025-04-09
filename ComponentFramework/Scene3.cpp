@@ -114,7 +114,7 @@ bool Scene3::OnCreate() {
 	Vec3 carPos = Vec3(21.7f, -2.0f, -7.0f);
 	Quaternion carRot = QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0));
 	Vec3 carScale = Vec3(7.0f, 7.0f, 7.0f);
-	Vec3 collisionScale = Vec3(4.0f, 1.0f, 2.0f);
+	Vec3 collisionScale = Vec3(3.0f, 1.0f, 2.0f);
 
 	tc = std::make_shared<TransformComponent>(car.get(), carPos, QMath::angleAxisRotation(180.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(-26.0f, Vec3(0, 0, 1)), carScale);
 	cc = std::make_shared<CollisionComponent>(car.get(), ColliderType::AABB);
@@ -305,7 +305,7 @@ bool Scene3::OnCreate() {
 		character = std::make_shared<Actor>(nullptr);
 		Quaternion playersQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f))
 			* QMath::angleAxisRotation(180.0f, Vec3(-20.0f, 0.0f, 0.0f));
-		pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-30.0f, 0.0f, -7.0f),
+		pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-20.0f, 0.0f, -7.0f),
 			playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 		cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 		character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
@@ -484,10 +484,10 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 				idleTexture = false;
 				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 				if (facingRight = true) {
-					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(0.1f, 0.0f, 0.0f));
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(0.3f, 0.0f, 0.0f));
 				}
 				if (facingLeft = true) {
-					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(-0.1f, 0.5f, 0.0f));
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(-0.3f, 0.5f, 0.0f));
 				}
 			}
 
