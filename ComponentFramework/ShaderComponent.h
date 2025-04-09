@@ -43,7 +43,7 @@ public:
 	bool OnCreate() override;
 	void OnDestroy() override;
 	void Update(const float deltaTime ) override;
-	void Render() const override;
+	void Render() const;
 };
 
 

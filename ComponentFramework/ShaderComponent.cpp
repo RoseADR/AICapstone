@@ -33,9 +33,6 @@ bool ShaderComponent::OnCreate() {
 }
 
 
-
-
-
 bool ShaderComponent::CompileAttach(){
     GLint status;
 

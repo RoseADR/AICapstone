@@ -36,7 +36,7 @@ public:
 	// Update method to update the Actor each frame
 	void Update(const float deltaTime_);
 	// Render method to render the Actor
-	void Render() const;
+	virtual void Render();
 
 	//ADDED FOR DECISION TREE MAY NEED TO PUT SOMEWHERE ELSE
 	int health = 100;

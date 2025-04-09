@@ -1,5 +1,9 @@
 #include "Actor.h"
 #include "Debug.h"
+#include <glew.h>
+#include "ShaderComponent.h"
+#include "MeshComponent.h"
+#include "MaterialComponent.h"
 
 // Constructor for the Actor class, which initializes the parent component
 Actor::Actor(Component* parent_):Component(parent_) {}
@@ -47,7 +51,47 @@ void Actor::Update(const float deltaTime) {
 }
 
 // Render is called to draw the Actor to the screen. 
-void Actor::Render()const {
+void Actor::Render()  {
+	auto mesh = GetComponent<MeshComponent>();
+	auto shader = GetComponent<ShaderComponent>();
+	auto material = GetComponent<MaterialComponent>();
+
+	// Bind shader only if it's valid
+	if (shader) {
+		GLuint programID = shader->GetProgram();
+		if (programID != 0) {
+			glUseProgram(programID);
+
+			// If material exists, bind texture
+			if (material) {
+				GLuint texID = material->getTextureID();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texID);
+
+				GLuint texUniformID = shader->GetUniformID("textureSampler");
+				if (texUniformID != static_cast<GLuint>(-1)) {
+					glUniform1i(texUniformID, 0);
+				}
+			}
+
+			// Apply model matrix if shader accepts it
+			GLuint modelLoc = shader->GetUniformID("modelMatrix");
+			if (modelLoc != static_cast<GLuint>(-1)) {
+				Matrix4 modelMatrix = GetModelMatrix();
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, reinterpret_cast<const float*>(&modelMatrix));
+			}
+		}
+	}
+
+	// Render mesh even without shader (if some legacy fixed-function fallback)
+	if (mesh) {
+		mesh->Render();
+	}
+
+	// Unbind shader program
+	if (shader && shader->GetProgram() != 0) {
+		glUseProgram(0);
+	}
 }
 
 

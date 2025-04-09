@@ -202,6 +202,7 @@
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BillBoardedCameraActor.h" />
     <ClInclude Include="CameraActor.h" />
+    <ClInclude Include="CollisionActor.h" />
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Component.h" />

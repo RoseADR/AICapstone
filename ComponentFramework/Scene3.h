@@ -128,6 +128,7 @@ public:
 	virtual void Render() const;
 	virtual void HandleEvents(const SDL_Event& sdlEvent);
 
+	void AddAABBCollisionBox(Ref<Actor> actor, const Vec3& pos, const Quaternion& rot, const Vec3& scale);
 
 
 	int Pick(int x, int y);

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <Plane.h>
 #include <PMath.h>
+#include "Actor.h"
 
 using namespace MATHEX;
 
@@ -71,13 +72,17 @@ public:
 	float GetRadius() const { return radius; }
 	ColliderType GetColliderType() const { return colliderType; }
 
-	void SetAABB(const Vec3& center, float rx, float ry, float rz) {
-		aabb = { center, rx, ry, rz };
-	}
+	void SetAABB(const Vec3& position, const Quaternion& rotation, float rx_, float ry_, float rz_);
+
 	AABB GetAABB() const { return aabb; }
+
+
+	//AABB AddAABBCollisionBox(const Vec3& pos, const Quaternion& rot, const Vec3& scale);
 
 	void SetRadiusFromScale(const Vec3& scale) {
 		radius = std::max({ scale.x, scale.y, scale.z }) * 0.5f;
 	}
+
+	void DrawAABB() const;
 };
 

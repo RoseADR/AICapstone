@@ -1,12 +1,137 @@
 #include "ScottCollisionSystem.h"
 #include <PMath.h>
 #include <MMath.h>
+#include <unordered_map>
+#include <chrono>
+#include <SDL.h>
 
 
 using namespace MATH;
 using namespace std;
+using namespace chrono;
+
 
 void CollisionSystem::Update(const float deltaTime) {
+//    Ref<PhysicsComponent> pc1 = character->GetComponent<PhysicsComponent>();
+//    Ref<TransformComponent> tc1 = character->GetComponent<TransformComponent>();
+//    Ref<CollisionComponent> cc1 = character->GetComponent<CollisionComponent>();
+//    if (!cc1 || (!pc1 && !tc1)) return;
+//
+//    Sphere s1;
+//    s1.r = cc1->GetRadius();
+//    s1.center = pc1 ? pc1->pos : tc1->GetPosition();
+//
+//    Vec3 obj1Pos = pc1 ? pc1->pos : tc1->GetPosition();
+//
+//    for (size_t i = 0; i < collidingActors.size(); ++i) {
+//
+//        Ref<PhysicsComponent> pc2 = collidingActors[i]->GetComponent<PhysicsComponent>();
+//        Ref<TransformComponent> tc2 = collidingActors[i]->GetComponent<TransformComponent>();
+//        Ref<CollisionComponent> cc2 = collidingActors[i]->GetComponent<CollisionComponent>();
+//        if (!cc2 || (!pc2 && !tc2)) continue;
+//
+//        Vec3 obj2Pos = pc2 ? pc2->pos : tc2->GetPosition();
+//
+//        Actor* a = collidingActors[i].get();
+//        bool triggered = false;
+//
+//        if (cc2->GetColliderType() == ColliderType::Sphere) {
+//            Sphere s2;
+//            s2.r = cc2->radius;
+//            s2.center = pc2 ? pc2->pos : tc2->GetPosition();
+//
+//            if (SphereSphereCollisionDetection(s1, s2)) {
+//                if (!collisionStates[a].isCurrentlyColliding) {
+//                    SphereSphereCollisionResponse(s1, pc1, s2, pc2);
+//                    Actor* parentActor = static_cast<Actor*>(cc2->parent);
+//                    if (parentActor) {
+//                        std::cout << " SPHERE Collision with actor " << i
+//                            << ": " << parentActor->GetName() << std::endl;
+//                    }
+//                    triggered = true;
+//                }
+//            }
+//        }
+//
+//            else if (cc2->GetColliderType() == ColliderType::PLANE) {
+//                Plane p;
+//                p.n = cc2->normal;
+//                p.d = cc2->dist;
+//
+//                if (SpherePlaneCollisionDetection(s1, p)) {
+//                    if (!collisionStates[a].isCurrentlyColliding) {
+//                        SpherePlaneCollisionResponse(s1, pc1, p);
+//                        Actor* parentActor = static_cast<Actor*>(cc2->parent);
+//                        if (parentActor) {
+//                            std::cout << " PLANE Collision with actor " << i
+//                                << ": " << parentActor->GetName() << std::endl;
+//                        }
+//                        /*if (a->GetName() == "DeathFloor") {
+//                            SceneManager::Instance()->LoadScene("DeathScene");
+//                        }*/
+//                        triggered = true;
+//                    }
+//                }
+//            }
+//
+//            else if (cc2->GetColliderType() == ColliderType::AABB) {
+//
+//            AABB worldAABB = cc2->GetAABB();
+//            Vec3 worldPos = tc2->GetPosition();
+//            worldAABB.center += worldPos; // move AABB to world space
+//      /*
+//                AABB bb1 = cc2->GetAABB();
+//                bb1.center = tc2->GetPosition() + bb1.center;
+//                worldAABB.center += worldPos;*/
+//                cc2->DrawAABB();
+//                    //pc2 ? pc2->pos : tc2->GetPosition();
+//
+//                if (SphereAABBCollisionDetection(s1, worldAABB)) {
+//                    if (!collisionStates[a].isCurrentlyColliding) {
+//                        SphereAABBCollisionResponse(s1, pc1, worldAABB);
+//                        Actor* parentActor = static_cast<Actor*>(cc2->parent);
+//                        if (parentActor) {
+//                            std::cout << " AABB Collision with actor " << i
+//                                << ": " << parentActor->GetName() << std::endl;
+//                        }
+//                        triggered = true;
+//                    }
+//                }
+//            }
+//
+//        if (triggered) {
+//            collisionStates[a].isCurrentlyColliding = true; 
+//        }
+//
+//        /*if (triggered) {
+//            collisionStates[a].isCurrentlyColliding = true;
+//            collisionStates[a].isCurrentlyColliding = SDL_GetTicks();
+//        }*/
+//    }
+//
+//    // Only clear collision states AFTER full processing
+//    for (auto& [actor, state] : collisionStates) {
+//        state.isCurrentlyColliding = false;
+//    }
+//
+//    // STABLE GROUND LOGIC: Do NOT zero-out isGrounded until AFTER checking collisions
+//    if (isGrounded) {
+//        pc1->accel.y = 0.0f;
+//        pc1->vel.y = 0.0f;
+//    }
+//    else {
+//        pc1->accel.y = -9.81f;
+//    }
+//
+//    // Delay reset to next frame
+//    // isGrounded should NOT be set to false until start of *next* Update frame
+//    static bool wasGroundedLastFrame = false;
+//    wasGroundedLastFrame = isGrounded;
+//    isGrounded = false;
+//}
+
+
+
 
     Ref<PhysicsComponent> pc1 = character->GetComponent<PhysicsComponent>();
     Ref<TransformComponent> tc1 = character->GetComponent<TransformComponent>();
@@ -37,7 +162,7 @@ void CollisionSystem::Update(const float deltaTime) {
                 SphereSphereCollisionResponse(s1, pc1, s2, pc2);
                 Actor* parentActor = static_cast<Actor*>(cc2->parent);
                 if (parentActor) {
-                    std::cout << "Collision with actor " << i
+                    std::cout << " SPHERE Collision with actor " << i
                         << ": " << parentActor->GetName() << std::endl;
                 }
             }
@@ -51,7 +176,7 @@ void CollisionSystem::Update(const float deltaTime) {
                 SpherePlaneCollisionResponse(s1, pc1, p);
                 Actor* parentActor = static_cast<Actor*>(cc2->parent);
                 if (parentActor) {
-                    std::cout << "Collision with actor " << i
+                    std::cout << " PLANE Collision with actor " << i
                         << ": " << parentActor->GetName() << std::endl;
                 }
             }
@@ -64,7 +189,7 @@ void CollisionSystem::Update(const float deltaTime) {
                 SphereAABBCollisionResponse(s1, pc1, bb1);
                 Actor* parentActor = static_cast<Actor*>(cc2->parent);
                 if (parentActor) {
-                    std::cout << "Collision with actor " << i
+                    std::cout << " AABB Collision with actor " << i
                         << ": " << parentActor->GetName() << std::endl;
                 }
             }
@@ -196,46 +321,42 @@ void CollisionSystem::SphereSphereCollisionResponse(Sphere s1, Ref<PhysicsCompon
 //    }
 //}
 
-void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent> pc, AABB box) 
-{
-    // findclosest point on the AABB to the sphere center
+
+void CollisionSystem::SphereAABBCollisionResponse(Sphere s, Ref<PhysicsComponent> pc, AABB box) {
+    // find closest point on AABB
     Vec3 closestPoint;
     closestPoint.x = std::max(box.center.x - box.rx, std::min(s.center.x, box.center.x + box.rx));
     closestPoint.y = std::max(box.center.y - box.ry, std::min(s.center.y, box.center.y + box.ry));
     closestPoint.z = std::max(box.center.z - box.rz, std::min(s.center.z, box.center.z + box.rz));
 
-    // compute vector from closest point to sphere center
+    // calculate penetration
     Vec3 penetrationVec = s.center - closestPoint;
-
-    float penetrationVecMagSq = penetrationVec.x * penetrationVec.x +
-        penetrationVec.y * penetrationVec.y +
-        penetrationVec.z * penetrationVec.z;
-
-    // Avoid zero-length normals or invalid sqrt
-    if (penetrationVecMagSq < VERY_SMALL) return;
+    float penetrationVecMagSq = VMath::dot(penetrationVec, penetrationVec);
+    if (penetrationVecMagSq < VERY_SMALL) return; // avoid zero-length normal
 
     float penetrationVecMag = sqrt(penetrationVecMagSq);
     float penetrationDepth = s.r - penetrationVecMag;
 
-    if (penetrationDepth <= 0.0f) return;
+    if (penetrationDepth <= VERY_SMALL) return; // small threshold for stability
+
     Vec3 n = penetrationVec / penetrationVecMag;
 
-    // move sphere out of the box (MTV resolution)
+    // MTV resolution - correct actor position
     pc->pos += n * penetrationDepth;
 
-    // remove velocity along the collision normal
+    // Zero out the velocity along the collision normal completely
     float velocityIntoBox = VMath::dot(pc->vel, n);
     if (velocityIntoBox < 0.0f) {
         pc->vel -= n * velocityIntoBox;
     }
 
-    // treat vertical collisions as grounding
+    // Grounding logic
     if (fabs(n.y) > 0.5f) {
         pc->vel.y = 0.0f;
         isGrounded = true;
     }
 
-    std::cout << "SphereAABB Collision resolved: MTV = " << (n * penetrationDepth) << ", NewPos = " << pc->pos << std::endl;
+    std::cout << "Collision resolved: MTV = " << (n * penetrationDepth) << ", New Pos = " << pc->pos << "\n";
 }
 
 
@@ -268,4 +389,5 @@ void CollisionSystem::SpherePlaneCollisionResponse(Sphere s1, Ref<PhysicsCompone
     }
         //  Set grounded flag if needed
         isGrounded = true;
+     
 }

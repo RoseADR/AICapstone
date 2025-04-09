@@ -5,17 +5,29 @@
 #include "Actor.h"
 #include "Debug.h"
 #include <Sphere.h>
+#include <unordered_map>
+#include <chrono>
+
+
 
 using namespace MATH;
 
+struct CollisionState {
+	bool isCurrentlyColliding = false;
+	bool wasUpdatedThisFrame = false;
+};
+
 class CollisionSystem {
 private:
+
+	std::unordered_map<Actor*, CollisionState> collisionStates;
 
 	std::vector<Ref<Actor>> collidingActors;
 	Ref<Actor> factory;
 	Ref<Actor> bridge;
 	Ref<Actor> character;
 	bool isGrounded = false;
+
 
 public:
 	/// This function will check the the actor being added is new and has the all proper components 
@@ -50,4 +62,8 @@ public:
 
 	void Update(const float deltaTime);
 
+
+	
+	
+	
 };

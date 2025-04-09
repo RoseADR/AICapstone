@@ -289,6 +289,9 @@
     <ClInclude Include="AnimationSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionActor.h">
+      <Filter>Header Files\Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">

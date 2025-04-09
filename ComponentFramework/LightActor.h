@@ -51,7 +51,7 @@ public:
 	// Called when the actor is destroyed, used for cleaning up light-related resources
 	void OnDestroy() override;
 	// Function to render the light (though usually, lights themselves are not rendered)
-	void Render() const override;
+	void Render() const;
 	// Getter function to return the light's UBO ID
 	GLuint GetLightID() { return uboLightDataID; }
 

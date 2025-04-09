@@ -148,6 +148,9 @@ public:
 	float frameSpeed = 0.01f;
 
 	uint64_t frameCount = 0;
+
+	void AddAABBCollisionBox(Ref<Actor> actor, const Vec3& pos, const Quaternion& rot, const Vec3& scale);
+
 };
 
 
