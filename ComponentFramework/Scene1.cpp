@@ -83,17 +83,44 @@ bool Scene1::OnCreate() {
 	transformSystem.AddActor(deathFloor);
 
 	factory = std::make_shared<Actor>(nullptr);
-	factory->AddComponent<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+
+	Vec3 boxPosMF = Vec3(-40.0f, -20.0f, -10.0f);
+	Vec3 boxScaleMF = Vec3(30.0f, 10.0f, 10.0f);
+	Quaternion boxRotMF = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
+
+	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
+	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::AABB);
+	cc->SetAABB(boxPosMF, boxRotMF, boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
+	cc->DrawAABB();
+	factory->AddComponent(tc);
+	factory->AddComponent(cc);
+	
+
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("MainFactory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	//factory->AddComponent(tc);
+
 	factory->SetName("Factory");
 	factory->OnCreate();
 	AddActor(factory);
 
+	collisionSystem.AddActor(factory);
+	transformSystem.AddActor(factory);
+
 	stairs = std::make_shared<Actor>(nullptr);
-	stairs->AddComponent<TransformComponent>(stairs.get(), Vec3(30.0f, 0.0f, -22.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+
+	Vec3 boxPosS = Vec3(35.0f, -5.0f, -22.5f);
+	Vec3 boxScaleS = Vec3(15.0f, 1.0f, 10.0f);
+	Quaternion boxRotS = QMath::angleAxisRotation(45.0f, Vec3(0.0f, 1.0f, 0.0f) );
+
+	tc = std::make_shared<TransformComponent>(stairs.get(), Vec3(30.0f, 0.0f, -22.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
+	cc = std::make_shared<CollisionComponent>(stairs.get(), ColliderType::AABB);
+	cc->SetAABB(boxPosS, boxRotS, boxScaleS.x / 2, boxScaleS.y / 2, boxScaleS.z / 2);
+	cc->DrawAABB();
+	stairs->AddComponent(tc);
+	stairs->AddComponent(cc);
+
+
 	stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
 	stairs->AddComponent<ShaderComponent>(shader);
 	stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -102,8 +129,12 @@ bool Scene1::OnCreate() {
 	stairs->OnCreate();
 	AddActor(stairs);
 
+	collisionSystem.AddActor(stairs);
+	transformSystem.AddActor(stairs);
+
+
 	topFloor = std::make_shared<Actor>(nullptr);
-	topFloor->AddComponent<TransformComponent>(topFloor.get(), Vec3(30.0f, 0.0f, -30.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05, 0.05, 0.05));
+	topFloor->AddComponent<TransformComponent>(topFloor.get(), Vec3(30.0f, 0.0f, -30.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
 	topFloor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("TopFloor"));
 	topFloor->AddComponent<ShaderComponent>(shader);
 	topFloor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -305,49 +336,48 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(Blocker1);
 	transformSystem.AddActor(Blocker1);
 
+auto Tunnels = std::make_shared<Actor>(factory.get());
 
-	//auto Tunnels = std::make_shared<Actor>(factory.get());
+	Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-310.0f, 1170.0f, -540.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f))* QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
+	Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	Tunnels->AddComponent<ShaderComponent>(shader);
+	//Tunnels->AddComponent(cc);
+	Tunnels->OnCreate();
+	AddActor(Tunnels);
 
-	//Tunnels->AddComponent<TransformComponent>(nullptr, Vec3(-310.0f, 1170.0f, -540.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f))* QMath::angleAxisRotation(-60.0f, Vec3(1.0f, 0.0f, 0.0f)), Vec3(4.0, 4.0, 4.0));
-	//Tunnels->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-	//Tunnels->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	//Tunnels->AddComponent<ShaderComponent>(shader);
-	////Tunnels->AddComponent(cc);
-	//Tunnels->OnCreate();
-	//AddActor(Tunnels);
+	Ref <Actor> UTunnels[3];
+		
+	UTunnels[0] = std::make_shared<Actor>(factory.get());
+	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-860.0f, 90.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[0]->AddComponent<ShaderComponent>(shader);
+	//UTunnels[0]->AddComponent(cc);
+	
+	UTunnels[0]->OnCreate();
+	AddActor(UTunnels[0]);
 
-//	Ref <Actor> UTunnels[3];
-//		
-//	UTunnels[0] = std::make_shared<Actor>(nullptr);
-//	UTunnels[0]->AddComponent<TransformComponent>(nullptr, Vec3(-129.0, 5.66f, -8.5f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
-//	UTunnels[0]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-//	UTunnels[0]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-//	UTunnels[0]->AddComponent<ShaderComponent>(shader);
-//	//UTunnels[0]->AddComponent(cc);
-//	
-//	UTunnels[0]->OnCreate();
-//	AddActor(UTunnels[0]);
-//
-//	UTunnels[1] = std::make_shared<Actor>(factory.get());
-//	UTunnels[1]->AddComponent<TransformComponent>(nullptr, Vec3(-80.0f, 12.0f, -8.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
-//	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-//	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-//	UTunnels[1]->AddComponent<ShaderComponent>(shader);
-////	UTunnels[1]->AddComponent(cc);
-//
-//	UTunnels[1]->OnCreate();
-//	AddActor(UTunnels[1]);
-//
-//
-//	UTunnels[2] = std::make_shared<Actor>(nullptr);
-//	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-90.0f, 12.0f, -8.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
-//	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
-//	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-//	UTunnels[2]->AddComponent<ShaderComponent>(shader);
-//	//UTunnels[2]->AddComponent(cc);
-//
-//	UTunnels[2]->OnCreate();
-//	AddActor(UTunnels[2]);
+	UTunnels[1] = std::make_shared<Actor>(factory.get());
+	UTunnels[1]->AddComponent<TransformComponent>(nullptr, Vec3(-1060.0f, 140.0f, -170.0f), QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[1]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[1]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[1]->AddComponent<ShaderComponent>(shader);
+//	UTunnels[1]->AddComponent(cc);
+
+	UTunnels[1]->OnCreate();
+	AddActor(UTunnels[1]);
+
+
+	UTunnels[2] = std::make_shared<Actor>(factory.get());
+	UTunnels[2]->AddComponent<TransformComponent>(nullptr, Vec3(-3320.0f, 260.0f, -170.0f), QMath::angleAxisRotation(270.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)), Vec3(2.0, 2.0, 2.0));
+	UTunnels[2]->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("UTunnel"));
+	UTunnels[2]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	UTunnels[2]->AddComponent<ShaderComponent>(shader);
+	//UTunnels[2]->AddComponent(cc);
+
+	UTunnels[2]->OnCreate();
+	AddActor(UTunnels[2]);
 
 	/*for (int i = 0; i < 8; i++) {
 		float x = -70.0f - (i * 17.0f);
@@ -405,7 +435,7 @@ bool Scene1::OnCreate() {
 		
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion playersQuaternion;
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0, 0.0f, -8.0f),
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0, 5.0f, -8.0f),
 		playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
@@ -1123,13 +1153,6 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
-
-
-	character->Update(deltaTime);
-	//collisionSystem.Update(deltaTime);
-//	physicsSystem.Update(deltaTime);
-	transformSystem.Update(deltaTime);
-
 	// animation movement
 	if (frameCount % 2 == 0) {
 		if (idleTexture) {
@@ -1178,6 +1201,8 @@ void Scene1::Update(const float deltaTime) {
 //	gameboard->GetComponent<TransformComponent>()->Update(deltaTime);
 
 	// Run all collisions
+	character->Update(deltaTime);
+	transformSystem.Update(deltaTime);
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
 }

@@ -89,8 +89,8 @@ bool Scene3::OnCreate() {
 	Ref<Actor> bus = std::make_shared<Actor>(nullptr);
 
 	Vec3 busPos = Vec3(40.0f, 2.4f, -7.0f);
-	Quaternion busRot = QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f));
-	Vec3 busScale = Vec3(4.0f, 3.0f, 4.0f); 
+	Quaternion busRot = QMath::angleAxisRotation(0.0f, Vec3(1.0f, 0.0f, 0.0f) * QMath::angleAxisRotation(45.0f, Vec3(0, 0, 1)));
+	Vec3 busScale = Vec3(7.0f, 7.0f, 4.0f); 
 
 	tc = std::make_shared<TransformComponent>(bus.get(), Vec3(40.0f, 2.4f, -7.0f), QMath::angleAxisRotation(0.0f, Vec3(1, 0, 0)) * QMath::angleAxisRotation(45.0f, Vec3(0, 0, 1)), Vec3(0.2f, 0.2f, 0.2f));
 	cc = std::make_shared<CollisionComponent>(bus.get(), ColliderType::AABB);
@@ -300,9 +300,10 @@ bool Scene3::OnCreate() {
 			AddActor(road);
 		}
 
+
 		character = std::make_shared<Actor>(nullptr);
 		Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f))
-			* QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
+			* QMath::angleAxisRotation(180.0f, Vec3(-20.0f, 0.0f, 0.0f));
 		pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -7.0f),
 			mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 		cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
@@ -319,12 +320,12 @@ bool Scene3::OnCreate() {
 		physicsSystem.AddActor(character);
 		collisionSystem.AddActor(character);
 
+
+		
 		SpawnAmmoAt(Vec3(15.0f, -3.1f, -8.0f));
 		SpawnAmmoAt(Vec3(10.0f, -3.1f, -8.0f));
 		//SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
-	
 
-		
 		engine = createIrrKlangDevice();
 		//engine->play2D("./Audio/SciFiBG.mp3");
 		engine->setSoundVolume(0.1);
@@ -341,17 +342,6 @@ Scene3::~Scene3() {
 
 void Scene3::OnDestroy() {
 	Debug::Info("Deleting assets Scene1: ", __FILE__, __LINE__);
-
-	//FOR PATHFINDING
-	// Delete each tile and its associated node in the 2D tiles vector
-	//for (auto& row : tiles) {
-	//	for (Tile* tile : row) {
-	//		delete tile->getNode();  // Delete the node associated with each tile
-	//		delete tile;              // Delete the tile itself
-	//	}
-	//}
-	//Delete the graph
-
 
 	//engine->drop(); // delete engine
 	return;
@@ -439,69 +429,76 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 		characterTC = character->GetComponent<TransformComponent>();
 		characterPC = character->GetComponent<PhysicsComponent>();
 
+		int newX = hackingPlayerPos.x;
+		int newY = hackingPlayerPos.y;
+
 		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_W:
-	
-				movingDown = true;
-				idleTexture = false;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
-			
-			break;
 
 		case SDL_SCANCODE_S:
-			
+			if (!hackingMode) {
+
 				movingDown = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, -0.5f, 0.0f));
-		
+			}
+			if (hackingMode && hackingPlayerPos.y > 0) newY--;
+
 
 			break;
 
 		case SDL_SCANCODE_A:
 
-		
+			if (!hackingMode) {
+
 				facing = false;
 				facingLeft = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(-0.25f, 0.0f, 0.0f));
-		
+			}
+			if (hackingMode && hackingPlayerPos.x > 0) newX--;
+
 			break;
 
 		case SDL_SCANCODE_D:
 
-			
+			if (!hackingMode) {
+
 				facing = true;
 				facingRight = true;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
-		
+			}
+			if (hackingMode && hackingPlayerPos.x < hackingTiles[0].size() - 1) newX++;
+
 
 			break;
 
 		case SDL_SCANCODE_SPACE:
 			std::cout << "SPACEBAR PRESSED!\n";
-		
-				std::cout << "JUMP TRIGGERED!\n";
+
+			if (!hackingMode) {
 
 				// Set vertical velocity
-				Vec3 vel = characterPC->getVel();
-				vel.y = jumpVelocity; // Apply upward velocity
-				characterPC->SetVelocity(vel);
-
-				// Optional horizontal nudge
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
-
-				// Set jump state
-				isJumping = true;
-				isGrounded = false;
-
-				std::cout << "Jump initiated! Velocity: " << vel << std::endl;
-
+				movingDown = true;
+				idleTexture = false;
+				//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				if (facingRight = true) {
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(0.1f, 0.0f, 0.0f));
+				}
+				if (facingLeft = true) {
+					characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f) + Vec3(-0.1f, 0.5f, 0.0f));
+				}
+			}
 
 			break;
 		}
 
-		
+		if (hackingMode && (newX != hackingPlayerPos.x || newY != hackingPlayerPos.y)) {
+			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(false);
+			hackingPlayerPos = Vec2(newX, newY);
+			hackingTiles[hackingPlayerPos.y][hackingPlayerPos.x]->setPathTile(true);
+		}
+
 
 		break;
 	}
@@ -560,78 +557,34 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 
 
 
-	case SDL_KEYDOWN:
-		cameraTC = camera->GetComponent<TransformComponent>();
-		characterTC = character->GetComponent<PhysicsComponent>();
-		//gameBoardTC = gameboard->GetComponent<TransformComponent>();
-
-
-		switch (sdlEvent.key.keysym.scancode) {
-		case SDL_SCANCODE_LEFT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(-0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case  SDL_SCANCODE_RIGHT:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.1f, 0.0f, 0.0f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_UP:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, 0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		case SDL_SCANCODE_DOWN:
-			cameraTC->SetTransform(cameraTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f), cameraTC->GetQuaternion());
-			camera->UpdateViewMatrix();
-			break;
-
-		}
-
-
-
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_E:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(-2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+			
 			break;
 
 		case SDL_SCANCODE_Q:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(2.0f, Vec3(0.0f, 1.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+			
 			break;
 
 		case SDL_SCANCODE_Z:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
+		
 			break;
 
 		case SDL_SCANCODE_X:
 			cameraTC->SetTransform(cameraTC->GetPosition(), cameraTC->GetQuaternion() *
 				QMath::angleAxisRotation(-2.0f, Vec3(1.0f, 0.0f, 0.0f)));
-			//camera->UpdateViewMatrix();
-			break;
-
-
-		case SDL_SCANCODE_B: {
-			showTiles = !showTiles; // Toggle the visibility flag
-		}
-						   break;
-
 		
-
+			break;
 
 
 		case SDL_SCANCODE_R:
 
-			//characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.0f, -0.1f));
-			//orientationR = QMath::angleAxisRotation(-90.0f, Vec3(0.0f, 1.0f, 0.0f)) *  // Turn right
-			//	QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));    // Stay upright
-			//characterTC->SetTransform(characterTC->GetPosition(), characterTC->GetQuaternion());
 			Reload();
 
 			break;
@@ -645,19 +598,6 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 
 			break;
 
-
-		case SDL_SCANCODE_N:
-			if (drawNormals == false) drawNormals = true;
-			else drawNormals = false;
-			break;
-
-		case SDL_SCANCODE_O:
-			if (drawOverlay == false) drawOverlay = true;
-			else drawOverlay = false;
-			break;
-
-		default:
-			break;
 		}
 		break;
 
@@ -675,7 +615,7 @@ void Scene3::Update(const float deltaTime) {
 		footstepTimer -= deltaTime;
 	}
 
-	
+
 
 
 	auto playerPhysics = character->GetComponent<PhysicsComponent>();
@@ -715,12 +655,50 @@ void Scene3::Update(const float deltaTime) {
 		projPhysics->SetVelocity(newVel);
 		projTransform->SetPosition(projTransform->GetPosition() + newVel * deltaTime);
 
+		// Check for collision with enemies
+		bool hitEnemy = false;
+		for (auto& pair : enemyHealth) {
+			Actor* enemy = pair.first;
+			auto enemyTransform = enemy->GetComponent<TransformComponent>();
+			auto enemyCollision = enemy->GetComponent<CollisionComponent>();
+			if (!enemyTransform || !enemyCollision) continue;
+
+			Sphere s1{ projTransform->GetPosition(), projCollision->GetRadius() };
+			Sphere s2{ enemyTransform->GetPosition(), enemyCollision->GetRadius() };
+
+			if (collisionSystem.SphereSphereCollisionDetection(s1, s2)) {
+				enemyHealth[enemy] -= 50.0f; // Damage
+				std::cout << "Enemy hit! Remaining health: " << enemyHealth[enemy] << std::endl;
+				engine->play2D("./Audio/boom.wav");
+				if (enemyHealth[enemy] <= 0.0f) {
+					std::cout << "Enemy destroyed!" << std::endl;
+					enemy->OnDestroy();
+					enemyHealth.erase(enemy);
+					actors.erase(std::remove_if(actors.begin(), actors.end(),
+						[enemy](const Ref<Actor>& a) { return a.get() == enemy; }),
+						actors.end());
+
+				}
+				projectile->OnDestroy();
+				actors.erase(std::remove_if(actors.begin(), actors.end(),
+					[&](const Ref<Actor>& a) { return a == projectile; }),
+					actors.end());
+				projectiles.erase(projectiles.begin() + i);
+				hitEnemy = true;
+				break;
+			}
+		}
+
+		if (!hitEnemy && projTransform->GetPosition().y > -50.0f) {
+			++i;
+		}
+		else if (!hitEnemy) {
+			projectiles.erase(projectiles.begin() + i);
+		}
 	}
-		
 
 
 	Vec3 playerPos = playerPhysics->GetPosition();
-
 
 
 	for (size_t i = 0; i < ammoPickups.size();) {
@@ -848,8 +826,8 @@ void Scene3::Update(const float deltaTime) {
 		}
 	}
 	
-	
-	// Normalize movement direction and scale by speed and deltaTime
+
+// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
 		horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
 	}
@@ -865,8 +843,46 @@ void Scene3::Update(const float deltaTime) {
 	Ref<PhysicsComponent>characterTC = character->GetComponent<PhysicsComponent>();
 	Ref<PhysicsComponent> enemyTC;
 
-	character->Update(deltaTime);
-	transformSystem.Update(deltaTime);
+
+	// Get Mario's position (character's position)
+	Vec3 mariosPos = character->GetComponent<PhysicsComponent>()->GetPosition();
+	locationManager.mariosPos = mariosPos;
+
+	// Enemy 1 (actors[2]) Decision Tree Logic 
+	auto& enemy = actors[2];
+
+	// Update Enemy 1's state
+	enemy->Update(deltaTime); // THIS DOES NOTHING 
+
+	// Evaluate the decision tree
+	for (auto& pair : enemyDecisionTrees) {
+		Actor* enemy = pair.first;
+
+		// Skip dead enemies
+		if (enemyHealth.find(enemy) == enemyHealth.end() || enemyHealth[enemy] <= 0.0f) continue;
+
+		DecisionTreeNode* tree = pair.second;
+		enemy->Update(deltaTime);
+
+		if (tree) {
+			DecisionTreeNode* result = tree->makeDecision(deltaTime);
+			if (auto* action = dynamic_cast<Action*>(result)) {
+				action->makeDecision(deltaTime);
+
+				if (action->GetActionName() == "Attack Player") {
+					sceneManager->playerHealth -= 0.2f;
+					engine->play2D("./Audio/enemyAttack.wav");
+					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
+				}
+			}
+		}
+	}
+
+	if (sceneManager->playerHealth <= 0) {
+		sceneManager->dead = true;
+	}
+
+	
 
 	// animation movement
 	if (frameCount % 2 == 0) {
@@ -909,6 +925,8 @@ void Scene3::Update(const float deltaTime) {
 	}
 
 	// Run all collisions
+	character->Update(deltaTime);
+	transformSystem.Update(deltaTime);
 	collisionSystem.Update(deltaTime);
 	physicsSystem.Update(deltaTime);
 }
@@ -935,7 +953,6 @@ void Scene3::Render() const {
 		glUniform2f(actor->GetComponent<ShaderComponent>()->GetUniformID("index"), index.x, index.y);
 
 
-
 		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	}
@@ -951,7 +968,7 @@ void Scene3::Render() const {
 		ImVec2 windowPos = ImVec2(displaySize.x * 0.5f, displaySize.y - 20.0f);
 
 		ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, ImVec2(0.5f, 1.0f));
-	
+
 
 		ImGui::Begin("##TutorialTextOnly", nullptr,
 			ImGuiWindowFlags_NoTitleBar |
@@ -963,7 +980,7 @@ void Scene3::Render() const {
 			ImGuiWindowFlags_NoNav |
 			ImGuiWindowFlags_NoDecoration);
 
-	
+
 		ImGui::SetWindowFontScale(2.5f);
 
 		ImGui::Text("Welcome to the tutorial!");
@@ -978,35 +995,12 @@ void Scene3::Render() const {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-
-
-	// ** Render Collision Boxes (Wireframe Mode) **
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glColor3f(1.0f, 0.0f, 0.0f);
-
-	for (auto actor : actors) {
-		auto collider = actor->GetComponent<CollisionComponent>();
-		if (collider && collider->GetColliderType() == ColliderType::AABB) {
-			collider->DrawAABB(); 
-		}
-	}
-
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Reset polygon mode
 
 
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);  // Ensure fixed-function pipeline for tiles
 
-
-
-	// ** Render Overlays **
-	if (drawOverlay) {
-		DrawMeshOverlay(Vec4(1.0f, 1.0f, 1.0f, 0.5f));
-	}
-
-	if (drawNormals) {
-		DrawNormals(Vec4(1.0f, 1.0f, 0.0f, 0.01f));
-	}
 
 	// ** Render Projectiles **
 	for (const auto& projectile : projectiles) {
@@ -1040,37 +1034,6 @@ void Scene3::SpawnLoadingScreen() {
 }
 
 
-
-
-void Scene3::DrawMeshOverlay(const Vec4 color) const {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glBindBuffer(GL_UNIFORM_BUFFER, camera->GetMatriciesID());
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("DefaultShader");
-	glUseProgram(shader->GetProgram());
-	glUniform4fv(shader->GetUniformID("color"), 1, color);
-	for (auto actor : actors) {
-		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
-		actor->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-	}
-	glUseProgram(0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-
-void Scene3::DrawNormals(const Vec4 color) const {
-	glBindBuffer(GL_UNIFORM_BUFFER, camera->GetMatriciesID());
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("DrawNormalsShader");
-	glUseProgram(shader->GetProgram());
-	glUniform4fv(shader->GetUniformID("color"), 1, color);
-	for (auto actor : actors) {
-		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, actor->GetModelMatrix());
-		actor->GetComponent<MeshComponent>()->Render();
-	}
-	glUseProgram(0);
-}
-
 void Scene3::SpawnAmmoAt(const Vec3& position) {
 	auto ammo = std::make_shared<Actor>(nullptr);
 
@@ -1093,8 +1056,6 @@ void Scene3::SpawnAmmoAt(const Vec3& position) {
 }
 
 
-
-
 int Scene3::Pick(int x, int y) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1114,5 +1075,3 @@ int Scene3::Pick(int x, int y) {
 	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
 	else return colorIndex;
 }
-
-
