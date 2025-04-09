@@ -520,12 +520,12 @@ bool Scene1::OnCreate() {
 		}
 	}*/
 	
-	/*char c;
+	char c;
 	engine = createIrrKlangDevice();
 	engine->play2D("./Audio/BackgroundSound.wav");
 	engine->setSoundVolume(0.1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::cout << "hi" << std::endl;*/
+	std::cout << "hi" << std::endl;
 
 
 	return true;
@@ -550,7 +550,7 @@ void Scene1::OnDestroy() {
 	//Delete the graph
 	
 
-	//engine->drop(); // delete engine
+	engine->drop(); // delete engine
 	return;
 }
 
@@ -645,7 +645,8 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 			}
-			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++; 
+			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
+			engine->play2D("./Audio/JumpSound2.mp3");
 			break;
 
 		case SDL_SCANCODE_S:

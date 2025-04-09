@@ -92,7 +92,9 @@ private:
 	bool isJumping = false;
 	float jumpVelocity = 7.5f;
 
+	//Audio
 	ISoundEngine* engine;
+	//
 
 	float xAxis;
 	float yAxis;
