@@ -8,8 +8,11 @@
 #include <chrono>
 #include <thread>
 
+#include "irrKlang.h"
+
 
 using namespace MATH;
+using namespace irrklang;
 
 
 /// Forward declarations 
@@ -28,6 +31,8 @@ private:
 	bool drawOverlay;
 	bool isRunning;
 	
+
+	ISoundEngine* engine;
 
 public:
 	explicit Scene0();

@@ -522,7 +522,7 @@ bool Scene1::OnCreate() {
 	
 	char c;
 	engine = createIrrKlangDevice();
-	engine->play2D("./Audio/BackgroundSound.wav");
+	engine->play2D("./Audio/SciFiBG.mp3");
 	engine->setSoundVolume(0.1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	std::cout << "hi" << std::endl;
@@ -1167,7 +1167,7 @@ void Scene1::Update(const float deltaTime) {
 				action->makeDecision(deltaTime);
 
 				if (action->GetActionName() == "Attack Player") {
-					sceneManager->playerHealth -= 2.2f;
+					sceneManager->playerHealth -= 0.1f;
 					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 				}
 			}

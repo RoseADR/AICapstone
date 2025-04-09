@@ -54,6 +54,15 @@ bool Scene0::OnCreate() {
 	backGround->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboMainMenu"));
 	AddActor(backGround);
 
+
+	//AudioSystem
+	char c;
+	engine = createIrrKlangDevice();
+	engine->play2D("./Audio/BackgroundSound.wav");
+	engine->setSoundVolume(0.1);
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::cout << "hi" << std::endl;
+
 	return true;
 }
 
