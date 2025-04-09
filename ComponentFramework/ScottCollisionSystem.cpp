@@ -11,6 +11,8 @@ using namespace std;
 
 void CollisionSystem::Update(const float deltaTime) {
 
+    std::unordered_set<std::string> updatedCollisions;
+
     Ref<PhysicsComponent> pc1 = character->GetComponent<PhysicsComponent>();
     Ref<TransformComponent> tc1 = character->GetComponent<TransformComponent>();
     Ref<CollisionComponent> cc1 = character->GetComponent<CollisionComponent>();
@@ -39,12 +41,16 @@ void CollisionSystem::Update(const float deltaTime) {
             s2.center = pc2 ? pc2->pos : tc2->GetPosition();
 
             if (SphereSphereCollisionDetection(s1, s2)) {
-                if (parentActor) {
-                    std::cout << " SPHERE Collision with actor " << i
-                        << ": " << parentActor->GetName() << std::endl;
-                }
+             
                 SphereSphereCollisionResponse(s1, pc1, s2, pc2);
-              
+                if (parentActor) {
+                    std::string collisionKey = character->GetName() + "-" + parentActor->GetName();
+                    if (currentCollisions.find(collisionKey) == currentCollisions.end()) {
+                        std::cout << " SPHERE Collision with actor " << i
+                            << ": " << parentActor->GetName() << std::endl;
+                    }
+                    updatedCollisions.insert(collisionKey); // Always add it so we know it's still active
+                }
             }
         }
         else if (cc2->GetColliderType() == ColliderType::PLANE) {
@@ -53,28 +59,45 @@ void CollisionSystem::Update(const float deltaTime) {
             p.d = cc2->dist; 
         
             if (SpherePlaneCollisionDetection(s1, p)) {
-                if (parentActor) {
-                    std::cout << " PLANE Collision with actor " << i
-                        << ": " << parentActor->GetName() << std::endl;
-                }
+               
                 SpherePlaneCollisionResponse(s1, pc1, p);
-             
+                if (parentActor) {
+                    std::string collisionKey = character->GetName() + "-" + parentActor->GetName();
+                    if (currentCollisions.find(collisionKey) == currentCollisions.end()) {
+                        std::cout << " PLANE Collision with actor " << i
+                            << ": " << parentActor->GetName() << std::endl;
+                    }
+                    updatedCollisions.insert(collisionKey); // Always add it so we know it's still active
+                }
             }
         }
         else if (cc2->GetColliderType() == ColliderType::AABB) {
+
             AABB bb1 = cc2->GetAABB();
-            bb1.center = pc2 ? pc2->pos : tc2->GetPosition();
-           
+            bb1.center = tc2->GetPosition();
+           // worldAABB.center += worldPos; // move AABB to world space
+          
+           /* AABB bb1 = cc2->GetAABB();
+            bb1.center = tc2->GetPosition() + bb1.center;
+            worldAABB.center += worldPos;*/
+                           
+            
             if (SphereAABBCollisionDetection(s1, bb1)) {
-                if (parentActor) {
-                    std::cout << " AABB Collision with actor " << i
-                        << ": " << parentActor->GetName() << std::endl;
-                }
                 SphereAABBCollisionResponse(s1, pc1, bb1);
+                if (parentActor) {
+                    std::string collisionKey = character->GetName() + "-" + parentActor->GetName();
+                    if (currentCollisions.find(collisionKey) == currentCollisions.end()) {
+                        std::cout << " SPHERE Collision with actor " << i
+                            << ": " << parentActor->GetName() << std::endl;
+                    }
+                    updatedCollisions.insert(collisionKey); // Always add it so we know it's still active
+                }
                
             }
         }
     }
+
+    currentCollisions = std::move(updatedCollisions);
   
     if (isGrounded) {
         pc1->accel.y = 0.0f;  // No gravity when grounded

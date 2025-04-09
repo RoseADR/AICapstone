@@ -84,18 +84,16 @@ bool Scene1::OnCreate() {
 
 	factory = std::make_shared<Actor>(nullptr);
 
-	Vec3 boxPosMF = Vec3(-70.0f, -20.0f, -25.0f);
+	Vec3 boxPosMF = Vec3(0.0f, 0.0f, -8.0f);
 	Vec3 boxScaleMF = Vec3(30.0f, 5.0f, 5.0f);
 	Quaternion boxRotMF = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
 	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::AABB);
 	cc->SetAABB(/*tc->GetPosition(), tc->GetQuaternion(),*/ boxPosMF, boxRotMF, boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
-	cc->DrawAABB();
+	//cc->DrawAABB();
 	factory->AddComponent(tc);
 	factory->AddComponent(cc);
-	
-
 	factory->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("MainFactory"));
 	factory->AddComponent<ShaderComponent>(shader);
 	factory->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
@@ -107,9 +105,11 @@ bool Scene1::OnCreate() {
 	collisionSystem.AddActor(factory);
 	transformSystem.AddActor(factory);
 
-	stairs = std::make_shared<Actor>(nullptr);
 
-	Vec3 boxPosS = Vec3(0.0f, -20.0f, -20.5f);
+
+	/*stairs = std::make_shared<Actor>(nullptr);
+
+	Vec3 boxPosS = Vec3(0.0f, 0.0f, -8.5f);
 	Vec3 boxScaleS = Vec3(5.0f, 5.0f, 5.0f);
 	Quaternion boxRotS = QMath::angleAxisRotation(45.0f, Vec3(0.0f, 1.0f, 0.0f) );
 
@@ -118,19 +118,19 @@ bool Scene1::OnCreate() {
 	cc->SetAABB(boxPosS, boxRotS, boxScaleS.x / 2, boxScaleS.y / 2, boxScaleS.z / 2);
 	cc->DrawAABB();
 	stairs->AddComponent(tc);
-	stairs->AddComponent(cc);
+	stairs->AddComponent(cc);*/
 
 
-	stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
-	stairs->AddComponent<ShaderComponent>(shader);
-	stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	//factory->AddComponent(tc);
-	stairs->SetName("Stairs");
-	stairs->OnCreate();
-	AddActor(stairs);
+	//stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
+	//stairs->AddComponent<ShaderComponent>(shader);
+	//stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	////factory->AddComponent(tc);
+	//stairs->SetName("Stairs");
+	//stairs->OnCreate();
+	//AddActor(stairs);
 
-	collisionSystem.AddActor(stairs);
-	transformSystem.AddActor(stairs);
+	//collisionSystem.AddActor(stairs);
+	//transformSystem.AddActor(stairs);
 
 
 	topFloor = std::make_shared<Actor>(nullptr);

@@ -5,22 +5,23 @@
 #include "Actor.h"
 #include "Debug.h"
 #include <Sphere.h>
-#include <unordered_map>
+#include <unordered_set>
 #include <chrono>
-
-
 
 using namespace MATH;
 
 struct CollisionState {
 	bool isCurrentlyColliding = false;
 	bool wasUpdatedThisFrame = false;
+	
 };
 
 class CollisionSystem {
 private:
 
-	std::unordered_map<Actor*, CollisionState> collisionStates;
+//	std::unordered_map<Actor*, CollisionState> collisionStates;
+	std::unordered_set<std::string> currentCollisions;
+
 
 	std::vector<Ref<Actor>> collidingActors;
 	Ref<Actor> factory;
