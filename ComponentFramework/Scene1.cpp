@@ -422,10 +422,9 @@ bool Scene1::OnCreate() {
 		
 		
 	character = std::make_shared<Actor>(nullptr);
-	Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) 
-		* QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f));
+	Quaternion playersQuaternion;
 	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -8.0f),
-		mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
+		playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 	character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
@@ -646,7 +645,6 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 			}
 			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
-			engine->play2D("./Audio/JumpSound2.mp3");
 			break;
 
 		case SDL_SCANCODE_S:
@@ -675,6 +673,7 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			if (!hackingMode) {
 				facing = true;
 				facingRight = true;
+				facingLeft = false;
 				idleTexture = false;
 				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
 			}

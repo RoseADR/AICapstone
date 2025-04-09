@@ -47,7 +47,6 @@ void main() {
     texCoord.x = texCoord.x * 0.125 + (index.x * 0.125);
     texCoord.y = texCoord.y * 0.5 + (index.y * 0.5);
 
-    
 
     // Create a normal matrix by transforming the normal vectors using the model and view matrix (correcting for non-uniform scaling)
     mat3 normalMatrix = mat3(transpose(inverse(view * modelMatrix)));
