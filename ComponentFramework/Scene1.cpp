@@ -90,7 +90,7 @@ bool Scene1::OnCreate() {
 
 	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
 	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::AABB);
-	cc->SetAABB(boxPosMF, boxRotMF, boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
+	cc->SetAABB(tc->GetPosition(), tc->GetQuaternion(), /*boxPosMF, boxRotMF,*/ boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
 	cc->DrawAABB();
 	factory->AddComponent(tc);
 	factory->AddComponent(cc);
