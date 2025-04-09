@@ -46,6 +46,7 @@ private:
 	Ref<Actor> hack;
 	Ref<Actor> bill;
 	Ref<Actor> character;
+	Ref<Actor> enemy;
 	Ref<Actor> TestCube;
 	Ref<Actor> TestCube1;
 	Ref<Actor> enemies;

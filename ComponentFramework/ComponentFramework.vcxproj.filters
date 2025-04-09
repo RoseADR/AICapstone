@@ -119,6 +119,7 @@
     <ClCompile Include="AnimationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Scene4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
@@ -292,6 +293,7 @@
     <ClInclude Include="CollisionActor.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="Scene4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
