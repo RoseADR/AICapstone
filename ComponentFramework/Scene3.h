@@ -55,6 +55,7 @@ private:
 	Ref<Actor> BridgeCollisionBox;
 	Ref<Actor> sceneChangeTrigger;
 	Ref<Actor> loadingScreenActor;
+
 	bool loadingStarted = false;
 	float loadingTimer = 0.0f;
 	void SpawnLoadingScreen();

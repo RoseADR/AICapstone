@@ -115,6 +115,7 @@ bool Scene1::OnCreate() {
 	//collisionSystem.AddActor(aabbBox);
 	//transformSystem.AddActor(aabbBox);
 
+	
 
 	for (int i = 0; i < 3; i++) {
 		float x = 0.0f - (i * 90.0f);
@@ -549,7 +550,7 @@ void Scene1::OnDestroy() {
 	//Delete the graph
 	
 
-	engine->drop(); // delete engine
+	//engine->drop(); // delete engine
 	return;
 }
 
@@ -1080,7 +1081,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += -9.8f * deltaTime;
+		currentVel.y += -0.0f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	
@@ -1166,16 +1167,34 @@ void Scene1::Update(const float deltaTime) {
 				action->makeDecision(deltaTime);
 
 				if (action->GetActionName() == "Attack Player") {
-					sceneManager->playerHealth -= 0.2f;
+					sceneManager->playerHealth -= 2.2f;
 					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 				}
 			}
 		}
 	}
 
-	if (sceneManager->playerHealth <= 0) {
+	if (!loadingStarted && sceneManager->playerHealth <= 0) {
 		sceneManager->dead = true;
+		loadingStarted = true;
+
+		SpawnLoadingScreen();
+
+		// Move and rotate the camera to face the loading screen
+		if (camera) {
+			auto camTransform = camera->GetComponent<TransformComponent>();
+			if (camTransform) {
+				Vec3 newCamPos = Vec3(0.0f, -18.0f, 0.0f); // match Scene3 position
+				Quaternion newCamRot = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f));
+					
+
+				camTransform->SetTransform(newCamPos, newCamRot);
+				camera->UpdateViewMatrix();
+			}
+		}
 	}
+
+
 
 	character->Update(deltaTime);
 	//collisionSystem.Update(deltaTime);
@@ -1637,4 +1656,21 @@ int Scene1::Pick(int x, int y) {
 	else return colorIndex;
 }
 
+void Scene1::SpawnLoadingScreen() {
+	loadingScreenActor = std::make_shared<Actor>(nullptr);
+
+	// Set position and rotation
+	Vec3 screenPos = Vec3(0.0f, 18.0f, -17.0f);;
+
+	// Rotate plane to face along +X (normal = +X)
+	Quaternion screenRotation = QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
+
+	loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(3.0f, 2.0f, 4.0f));
+	loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("DieLoading"));
+	loadingScreenActor->SetName("DieLoading");
+	loadingScreenActor->OnCreate();
+	AddActor(loadingScreenActor);
+}
 

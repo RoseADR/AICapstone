@@ -95,6 +95,11 @@ private:
 	//Audio
 	ISoundEngine* engine;
 	//
+	Ref<Actor> loadingScreenActor;
+	bool loadingStarted = false;
+	float loadingTimer = 0.0f;
+	void SpawnLoadingScreen();
+
 
 	float xAxis;
 	float yAxis;
