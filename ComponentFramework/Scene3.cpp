@@ -391,21 +391,7 @@ bool Scene3::OnCreate() {
 		SpawnAmmoAt(Vec3(15.0f, -3.1f, -8.0f));
 		SpawnAmmoAt(Vec3(10.0f, -3.1f, -8.0f));
 		//SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
-
-		physicsSystem.AddActor(character);
-
-		collisionSystem.AddActor(character);
-		collisionSystem.AddActor(factoryCollisionBox);
-		collisionSystem.AddActor(BridgeCollisionBox);
-		//collisionSystem.AddActor(TestCube);
-		//collisionSystem.AddActor(TestCube1);
-		collisionSystem.AddActor(deathFloor);
-		//collisionSystem.AddActor(Bridge);
-
-		transformSystem.AddActor(factoryCollisionBox);
-		transformSystem.AddActor(BridgeCollisionBox);
-		transformSystem.AddActor(deathFloor);
-		//transformSystem.AddActor(Bridge);
+	
 
 
 		//PATHFINDING REALTED 
