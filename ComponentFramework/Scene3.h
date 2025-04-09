@@ -106,6 +106,9 @@ private:
 	float yAxis;
 	Tile* currentlyHoveredTile = nullptr;
 	std::vector<std::pair<int, int>> redTilePositions;
+	irrklang::ISound* footstepSound = nullptr;
+	float footstepTimer = 0.0f;
+	float footstepCooldown = 0.6f; 
 
 public:
 	std::unordered_map<Actor*, DecisionTreeNode*> enemyDecisionTrees;

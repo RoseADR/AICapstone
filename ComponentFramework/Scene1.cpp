@@ -550,10 +550,10 @@ bool Scene1::OnCreate() {
 	
 	char c;
 	engine = createIrrKlangDevice();
-	engine->play2D("./Audio/SciFiBG.mp3");
+	//engine->play2D("./Audio/SciFiBG.mp3");
 	engine->setSoundVolume(0.1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::cout << "hi" << std::endl;
+	//std::cout << "hi" << std::endl;
 
 
 	return true;
@@ -615,6 +615,8 @@ void Scene1::FireProjectile() {
 	collisionSystem.AddActor(projectile);
 	projectiles.push_back(projectile);
 	
+	engine->play2D("./Audio/gunShot.wav");
+
 
 }
 
@@ -737,8 +739,10 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 					redTilePositions.erase(
 						std::remove(redTilePositions.begin(), redTilePositions.end(),
 							std::make_pair(hackingPlayerPos.y, hackingPlayerPos.x)),
+						
 						redTilePositions.end()
 					);
+					engine->play2D("./Audio/beep.wav");
 
 					if (redTilePositions.empty()) {
 						SDL_Delay(1000);
@@ -968,7 +972,9 @@ void Scene1::Update(const float deltaTime) {
 
 	// Player-hack collision detection
 	
-
+	if (footstepTimer > 0.0f) {
+		footstepTimer -= deltaTime;
+	}
 
 
 	for (size_t i = 0; i < projectiles.size();) {
@@ -1001,7 +1007,7 @@ void Scene1::Update(const float deltaTime) {
 			if (collisionSystem.SphereSphereCollisionDetection(s1, s2)) {
 				enemyHealth[enemy] -= 50.0f; // Damage
 				std::cout << "Enemy hit! Remaining health: " << enemyHealth[enemy] << std::endl;
-
+				engine->play2D("./Audio/boom.wav");
 				if (enemyHealth[enemy] <= 0.0f) {
 					std::cout << "Enemy destroyed!" << std::endl;
 					enemy->OnDestroy();
@@ -1068,7 +1074,7 @@ void Scene1::Update(const float deltaTime) {
 		if (collisionSystem.SphereSphereCollisionDetection(playerSphere, ammoSphere)) {
 			std::cout << "[INFO]: Ammo collected! +5 bullets.\n";
 			sceneManager->totalAmmo += 5;
-
+			engine->play2D("./Audio/ammoPickUp.wav");
 			ammo->OnDestroy();
 
 			// Remove from actors and ammo list
@@ -1131,6 +1137,13 @@ void Scene1::Update(const float deltaTime) {
 	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 	if (!hackingMode) {
+		if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_D]) {
+			if (footstepTimer <= 0.0f) {
+				engine->play2D("./Audio/footStep.wav", false);
+				footstepTimer = footstepCooldown;
+			}
+		}
+	}
 		//if (keystate[SDL_SCANCODE_W]) {
 		//	movingUp = true;
 		//	facing = true;
@@ -1151,7 +1164,7 @@ void Scene1::Update(const float deltaTime) {
 		//	facing = true;
 		//	horizontalMove.x += 1.0f; // Right
 		//}
-	}
+	//}
 	// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
 		horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
@@ -1195,6 +1208,7 @@ void Scene1::Update(const float deltaTime) {
 				action->makeDecision(deltaTime);
 
 				if (action->GetActionName() == "Attack Player") {
+					engine->play2D("./Audio/enemyAttack.wav");
 					sceneManager->playerHealth -= 0.1f;
 					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 				}

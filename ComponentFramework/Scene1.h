@@ -91,7 +91,8 @@ private:
 	bool hackUsed = false;
 	bool isJumping = false;
 	float jumpVelocity = 7.5f;
-
+	float footstepTimer = 0.0f;
+	float footstepCooldown = 0.6f;
 	//Audio
 	ISoundEngine* engine;
 	//

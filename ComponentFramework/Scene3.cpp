@@ -453,6 +453,11 @@ bool Scene3::OnCreate() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 		std::cout << "hi" << std::endl;*/
 
+		engine = createIrrKlangDevice();
+		//engine->play2D("./Audio/SciFiBG.mp3");
+		engine->setSoundVolume(0.1);
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		//std::cout << "hi" << std::endl;
 
 		return true;
 }
@@ -513,6 +518,7 @@ void Scene3::FireProjectile() {
 	collisionSystem.AddActor(projectile);
 	projectiles.push_back(projectile);
 
+	engine->play2D("./Audio/gunShot.wav");
 
 }
 
@@ -676,17 +682,24 @@ void Scene3::HandleEvents(const SDL_Event& sdlEvent) {
 			//index.y = 0.0f;
 			break;
 		case SDL_SCANCODE_A:
-			//facing = false;
 			facingLeft = false;
 			idleTexture = true;
-			//index.x = 0.0f;
+
+			// Only play footstep sound if it's not already playing
+			/*if (!footstepSound || footstepSound->isFinished()) {
+				footstepSound = engine->play2D("./Audio/grassFootsteps.wav", false, false, true);
+			}*/
 			break;
+
 		case SDL_SCANCODE_D:
-			//facing = false;
 			facingRight = false;
 			idleTexture = true;
-			//index.x = 0.0f;
+
+			/*if (!footstepSound || footstepSound->isFinished()) {
+				footstepSound = engine->play2D("./Audio/grassFootsteps.wav", false, false, true);
+			}*/
 			break;
+
 		default:
 			break;
 		}
@@ -864,6 +877,11 @@ void Scene3::Update(const float deltaTime) {
 	// Update a single enemy using the decision tree
 
 	// Player-hack collision detection
+	if (footstepTimer > 0.0f) {
+		footstepTimer -= deltaTime;
+	}
+
+	
 
 
 	auto playerPhysics = character->GetComponent<PhysicsComponent>();
@@ -917,7 +935,7 @@ void Scene3::Update(const float deltaTime) {
 			if (collisionSystem.SphereSphereCollisionDetection(s1, s2)) {
 				enemyHealth[enemy] -= 50.0f; // Damage
 				std::cout << "Enemy hit! Remaining health: " << enemyHealth[enemy] << std::endl;
-
+				engine->play2D("./Audio/boom.wav");
 				if (enemyHealth[enemy] <= 0.0f) {
 					std::cout << "Enemy destroyed!" << std::endl;
 					enemy->OnDestroy();
@@ -992,6 +1010,7 @@ void Scene3::Update(const float deltaTime) {
 				[&](const Ref<Actor>& a) { return a == ammo; }), actors.end());
 
 			ammoPickups.erase(ammoPickups.begin() + i);
+			engine->play2D("./Audio/ammoPickUp.wav");
 		}
 		else {
 			++i;
@@ -1084,6 +1103,13 @@ void Scene3::Update(const float deltaTime) {
 	Vec3 horizontalMove(0.0f, 0.0f, 0.0f); // Movement direction
 	const Uint8* keystate = SDL_GetKeyboardState(nullptr);
 	if (!hackingMode) {
+		if (keystate[SDL_SCANCODE_A] || keystate[SDL_SCANCODE_D]) {
+			if (footstepTimer <= 0.0f) {
+				engine->play2D("./Audio/grassFootsteps.wav", false);
+				footstepTimer = footstepCooldown;
+			}
+		}
+	}
 		//if (keystate[SDL_SCANCODE_W]) {
 		//	movingUp = true;
 		//	facing = true;
@@ -1104,7 +1130,7 @@ void Scene3::Update(const float deltaTime) {
 		//	facing = true;
 		//	horizontalMove.x += 1.0f; // Right
 		//}
-	}
+	
 	// Normalize movement direction and scale by speed and deltaTime
 	if (VMath::mag(horizontalMove) > 0.0f) {
 		horizontalMove = VMath::normalize(horizontalMove) * moveSpeed * deltaTime;
@@ -1149,6 +1175,7 @@ void Scene3::Update(const float deltaTime) {
 
 				if (action->GetActionName() == "Attack Player") {
 					sceneManager->playerHealth -= 0.2f;
+					engine->play2D("./Audio/enemyAttack.wav");
 					std::cout << "[SCENE1]: Player took damage! Health is now " << sceneManager->playerHealth << "\n";
 				}
 			}
@@ -1342,21 +1369,21 @@ void Scene3::Render() const {
 }
 
 void Scene3::SpawnLoadingScreen() {
-	loadingScreenActor = std::make_shared<Actor>(nullptr);
+	//loadingScreenActor = std::make_shared<Actor>(nullptr);
 
-	// Set position and rotation
-	Vec3 screenPos = Vec3(20.02f, 13.28f, 9.1f);
+	//// Set position and rotation
+	//Vec3 screenPos = Vec3(20.02f, 13.28f, 9.1f);
 
-	// Rotate plane to face along +X (normal = +X)
-	Quaternion screenRotation = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
+	//// Rotate plane to face along +X (normal = +X)
+	//Quaternion screenRotation = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
 
-	loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(4.5f, 4.53f, 4.53f));
-	loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("Loading"));
-	loadingScreenActor->SetName("LoadingScreen");
-	loadingScreenActor->OnCreate();
-	AddActor(loadingScreenActor);
+	//loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(4.5f, 4.53f, 4.53f));
+	//loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	//loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	//loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("Loading"));
+	//loadingScreenActor->SetName("LoadingScreen");
+	//loadingScreenActor->OnCreate();
+	//AddActor(loadingScreenActor);
 }
 
 
