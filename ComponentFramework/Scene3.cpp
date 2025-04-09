@@ -302,10 +302,10 @@ bool Scene3::OnCreate() {
 
 
 		character = std::make_shared<Actor>(nullptr);
-		Quaternion playersQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f))
+		Quaternion mariosQuaternion = QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) * QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f))
 			* QMath::angleAxisRotation(180.0f, Vec3(-20.0f, 0.0f, 0.0f));
 		pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0f, 0.0f, -7.0f),
-			playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
+			mariosQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 		cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 		character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
 		character->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
@@ -320,22 +320,7 @@ bool Scene3::OnCreate() {
 		physicsSystem.AddActor(character);
 		collisionSystem.AddActor(character);
 
-		enemy = std::make_shared<Actor>(nullptr);
-		Quaternion enemyQuaternion;
-		pc = std::make_shared<PhysicsComponent>(enemy.get(), Vec3(0.0f, 0.0f, -7.0f),
-			enemyQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
-		cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
-		enemy->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));
-		enemy->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("RoboGun"));
-		enemy->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("EnemyBillboard"));
-		enemy->AddComponent(cc);
-		enemy->AddComponent(pc);
 
-		character->OnCreate();
-		AddActor(enemy);
-		collisionSystem.SetCharacter(enemy);
-		physicsSystem.AddActor(enemy);
-		collisionSystem.AddActor(enemy);
 		
 		SpawnAmmoAt(Vec3(15.0f, -3.1f, -8.0f));
 		SpawnAmmoAt(Vec3(10.0f, -3.1f, -8.0f));
