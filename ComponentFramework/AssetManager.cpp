@@ -85,6 +85,7 @@ AssetManager::AssetManager() {
 	AddComponent<MaterialComponent>("BusDif", nullptr, "textures/busDif.png");
 	AddComponent<MaterialComponent>("Loading", nullptr, "textures/loading.png");
 	AddComponent<MaterialComponent>("DieLoading", nullptr, "textures/DieLoad.png");
+	AddComponent<MaterialComponent>("VicBot", nullptr, "textures/victoryRogue.png");
 
 	//AddComponent<MaterialComponent>("RobotTexture", nullptr, "textures/robo.png");
 

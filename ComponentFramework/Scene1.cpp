@@ -281,7 +281,7 @@ bool Scene1::OnCreate() {
 	hack->AddComponent<PhysicsComponent>(nullptr, hackPosition, hackRotation, hackVelocity, Vec3(), Vec3(), hackScale);
 
 	// Optional: Add collision
-	hack->AddComponent<CollisionComponent>(nullptr, ColliderType::Sphere, 10.0f);
+	hack->AddComponent<CollisionComponent>(nullptr, ColliderType::Sphere, 8.0f);
 
 	// Visuals
 	hack->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Box"));
@@ -671,9 +671,9 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_W:
 			if (!hackingMode) {
-				movingDown = true;
+				/*movingDown = true;
 				idleTexture = false;
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));*/
 			}
 			if (hackingMode && hackingPlayerPos.y < hackingTiles.size() - 1) newY++;
 			break;
@@ -713,23 +713,14 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 			break;
 
 		case SDL_SCANCODE_SPACE:
-			std::cout << "SPACEBAR PRESSED!\n";
-			if (!hackingMode && isGrounded && !isJumping) {
-				std::cout << "JUMP TRIGGERED!\n";
+			
+			if (!hackingMode) {
+				
 
 				// Set vertical velocity
-				Vec3 vel = characterPC->getVel();
-				vel.y = jumpVelocity; // Apply upward velocity
-				characterPC->SetVelocity(vel);
-
-				// Optional horizontal nudge
-				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.25f, 0.0f, 0.0f));
-
-				// Set jump state
-				isJumping = true;
-				isGrounded = false;
-
-				std::cout << "Jump initiated! Velocity: " << vel << std::endl;
+				movingDown = true;
+				idleTexture = false;
+				characterTC->SetPosition(characterTC->GetPosition() + Vec3(0.0f, 0.5f, 0.0f));
 			}
 			else if (hackingMode) {
 
@@ -745,10 +736,14 @@ void Scene1::HandleEvents(const SDL_Event& sdlEvent) {
 					engine->play2D("./Audio/beep.wav");
 
 					if (redTilePositions.empty()) {
-						SDL_Delay(1000);
 						hackingMode = false;
 						showHackingGrid = false;
-						std::cout << "All red tiles cleared. Hacking mode off." << std::endl;
+						sceneManager->Victory = true;
+						
+
+						engine->play2D("./Audio/victory.wav");
+						//SDL_Delay(1000);
+						
 					}
 				}
 
@@ -1115,7 +1110,7 @@ void Scene1::Update(const float deltaTime) {
 	 // Gravity
 	if (!isGrounded) {
 		Vec3 currentVel = playerPhysics->getVel();
-		currentVel.y += -0.0f * deltaTime;
+		currentVel.y += 1.0f * deltaTime;
 		playerPhysics->SetVelocity(currentVel);
 	}
 	

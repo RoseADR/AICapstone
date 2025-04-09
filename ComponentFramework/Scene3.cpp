@@ -1369,21 +1369,21 @@ void Scene3::Render() const {
 }
 
 void Scene3::SpawnLoadingScreen() {
-	//loadingScreenActor = std::make_shared<Actor>(nullptr);
+	loadingScreenActor = std::make_shared<Actor>(nullptr);
 
-	//// Set position and rotation
-	//Vec3 screenPos = Vec3(20.02f, 13.28f, 9.1f);
+	// Set position and rotation
+	Vec3 screenPos = Vec3(20.02f, 13.28f, 9.1f);
 
-	//// Rotate plane to face along +X (normal = +X)
-	//Quaternion screenRotation = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
+	// Rotate plane to face along +X (normal = +X)
+	Quaternion screenRotation = QMath::angleAxisRotation(90.0f, Vec3(0.0f, 1.0f, 0.0f)) * QMath::angleAxisRotation(0.0f, Vec3(0.0f, 0.0f, 1.0f));
 
-	//loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(4.5f, 4.53f, 4.53f));
-	//loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
-	//loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
-	//loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("Loading"));
-	//loadingScreenActor->SetName("LoadingScreen");
-	//loadingScreenActor->OnCreate();
-	//AddActor(loadingScreenActor);
+	loadingScreenActor->AddComponent<TransformComponent>(nullptr, screenPos, screenRotation, Vec3(4.5f, 4.53f, 4.53f));
+	loadingScreenActor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Plane"));
+	loadingScreenActor->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("TextureShader"));
+	loadingScreenActor->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("Loading"));
+	loadingScreenActor->SetName("LoadingScreen");
+	loadingScreenActor->OnCreate();
+	AddActor(loadingScreenActor);
 }
 
 

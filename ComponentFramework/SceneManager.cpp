@@ -6,6 +6,7 @@
 #include "Scene1.h"
 #include "Scene2.h"
 #include "Scene3.h"
+#include "Scene4.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
@@ -69,7 +70,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 
 	/********************************   Default first scene   ***********************/
-	BuildNewScene(SCENE_NUMBER::SCENE3);
+	BuildNewScene(SCENE_NUMBER::SCENE1);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -103,6 +104,11 @@ void SceneManager::Run() {
 		if (triggerScene1) {
 			BuildNewScene(SCENE_NUMBER::SCENE1);
 			triggerScene1 = false; // reset the flag
+		}
+
+		if (Victory) {
+			BuildNewScene(SCENE_NUMBER::SCENE4);
+			Victory = false; // reset the flag
 		}
 
 
@@ -152,6 +158,51 @@ void SceneManager::Run() {
 			ImGui::PopStyleVar();
 			ImGui::End();
 		}
+
+
+		if (dynamic_cast<Scene4*>(currentScene)) {
+			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Always);
+
+			ImGui::Begin("##InvisibleWindow", nullptr,
+				ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+			ImVec2 windowSize = ImGui::GetWindowSize();
+			ImVec2 buttonSize = ImVec2(300, 100);
+
+			// Lower the buttons vertically
+			ImVec2 buttonRowPos = ImVec2((windowSize.x - (buttonSize.x * 2 + 20)) * 0.5f,  // horizontally centered across two buttons + spacing
+				(windowSize.y * 0.78f));  // Lowered vertically (adjust 0.65 to taste)
+
+			ImGui::SetCursorPos(buttonRowPos);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(20, 20));
+			ImGui::SetWindowFontScale(3);
+
+			// Retry Button
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));         // Dark gray
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));  // Slightly lighter on hover
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));   // Even lighter when clicked
+
+			if (ImGui::Button("Replay", buttonSize)) {
+				BuildNewScene(SCENE_NUMBER::SCENE3);
+			}
+
+			ImGui::SameLine(); // Makes the next widget appear on the same row
+
+			
+
+			if (ImGui::Button("Main Menu", buttonSize)) {
+				BuildNewScene(SCENE_NUMBER::SCENE0);
+			}
+			ImGui::PopStyleColor(3); // Pops all 3 color overrides
+
+			ImGui::PopStyleVar();
+			ImGui::End();
+		}
+
 
 
 		// Health bar rendering
@@ -309,6 +360,11 @@ void SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 
 	case SCENE_NUMBER::SCENE3:
 		currentScene = new Scene3(this);
+		status = currentScene->OnCreate();
+		break;
+
+	case SCENE_NUMBER::SCENE4:
+		currentScene = new Scene4();
 		status = currentScene->OnCreate();
 		break;
 

@@ -22,7 +22,7 @@ public:
 	static SceneManager* GetInstance();
 	bool dead = false;
 	bool triggerScene1 = false;
-
+	bool Victory = false;
 	ISoundEngine* engine;
 
 private:

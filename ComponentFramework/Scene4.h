@@ -1,5 +1,5 @@
-#ifndef SCENE2_H
-#define SCENE2_H
+#ifndef SCENE4_H
+#define SCENE4_H
 #include "Scene.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -13,7 +13,7 @@ class CameraActor;
 class LightActor;
 class Actor;
 
-class Scene2 : public Scene {
+class Scene4 : public Scene {
 private:
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor> camera;
@@ -23,21 +23,21 @@ private:
 	bool drawNormals;
 	bool drawOverlay;
 public:
-	explicit Scene2();
-	virtual ~Scene2();
+	explicit Scene4();
+	virtual ~Scene4();
 
 	virtual bool OnCreate();
 	virtual void OnDestroy();
 	virtual void Update(const float deltaTime);
 	virtual void Render() const;
-	virtual void HandleEvents(const SDL_Event &sdlEvent);
+	virtual void HandleEvents(const SDL_Event& sdlEvent);
 
 	int Pick(int x, int y);
 	/// The w component holds the scale of the normal
 	void DrawNormals(const Vec4 color) const;
 
 	void DrawMeshOverlay(const Vec4 color) const;
-	
+
 };
 
 
