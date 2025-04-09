@@ -216,6 +216,9 @@ void SceneManager::Run() {
 
 			if (ImGui::Button("Start Game", buttonSize)) {
 				BuildNewScene(SCENE_NUMBER::SCENE1);
+				engine->play2D("./Audio/SciButtonSound.mp3");
+				engine->setSoundVolume(0.1);
+				
 			}
 
 			ImGui::SetCursorPos(cursorPosQuit);

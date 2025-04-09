@@ -2,6 +2,10 @@
 #define SCENEMANAGER_H
 
 #include <string>
+
+#include "irrKlang.h"
+using namespace irrklang;
+
 class SceneManager  {
 public:
 	
@@ -18,6 +22,8 @@ public:
 	static SceneManager* GetInstance();
 	bool dead = false;
 	bool triggerScene1 = false;
+
+	ISoundEngine* engine;
 
 private:
 	enum class SCENE_NUMBER {
