@@ -84,13 +84,13 @@ bool Scene1::OnCreate() {
 
 	factory = std::make_shared<Actor>(nullptr);
 
-	Vec3 boxPosMF = Vec3(-40.0f, -20.0f, -10.0f);
-	Vec3 boxScaleMF = Vec3(30.0f, 10.0f, 10.0f);
+	Vec3 boxPosMF = Vec3(-70.0f, -20.0f, -25.0f);
+	Vec3 boxScaleMF = Vec3(30.0f, 5.0f, 5.0f);
 	Quaternion boxRotMF = QMath::angleAxisRotation(90.0f, Vec3(1.0f, 0.0f, 0.0f));
 
 	tc = std::make_shared<TransformComponent>(factory.get(), Vec3(30.0f, 0.0f, -10.0f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
 	cc = std::make_shared<CollisionComponent>(factory.get(), ColliderType::AABB);
-	cc->SetAABB(tc->GetPosition(), tc->GetQuaternion(), /*boxPosMF, boxRotMF,*/ boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
+	cc->SetAABB(/*tc->GetPosition(), tc->GetQuaternion(),*/ boxPosMF, boxRotMF, boxScaleMF.x / 2, boxScaleMF.y / 2, boxScaleMF.z / 2);
 	cc->DrawAABB();
 	factory->AddComponent(tc);
 	factory->AddComponent(cc);
@@ -109,8 +109,8 @@ bool Scene1::OnCreate() {
 
 	stairs = std::make_shared<Actor>(nullptr);
 
-	Vec3 boxPosS = Vec3(35.0f, -5.0f, -22.5f);
-	Vec3 boxScaleS = Vec3(15.0f, 1.0f, 10.0f);
+	Vec3 boxPosS = Vec3(0.0f, -20.0f, -20.5f);
+	Vec3 boxScaleS = Vec3(5.0f, 5.0f, 5.0f);
 	Quaternion boxRotS = QMath::angleAxisRotation(45.0f, Vec3(0.0f, 1.0f, 0.0f) );
 
 	tc = std::make_shared<TransformComponent>(stairs.get(), Vec3(30.0f, 0.0f, -22.5f), QMath::angleAxisRotation(0.0f, Vec3(0.0f, 1.0f, 0.0f)), Vec3(0.05f, 0.05f, 0.05f));
