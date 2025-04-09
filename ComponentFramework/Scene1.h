@@ -136,7 +136,7 @@ public:
 	/// The w component holds the scale of the normal
 	void DrawNormals(const Vec4 color) const;
 	void DrawMeshOverlay(const Vec4 color) const;
-	void LoadEnemies();
+	void LoadEnemies(const Vec3& position);
 	
 	//void FireProjectile(const Vec3& startPos, const Vec3& direction, float speed);
 

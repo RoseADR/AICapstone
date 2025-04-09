@@ -451,7 +451,8 @@ auto Tunnels = std::make_shared<Actor>(factory.get());
 	collisionSystem.AddActor(character);
 	physicsSystem.AddActor(character);
 
-	LoadEnemies();
+	LoadEnemies(Vec3());  // now spawns all 6
+
 	SpawnAmmoAt(Vec3(6.0f, 1.0f, -6.0f));
 	SpawnAmmoAt(Vec3(-47.0f, 15.0f, -5.0f));
 	SpawnAmmoAt(Vec3(-160.0f, 12.2f, -6.0f));
@@ -1348,56 +1349,51 @@ void Scene1::SpawnAmmoAt(const Vec3& position) {
 
 
 
-void Scene1::LoadEnemies() {
+void Scene1::LoadEnemies(const Vec3&) {
 	Ref<MeshComponent> mesh = assetManager->GetComponent<MeshComponent>("Plane");
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("Billboard");
 	Ref<MaterialComponent> material = assetManager->GetComponent<MaterialComponent>("Enemy");
 
-	// === Enemy 1 ===
-	Ref<Actor> enemy1 = std::make_shared<Actor>(nullptr);
-	enemy1->AddComponent<MeshComponent>(mesh);
-	enemy1->AddComponent<ShaderComponent>(shader);
-	enemy1->AddComponent<MaterialComponent>(material);
-	enemy1->AddComponent<AiComponent>(enemy1.get());
-	enemy1->AddComponent<CollisionComponent>(enemy1.get(), ColliderType::Sphere, 1.0f);
-	enemy1->AddComponent<PhysicsComponent>(
-		enemy1.get(),
-		Vec3(0.0f, 0.0f, -10.0f), // position
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // rotation
-		Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), // velocity, accel, forces
-		Vec3(5.15f, 5.15f, 5.15f)); // scale
+	std::vector<Vec3> positions = {
+		Vec3(-10.0f, 0.0f, -8.0f),
+		Vec3(0.0f, 0.0f, -8.0f),
+		Vec3(10.0f, 0.0f, -8.0f),
+		Vec3(-60.0f, 0.0f, -8.0f),
+		Vec3(-47.0f, 15.0f, -8.0f),
+		Vec3(-60.0f, 12.2f, -8.0f)
+	};
 
-	enemy1->OnCreate();
-	AddActor(enemy1);
-	collisionSystem.AddActor(enemy1);
-	physicsSystem.AddActor(enemy1);
-	transformSystem.AddActor(enemy1);
-	enemyHealth[enemy1.get()] = 100.0f;
+	for (const auto& pos : positions) {
+		Ref<Actor> enemy = std::make_shared<Actor>(nullptr);
+		enemy->AddComponent<MeshComponent>(mesh);
+		enemy->AddComponent<ShaderComponent>(shader);
+		enemy->AddComponent<MaterialComponent>(material);
+		enemy->AddComponent<AiComponent>(enemy.get());
+		enemy->AddComponent<CollisionComponent>(enemy.get(), ColliderType::Sphere, 1.0f);
+		enemy->AddComponent<PhysicsComponent>(
+			enemy.get(),
+			pos,
+			QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
+			QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
+			QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)),
+			Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.5f, 0.5f, 0.5f)  // Set a visible scale
+		);
 
-	// === Enemy 2 ===
-	Ref<Actor> enemy2 = std::make_shared<Actor>(nullptr);
-	enemy2->AddComponent<MeshComponent>(mesh);
-	enemy2->AddComponent<ShaderComponent>(shader);
-	enemy2->AddComponent<MaterialComponent>(material);
-	enemy2->AddComponent<AiComponent>(enemy2.get());
-	enemy2->AddComponent<CollisionComponent>(enemy2.get(), ColliderType::Sphere, 1.0f);
-	enemy2->AddComponent<PhysicsComponent>(
-		enemy2.get(),
-		Vec3(10.0f, 0.0f, -10.0f), // different position
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 0.0f, 1.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(0.0f, 1.0f, 0.0f)) *
-		QMath::angleAxisRotation(180.0f, Vec3(1.0f, 0.0f, 0.0f)), // same upright rotation
-		Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f),
-		Vec3(0.75f, 0.75f, 0.75f));
+		enemy->OnCreate();
+		AddActor(enemy);
+		collisionSystem.AddActor(enemy);
+		physicsSystem.AddActor(enemy);
+		transformSystem.AddActor(enemy);
+		enemyHealth[enemy.get()] = 100.0f;
 
-	enemy2->OnCreate();
-	AddActor(enemy2);
-	collisionSystem.AddActor(enemy2);
-	physicsSystem.AddActor(enemy2);
-	transformSystem.AddActor(enemy2);
-	enemyHealth[enemy2.get()] = 100.0f;
+		// Assign decision tree
+		Actor* player = character.get();
+		auto tree = TreeBuilder::buildTree("Scene1.xml", enemy.get(), player);
+		if (tree) {
+			enemyDecisionTrees[enemy.get()] = tree;
+		}
+	}
 }
 
 
