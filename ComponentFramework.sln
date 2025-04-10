@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35303.130
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComponentFramework", "ComponentFramework\ComponentFramework.vcxproj", "{614C2865-E38B-423B-8A72-E9D57BC43A73}"
 EndProject
@@ -11,12 +11,6 @@ Global
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-		RougeRobot|x64 = RougeRobot|x64
-		RougeRobot|x86 = RougeRobot|x86
-		RougeRobott|x64 = RougeRobott|x64
-		RougeRobott|x86 = RougeRobott|x86
-		RpugeRobot|x64 = RpugeRobot|x64
-		RpugeRobot|x86 = RpugeRobot|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{614C2865-E38B-423B-8A72-E9D57BC43A73}.Debug|x64.ActiveCfg = Debug|x64
@@ -27,18 +21,6 @@ Global
 		{614C2865-E38B-423B-8A72-E9D57BC43A73}.Release|x64.Build.0 = Release|x64
 		{614C2865-E38B-423B-8A72-E9D57BC43A73}.Release|x86.ActiveCfg = Release|Win32
 		{614C2865-E38B-423B-8A72-E9D57BC43A73}.Release|x86.Build.0 = Release|Win32
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobot|x64.ActiveCfg = RougeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobot|x64.Build.0 = RougeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobot|x86.ActiveCfg = RougeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobot|x86.Build.0 = RougeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobott|x64.ActiveCfg = RougeRobott|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobott|x64.Build.0 = RougeRobott|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobott|x86.ActiveCfg = RougeRobott|Win32
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RougeRobott|x86.Build.0 = RougeRobott|Win32
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RpugeRobot|x64.ActiveCfg = RpugeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RpugeRobot|x64.Build.0 = RpugeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RpugeRobot|x86.ActiveCfg = RpugeRobot|x64
-		{614C2865-E38B-423B-8A72-E9D57BC43A73}.RpugeRobot|x86.Build.0 = RpugeRobot|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
