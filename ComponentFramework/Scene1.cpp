@@ -107,7 +107,7 @@ bool Scene1::OnCreate() {
 
 
 
-	stairs = std::make_shared<Actor>(nullptr);
+	/*stairs = std::make_shared<Actor>(nullptr);
 
 	Vec3 boxPosS = Vec3(0.0f, 0.0f, -8.5f);
 	Vec3 boxScaleS = Vec3(5.0f, 5.0f, 5.0f);
@@ -118,19 +118,19 @@ bool Scene1::OnCreate() {
 	cc->SetAABB(boxPosS, boxRotS, boxScaleS.x / 2, boxScaleS.y / 2, boxScaleS.z / 2);
 	cc->DrawAABB();
 	stairs->AddComponent(tc);
-	stairs->AddComponent(cc);
+	stairs->AddComponent(cc);*/
 
 
-	stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
-	stairs->AddComponent<ShaderComponent>(shader);
-	stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
-	//factory->AddComponent(tc);
-	stairs->SetName("Stairs");
-	stairs->OnCreate();
-	AddActor(stairs);
+	//stairs->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Stairs"));
+	//stairs->AddComponent<ShaderComponent>(shader);
+	//stairs->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("bg"));
+	////factory->AddComponent(tc);
+	//stairs->SetName("Stairs");
+	//stairs->OnCreate();
+	//AddActor(stairs);
 
-	collisionSystem.AddActor(stairs);
-	transformSystem.AddActor(stairs);
+	//collisionSystem.AddActor(stairs);
+	//transformSystem.AddActor(stairs);
 
 
 	topFloor = std::make_shared<Actor>(nullptr);
@@ -435,7 +435,7 @@ auto Tunnels = std::make_shared<Actor>(factory.get());
 		
 	character = std::make_shared<Actor>(nullptr);
 	Quaternion playersQuaternion;
-	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(-190.0, 14.0f, -8.0f),
+	pc = std::make_shared<PhysicsComponent>(character.get(), Vec3(0.0, 5.0f, -8.0f),
 		playersQuaternion, Vec3(), Vec3(), Vec3(), Vec3(3.0f, 3.0f, 3.0f));
 	cc = std::make_shared<CollisionComponent>(nullptr, ColliderType::Sphere, 2.0f);
 	character->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("Square"));

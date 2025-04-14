@@ -1,9 +1,8 @@
 #pragma once
 #include "Component.h"
-#include <Matrix.h>
-#include <QMath.h>
-#include <Euler.h>
-
+#include "Matrix.h"
+#include "QMath.h"
+#include "Euler.h"
 using namespace MATH;
 class TransformComponent : public Component {
 	TransformComponent(const TransformComponent&) = delete;
