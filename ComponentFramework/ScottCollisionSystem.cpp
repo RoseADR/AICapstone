@@ -67,19 +67,14 @@ void CollisionSystem::Update(const float deltaTime) {
                         std::cout << " PLANE Collision with actor " << i
                             << ": " << parentActor->GetName() << std::endl;
                     }
-                    updatedCollisions.insert(collisionKey); // Always add it so we know it's still active
+                    updatedCollisions.insert(collisionKey); 
                 }
             }
         }
         else if (cc2->GetColliderType() == ColliderType::AABB) {
 
             AABB bb1 = cc2->GetAABB();
-            bb1.center = tc2->GetPosition();
-           // worldAABB.center += worldPos; // move AABB to world space
-          
-           /* AABB bb1 = cc2->GetAABB();
-            bb1.center = tc2->GetPosition() + bb1.center;
-            worldAABB.center += worldPos;*/
+         
                            
             
             if (SphereAABBCollisionDetection(s1, bb1)) {
@@ -87,10 +82,10 @@ void CollisionSystem::Update(const float deltaTime) {
                 if (parentActor) {
                     std::string collisionKey = character->GetName() + "-" + parentActor->GetName();
                     if (currentCollisions.find(collisionKey) == currentCollisions.end()) {
-                        std::cout << " SPHERE Collision with actor " << i
+                        std::cout << " AABB Collision with actor " << i
                             << ": " << parentActor->GetName() << std::endl;
                     }
-                    updatedCollisions.insert(collisionKey); // Always add it so we know it's still active
+                    updatedCollisions.insert(collisionKey); 
                 }
                
             }
@@ -98,15 +93,15 @@ void CollisionSystem::Update(const float deltaTime) {
     }
 
     currentCollisions = std::move(updatedCollisions);
-  
+  // gravity
     if (isGrounded) {
-        pc1->accel.y = 0.0f;  // No gravity when grounded
-        pc1->vel.y = 0.0f;  // Optional: keep vertical velocity zero
+        pc1->accel.y = 0.0f; 
+        pc1->vel = Vec3(0.0f, 0.0f, 0.0f);
     }
     else {
-        pc1->accel.y = -9.81f;  // Restore gravity when not grounded
+        pc1->accel.y = -9.81f;  
     }
-    isGrounded = false; // Reset for next frame
+    isGrounded = false;
 
 }
 
@@ -137,17 +132,6 @@ bool CollisionSystem::SphereAABBCollisionDetection(const Sphere& s, const AABB& 
     // Compute vector from closest point to sphere center
     Vec3 d = s.center - closestPoint;
     float distSquared = d.x * d.x + d.y * d.y + d.z * d.z;
-
-    // DEBUG OUTPUT
-   /* std::cout << "-------- Sphere vs AABB Debug --------" << std::endl;
-    std::cout << "Sphere Center: " << s.center << " Radius: " << s.r << std::endl;
-    std::cout << "AABB Center: " << box.center
-        << " Half Extents: (" << box.rx << ", " << box.ry << ", " << box.rz << ")" << std::endl;
-    std::cout << "Closest Point on AABB: " << closestPoint << std::endl;
-    std::cout << "Distance Squared: " << distSquared
-        << " vs Radius^2: " << s.r * s.r << std::endl;
-    std::cout << "Colliding? " << (distSquared < (s.r * s.r) ? "YES" : "NO") << std::endl;
-    std::cout << "--------------------------------------" << std::endl;*/
 
     if (distSquared <= (s.r * s.r)) {
         return true;

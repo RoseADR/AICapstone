@@ -39,6 +39,7 @@ private:
 	Ref<Actor> factory;
 	Ref<Actor> stairs;
 	Ref<Actor> topFloor;
+	Ref<Actor> Bridge2;
 	Ref<Actor> bg;
 	Ref<Actor> projectile;
 	Ref<Actor> Bridge;
@@ -49,6 +50,7 @@ private:
 	Ref<Actor> character;
 	Ref<Actor> TestCube;
 	Ref<Actor> TestCube1;
+	Ref<Actor> TestCube2;
 	Ref<Actor> enemies;
 	//Ref<Actor> tile;
 	Ref<Actor> aabbBox;

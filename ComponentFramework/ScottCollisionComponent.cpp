@@ -59,44 +59,30 @@ void CollisionComponent::SetAABB(const Vec3& position, const Quaternion& rotatio
 
 void CollisionComponent::DrawAABB() const
 {
-
 	if (colliderType != ColliderType::AABB) return;
 
-	Vec3 worldCenter = aabb.center;
-
-	// Apply TransformComponent offset to center
-	if (parent) {
-		Actor* actor = static_cast<Actor*>(parent);
-		auto transform = actor->GetComponent<TransformComponent>();
-		if (transform) {
-			worldCenter += transform->GetPosition();  //  Now in world space
-
-			/*std::cout << "[AABB DEBUG] Drawing for: " << actor->GetName()
-				<< " at world pos " << worldCenter << std::endl;*/
-		}
-	}
-	
-	Vec3 c = aabb.center;
+	const Vec3& c = aabb.center;
 	float rx = aabb.rx, ry = aabb.ry, rz = aabb.rz;
 
-	// Draw a simple wireframe box
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDisable(GL_TEXTURE_2D);
+	glColor3f(1.0f, 0.0f, 0.0f); // bright red
+
 	glBegin(GL_QUADS);
 
-	// front face
+	// Front face
 	glVertex3f(c.x - rx, c.y - ry, c.z + rz);
 	glVertex3f(c.x + rx, c.y - ry, c.z + rz);
 	glVertex3f(c.x + rx, c.y + ry, c.z + rz);
 	glVertex3f(c.x - rx, c.y + ry, c.z + rz);
 
-	// back face
+	// Back face
 	glVertex3f(c.x - rx, c.y - ry, c.z - rz);
 	glVertex3f(c.x + rx, c.y - ry, c.z - rz);
 	glVertex3f(c.x + rx, c.y + ry, c.z - rz);
 	glVertex3f(c.x - rx, c.y + ry, c.z - rz);
 
-	// sides
+	// Sides
 	glVertex3f(c.x - rx, c.y - ry, c.z - rz);
 	glVertex3f(c.x - rx, c.y - ry, c.z + rz);
 	glVertex3f(c.x - rx, c.y + ry, c.z + rz);
@@ -119,6 +105,4 @@ void CollisionComponent::DrawAABB() const
 
 	glEnd();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 }
-
