@@ -39,7 +39,8 @@ bool Scene1::OnCreate() {
 	//Timing timing("Scene1::OnCreate");
 
 	Debug::Info("Loading assets Scene1: ", __FILE__, __LINE__);
-	assetManager = std::make_shared<AssetManager>();
+	//assetManager = std::make_shared<AssetManager>();
+	assetManager = AssetManager::GetInstance();
 	orientationCam = QMath::angleAxisRotation(10.0f, Vec3(1.0f, 0.0f, 0.0f));
 	camera = std::make_shared<CameraActor>(nullptr);
 	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), orientationCam);

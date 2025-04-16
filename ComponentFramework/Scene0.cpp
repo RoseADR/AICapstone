@@ -29,8 +29,8 @@ Scene0::Scene0():drawNormals(false),drawOverlay(false){
 bool Scene0::OnCreate() {
 	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
 	///The create the asset manager
-	assetManager = std::make_shared<AssetManager>();
-	
+	//assetManager = std::make_shared<AssetManager>();
+	assetManager = AssetManager::GetInstance();
 	
 	camera = std::make_shared<CameraActor>(nullptr);
 	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), Quaternion());

@@ -10,6 +10,8 @@
 #include "MaterialComponent.h"
 #include "AiComponent.h"
 
+std::shared_ptr<AssetManager> AssetManager::instance = nullptr;
+
 
 AssetManager::AssetManager() {
 	
@@ -97,8 +99,10 @@ AssetManager::AssetManager() {
 }
 
 AssetManager::~AssetManager() {
-	RemoveAllComponents();
+	//RemoveAllComponents();
 }
+
+
 
 bool AssetManager::OnCreate() {
 	/// This is why auto cool sometimes
@@ -112,6 +116,8 @@ bool AssetManager::OnCreate() {
 }
 
 
+
+
 void AssetManager::RemoveAllComponents() {
 	componentCatalog.clear();
 }
@@ -122,3 +128,11 @@ void AssetManager::ListAllComponents() const {
 	}
 }
 
+
+
+std::shared_ptr<AssetManager> AssetManager::GetInstance() {
+	if (instance == nullptr) {
+		instance = std::shared_ptr<AssetManager>(new AssetManager());
+	}
+	return instance;
+}
