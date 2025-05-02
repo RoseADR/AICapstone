@@ -12,7 +12,7 @@
 #include "Action.h"
 #include "DecisionTreeNode.h"
 #include "TreeBuilder.h"
-#include "ScottCollisionSystem.h"
+#include "CollisionSystem.h"
 #include "PhysicsSystem.h"
 #include "TransformSystem.h"
 #include <irrKlang.h>

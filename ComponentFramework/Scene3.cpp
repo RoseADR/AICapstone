@@ -14,8 +14,6 @@
 #include "LocationManager.h"
 #include "Timing.h"
 
-#include "ScottCollisionComponent.h"
-#include "ScottCollisionSystem.h"
 
 #include "CollisionSystem.h"
 #include "CollisionActor.h"

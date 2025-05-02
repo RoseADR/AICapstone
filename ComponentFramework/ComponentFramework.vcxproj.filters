@@ -47,13 +47,7 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="CollisionComponent.cpp">
-      <Filter>Source Files\Component</Filter>
-    </ClCompile>
     <ClCompile Include="AssetManager.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="DecisionTreeNode.cpp">
@@ -98,10 +92,10 @@
     <ClCompile Include="BillBoardedCameraActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="ScottCollisionSystem.cpp">
+    <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="ScottCollisionComponent.cpp">
+    <ClCompile Include="CollisionComponent.cpp">
       <Filter>Source Files\Component</Filter>
     </ClCompile>
     <ClCompile Include="Scene3.cpp">
@@ -200,17 +194,11 @@
     <ClInclude Include="Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionSystem.h">
-      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="DecisionTreeNode.h">
       <Filter>Header Files\DecisionTrees</Filter>
@@ -272,10 +260,10 @@
     <ClInclude Include="BillBoardedCameraActor.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="ScottCollisionComponent.h">
+    <ClInclude Include="CollisionComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ScottCollisionSystem.h">
+    <ClInclude Include="CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Scene3.h">

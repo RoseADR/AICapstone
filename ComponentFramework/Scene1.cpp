@@ -14,14 +14,12 @@
 #include "LocationManager.h"
 #include "Timing.h"
 
-#include "ScottCollisionComponent.h"
-#include "ScottCollisionSystem.h"
-
+#include "CollisionComponent.h"
 #include "CollisionSystem.h"
 
 #include <chrono>
 #include <thread>
-#include "CollisionComponent.h"
+
 #include <Quad.h>
 #include <QuadMath.h>
 // test test delete me 
